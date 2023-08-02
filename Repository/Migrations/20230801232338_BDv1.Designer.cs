@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.Context;
 
@@ -11,9 +12,10 @@ using Repository.Context;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230801232338_BDv1")]
+    partial class BDv1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +52,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("TutorId");
 
-                    b.ToTable("Aulas", (string)null);
+                    b.ToTable("Aulas");
                 });
 
             modelBuilder.Entity("Domain.Entities.Bank", b =>
@@ -92,7 +94,7 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Dimensiones", (string)null);
+                    b.ToTable("Dimensiones");
                 });
 
             modelBuilder.Entity("Domain.Entities.Docente", b =>
@@ -108,10 +110,9 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonaId")
-                        .IsUnique();
+                    b.HasIndex("PersonaId");
 
-                    b.ToTable("Docentes", (string)null);
+                    b.ToTable("Docentes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Escala", b =>
@@ -133,7 +134,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("DimensionId");
 
-                    b.ToTable("Escalas", (string)null);
+                    b.ToTable("Escalas");
                 });
 
             modelBuilder.Entity("Domain.Entities.Escuela", b =>
@@ -154,7 +155,7 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Escuelas", (string)null);
+                    b.ToTable("Escuelas");
                 });
 
             modelBuilder.Entity("Domain.Entities.Estudiante", b =>
@@ -179,10 +180,9 @@ namespace Repository.Migrations
 
                     b.HasIndex("AulaId");
 
-                    b.HasIndex("PersonaId")
-                        .IsUnique();
+                    b.HasIndex("PersonaId");
 
-                    b.ToTable("Estudiantes", (string)null);
+                    b.ToTable("Estudiantes");
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionAula", b =>
@@ -213,7 +213,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("UnidadId");
 
-                    b.ToTable("EvaluacionesAula", (string)null);
+                    b.ToTable("EvalucionAulas");
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionEstudiante", b =>
@@ -224,7 +224,7 @@ namespace Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("EstudianteId")
+                    b.Property<int>("Alumno_id")
                         .HasColumnType("int");
 
                     b.Property<int>("EvaluacionAulaId")
@@ -232,11 +232,7 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EstudianteId");
-
-                    b.HasIndex("EvaluacionAulaId");
-
-                    b.ToTable("EvaluacionesEstudiante", (string)null);
+                    b.ToTable("EvaluacionEstudiantes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Grado", b =>
@@ -261,7 +257,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("NivelId");
 
-                    b.ToTable("Grados", (string)null);
+                    b.ToTable("Grados");
                 });
 
             modelBuilder.Entity("Domain.Entities.Indicador", b =>
@@ -272,10 +268,11 @@ namespace Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("EscalaId")
-                        .HasColumnType("int");
+                    b.Property<string>("EscalaId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EvaEstudianteId")
+                    b.Property<int?>("EscalaId1")
                         .HasColumnType("int");
 
                     b.Property<string>("NombreIndicador")
@@ -291,11 +288,9 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EscalaId");
+                    b.HasIndex("EscalaId1");
 
-                    b.HasIndex("EvaEstudianteId");
-
-                    b.ToTable("Indicadores", (string)null);
+                    b.ToTable("Indicadores");
                 });
 
             modelBuilder.Entity("Domain.Entities.Nivel", b =>
@@ -312,7 +307,7 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Niveles", (string)null);
+                    b.ToTable("Niveles");
                 });
 
             modelBuilder.Entity("Domain.Entities.Persona", b =>
@@ -341,7 +336,7 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Personas", (string)null);
+                    b.ToTable("Personas");
                 });
 
             modelBuilder.Entity("Domain.Entities.Pix", b =>
@@ -380,13 +375,16 @@ namespace Repository.Migrations
                     b.Property<int>("PruebaId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PruebaPsicologicaId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GradoId");
 
-                    b.HasIndex("PruebaId");
+                    b.HasIndex("PruebaPsicologicaId");
 
-                    b.ToTable("PruebasGrado", (string)null);
+                    b.ToTable("PruebaGrados");
                 });
 
             modelBuilder.Entity("Domain.Entities.PruebaPsicologica", b =>
@@ -415,7 +413,7 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PruebasPsicologicas", (string)null);
+                    b.ToTable("PruebaPsicologicas");
                 });
 
             modelBuilder.Entity("Domain.Entities.Transaction", b =>
@@ -472,7 +470,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("EscuelaId");
 
-                    b.ToTable("Unidades", (string)null);
+                    b.ToTable("Unidades");
                 });
 
             modelBuilder.Entity("Domain.Entities.Usuario", b =>
@@ -496,30 +494,29 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonaId")
-                        .IsUnique();
+                    b.HasIndex("PersonaId");
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("Domain.Entities.Aula", b =>
                 {
                     b.HasOne("Domain.Entities.Escuela", "Escuela")
-                        .WithMany("Aulas")
+                        .WithMany()
                         .HasForeignKey("EscuelaId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Grado", "Grado")
-                        .WithMany("Aulas")
+                        .WithMany()
                         .HasForeignKey("GradoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Docente", "Tutor")
-                        .WithMany("Aulas")
+                        .WithMany()
                         .HasForeignKey("TutorId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Escuela");
@@ -532,9 +529,9 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.Docente", b =>
                 {
                     b.HasOne("Domain.Entities.Persona", "Persona")
-                        .WithOne("Docente")
-                        .HasForeignKey("Domain.Entities.Docente", "PersonaId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .WithMany()
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Persona");
@@ -543,9 +540,9 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.Escala", b =>
                 {
                     b.HasOne("Domain.Entities.Dimension", "Dimension")
-                        .WithMany("Escalas")
+                        .WithMany()
                         .HasForeignKey("DimensionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Dimension");
@@ -554,15 +551,15 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.Estudiante", b =>
                 {
                     b.HasOne("Domain.Entities.Aula", "Aula")
-                        .WithMany("Estudiantes")
+                        .WithMany()
                         .HasForeignKey("AulaId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Persona", "Persona")
-                        .WithOne("Estudiante")
-                        .HasForeignKey("Domain.Entities.Estudiante", "PersonaId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .WithMany()
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Aula");
@@ -573,21 +570,21 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.EvaluacionAula", b =>
                 {
                     b.HasOne("Domain.Entities.Aula", "Aula")
-                        .WithMany("EvaluacionesAula")
+                        .WithMany()
                         .HasForeignKey("AulaId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.PruebaGrado", "PruebaGrado")
-                        .WithMany("EvaluacionesAula")
+                        .WithMany()
                         .HasForeignKey("PruebaGradoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Unidad", "Unidad")
-                        .WithMany("EvaluacionesAula")
+                        .WithMany()
                         .HasForeignKey("UnidadId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Aula");
@@ -597,31 +594,12 @@ namespace Repository.Migrations
                     b.Navigation("Unidad");
                 });
 
-            modelBuilder.Entity("Domain.Entities.EvaluacionEstudiante", b =>
-                {
-                    b.HasOne("Domain.Entities.Estudiante", "Estudiante")
-                        .WithMany("EvaluacionesEstudiante")
-                        .HasForeignKey("EstudianteId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.EvaluacionAula", "EvaluacionAula")
-                        .WithMany("EvaluacionesEstudiante")
-                        .HasForeignKey("EvaluacionAulaId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Estudiante");
-
-                    b.Navigation("EvaluacionAula");
-                });
-
             modelBuilder.Entity("Domain.Entities.Grado", b =>
                 {
                     b.HasOne("Domain.Entities.Nivel", "Nivel")
-                        .WithMany("Grados")
+                        .WithMany()
                         .HasForeignKey("NivelId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Nivel");
@@ -630,20 +608,10 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.Indicador", b =>
                 {
                     b.HasOne("Domain.Entities.Escala", "Escala")
-                        .WithMany("Indicadores")
-                        .HasForeignKey("EscalaId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.EvaluacionEstudiante", "EvaluacionEstudiante")
-                        .WithMany("Indicadores")
-                        .HasForeignKey("EvaEstudianteId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("EscalaId1");
 
                     b.Navigation("Escala");
-
-                    b.Navigation("EvaluacionEstudiante");
                 });
 
             modelBuilder.Entity("Domain.Entities.Pix", b =>
@@ -651,7 +619,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Bank", "Bank")
                         .WithMany("Pixes")
                         .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Bank");
@@ -660,16 +628,14 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.PruebaGrado", b =>
                 {
                     b.HasOne("Domain.Entities.Grado", "Grado")
-                        .WithMany("PruebasGrado")
+                        .WithMany()
                         .HasForeignKey("GradoId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.PruebaPsicologica", "PruebaPsicologica")
-                        .WithMany("PruebasGrado")
-                        .HasForeignKey("PruebaId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("PruebaPsicologicaId");
 
                     b.Navigation("Grado");
 
@@ -681,7 +647,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Pix", "Pix")
                         .WithMany("Transactions")
                         .HasForeignKey("PixId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Pix");
@@ -690,9 +656,9 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.Unidad", b =>
                 {
                     b.HasOne("Domain.Entities.Escuela", "Escuela")
-                        .WithMany("Unidades")
+                        .WithMany()
                         .HasForeignKey("EscuelaId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Escuela");
@@ -701,19 +667,12 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.Usuario", b =>
                 {
                     b.HasOne("Domain.Entities.Persona", "Persona")
-                        .WithOne("Usuario")
-                        .HasForeignKey("Domain.Entities.Usuario", "PersonaId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .WithMany()
+                        .HasForeignKey("PersonaId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Persona");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Aula", b =>
-                {
-                    b.Navigation("Estudiantes");
-
-                    b.Navigation("EvaluacionesAula");
                 });
 
             modelBuilder.Entity("Domain.Entities.Bank", b =>
@@ -721,82 +680,9 @@ namespace Repository.Migrations
                     b.Navigation("Pixes");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Dimension", b =>
-                {
-                    b.Navigation("Escalas");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Docente", b =>
-                {
-                    b.Navigation("Aulas");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Escala", b =>
-                {
-                    b.Navigation("Indicadores");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Escuela", b =>
-                {
-                    b.Navigation("Aulas");
-
-                    b.Navigation("Unidades");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Estudiante", b =>
-                {
-                    b.Navigation("EvaluacionesEstudiante");
-                });
-
-            modelBuilder.Entity("Domain.Entities.EvaluacionAula", b =>
-                {
-                    b.Navigation("EvaluacionesEstudiante");
-                });
-
-            modelBuilder.Entity("Domain.Entities.EvaluacionEstudiante", b =>
-                {
-                    b.Navigation("Indicadores");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Grado", b =>
-                {
-                    b.Navigation("Aulas");
-
-                    b.Navigation("PruebasGrado");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Nivel", b =>
-                {
-                    b.Navigation("Grados");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Persona", b =>
-                {
-                    b.Navigation("Docente");
-
-                    b.Navigation("Estudiante");
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("Domain.Entities.Pix", b =>
                 {
                     b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("Domain.Entities.PruebaGrado", b =>
-                {
-                    b.Navigation("EvaluacionesAula");
-                });
-
-            modelBuilder.Entity("Domain.Entities.PruebaPsicologica", b =>
-                {
-                    b.Navigation("PruebasGrado");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Unidad", b =>
-                {
-                    b.Navigation("EvaluacionesAula");
                 });
 #pragma warning restore 612, 618
         }

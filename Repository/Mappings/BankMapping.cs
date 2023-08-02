@@ -11,5 +11,5 @@ public class BankMapping : IEntityTypeConfiguration<Bank>
         builder.HasKey(x => x.Id);
 
         builder.ToTable("Banks");
-    }
+    }   
 }

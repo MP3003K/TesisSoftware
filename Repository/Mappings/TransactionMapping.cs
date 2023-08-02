@@ -12,7 +12,7 @@ public class TransactionMapping : IEntityTypeConfiguration<Domain.Entities.Trans
         builder.HasOne(x => x.Pix)
             .WithMany(x => x.Transactions)
             .HasForeignKey(x => x.PixId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Property(x => x.Date)
             .HasDefaultValueSql("GETDATE()");

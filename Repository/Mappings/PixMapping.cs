@@ -6,14 +6,14 @@ namespace Repository.Mappings;
 
 public class PixMapping : IEntityTypeConfiguration<Pix>
 {
-    public void Configure(EntityTypeBuilder<Pix> builder)
+    public void Configure(EntityTypeBuilder<Pix> builder)   
     {
         builder.HasKey(x => x.Id);
 
         builder.HasOne(x => x.Bank)
             .WithMany(x => x.Pixes)
             .HasForeignKey(x => x.BankId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.ToTable("Pixes");
     }

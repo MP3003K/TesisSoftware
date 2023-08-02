@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.Context;
 
@@ -11,9 +12,10 @@ using Repository.Context;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230802145502_BDv6")]
+    partial class BDv6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -581,7 +583,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.PruebaGrado", "PruebaGrado")
                         .WithMany("EvaluacionesAula")
                         .HasForeignKey("PruebaGradoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Unidad", "Unidad")
@@ -621,7 +623,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Nivel", "Nivel")
                         .WithMany("Grados")
                         .HasForeignKey("NivelId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Nivel");
@@ -651,7 +653,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Bank", "Bank")
                         .WithMany("Pixes")
                         .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Bank");
@@ -681,7 +683,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Pix", "Pix")
                         .WithMany("Transactions")
                         .HasForeignKey("PixId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Pix");
