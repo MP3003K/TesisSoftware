@@ -10,6 +10,20 @@ namespace Repository.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Banks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Banks", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Dimensiones",
                 columns: table => new
                 {
@@ -35,20 +49,6 @@ namespace Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Escuelas", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EvaluacionEstudiantes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EvaluacionAulaId = table.Column<int>(type: "int", nullable: false),
-                    Alumno_id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EvaluacionEstudiantes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,7 +81,7 @@ namespace Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PruebaPsicologicas",
+                name: "PruebasPsicologicas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -93,7 +93,26 @@ namespace Repository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PruebaPsicologicas", x => x.Id);
+                    table.PrimaryKey("PK_PruebasPsicologicas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Pixes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BankId = table.Column<int>(type: "int", nullable: false),
+                    Key = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pixes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Pixes_Banks_BankId",
+                        column: x => x.BankId,
+                        principalTable: "Banks",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -112,8 +131,7 @@ namespace Repository.Migrations
                         name: "FK_Escalas_Dimensiones_DimensionId",
                         column: x => x.DimensionId,
                         principalTable: "Dimensiones",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -135,8 +153,7 @@ namespace Repository.Migrations
                         name: "FK_Unidades_Escuelas_EscuelaId",
                         column: x => x.EscuelaId,
                         principalTable: "Escuelas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -156,8 +173,7 @@ namespace Repository.Migrations
                         name: "FK_Grados_Niveles_NivelId",
                         column: x => x.NivelId,
                         principalTable: "Niveles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -175,8 +191,7 @@ namespace Repository.Migrations
                         name: "FK_Docentes_Personas_PersonaId",
                         column: x => x.PersonaId,
                         principalTable: "Personas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -196,55 +211,50 @@ namespace Repository.Migrations
                         name: "FK_Usuarios_Personas_PersonaId",
                         column: x => x.PersonaId,
                         principalTable: "Personas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Indicadores",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NombreIndicador = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Pregunta = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Puntaje = table.Column<int>(type: "int", nullable: false),
-                    EscalaId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EscalaId1 = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Indicadores", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Indicadores_Escalas_EscalaId1",
-                        column: x => x.EscalaId1,
-                        principalTable: "Escalas",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "PruebaGrados",
+                name: "Transactions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PixId = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<double>(type: "float", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Pixes_PixId",
+                        column: x => x.PixId,
+                        principalTable: "Pixes",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PruebasGrado",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GradoId = table.Column<int>(type: "int", nullable: false),
-                    PruebaId = table.Column<int>(type: "int", nullable: false),
-                    PruebaPsicologicaId = table.Column<int>(type: "int", nullable: true)
+                    PruebaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PruebaGrados", x => x.Id);
+                    table.PrimaryKey("PK_PruebasGrado", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PruebaGrados_Grados_GradoId",
+                        name: "FK_PruebasGrado_Grados_GradoId",
                         column: x => x.GradoId,
                         principalTable: "Grados",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PruebaGrados_PruebaPsicologicas_PruebaPsicologicaId",
-                        column: x => x.PruebaPsicologicaId,
-                        principalTable: "PruebaPsicologicas",
+                        name: "FK_PruebasGrado_PruebasPsicologicas_PruebaId",
+                        column: x => x.PruebaId,
+                        principalTable: "PruebasPsicologicas",
                         principalColumn: "Id");
                 });
 
@@ -266,14 +276,12 @@ namespace Repository.Migrations
                         name: "FK_Aulas_Docentes_TutorId",
                         column: x => x.TutorId,
                         principalTable: "Docentes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Aulas_Escuelas_EscuelaId",
                         column: x => x.EscuelaId,
                         principalTable: "Escuelas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Aulas_Grados_GradoId",
                         column: x => x.GradoId,
@@ -299,18 +307,16 @@ namespace Repository.Migrations
                         name: "FK_Estudiantes_Aulas_AulaId",
                         column: x => x.AulaId,
                         principalTable: "Aulas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Estudiantes_Personas_PersonaId",
                         column: x => x.PersonaId,
                         principalTable: "Personas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "EvalucionAulas",
+                name: "EvaluacionesAula",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -322,25 +328,74 @@ namespace Repository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EvalucionAulas", x => x.Id);
+                    table.PrimaryKey("PK_EvaluacionesAula", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EvalucionAulas_Aulas_AulaId",
+                        name: "FK_EvaluacionesAula_Aulas_AulaId",
                         column: x => x.AulaId,
                         principalTable: "Aulas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_EvalucionAulas_PruebaGrados_PruebaGradoId",
+                        name: "FK_EvaluacionesAula_PruebasGrado_PruebaGradoId",
                         column: x => x.PruebaGradoId,
-                        principalTable: "PruebaGrados",
+                        principalTable: "PruebasGrado",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_EvalucionAulas_Unidades_UnidadId",
+                        name: "FK_EvaluacionesAula_Unidades_UnidadId",
                         column: x => x.UnidadId,
                         principalTable: "Unidades",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EvaluacionesEstudiante",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EvaluacionAulaId = table.Column<int>(type: "int", nullable: false),
+                    EstudianteId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EvaluacionesEstudiante", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EvaluacionesEstudiante_Estudiantes_EstudianteId",
+                        column: x => x.EstudianteId,
+                        principalTable: "Estudiantes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_EvaluacionesEstudiante_EvaluacionesAula_EvaluacionAulaId",
+                        column: x => x.EvaluacionAulaId,
+                        principalTable: "EvaluacionesAula",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Indicadores",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NombreIndicador = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Pregunta = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Puntaje = table.Column<int>(type: "int", nullable: false),
+                    EscalaId = table.Column<int>(type: "int", nullable: false),
+                    EvaEstudianteId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Indicadores", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Indicadores_Escalas_EscalaId",
+                        column: x => x.EscalaId,
+                        principalTable: "Escalas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Indicadores_EvaluacionesEstudiante_EvaEstudianteId",
+                        column: x => x.EvaEstudianteId,
+                        principalTable: "EvaluacionesEstudiante",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -361,7 +416,8 @@ namespace Repository.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Docentes_PersonaId",
                 table: "Docentes",
-                column: "PersonaId");
+                column: "PersonaId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Escalas_DimensionId",
@@ -376,22 +432,33 @@ namespace Repository.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Estudiantes_PersonaId",
                 table: "Estudiantes",
-                column: "PersonaId");
+                column: "PersonaId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_EvalucionAulas_AulaId",
-                table: "EvalucionAulas",
+                name: "IX_EvaluacionesAula_AulaId",
+                table: "EvaluacionesAula",
                 column: "AulaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EvalucionAulas_PruebaGradoId",
-                table: "EvalucionAulas",
+                name: "IX_EvaluacionesAula_PruebaGradoId",
+                table: "EvaluacionesAula",
                 column: "PruebaGradoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EvalucionAulas_UnidadId",
-                table: "EvalucionAulas",
+                name: "IX_EvaluacionesAula_UnidadId",
+                table: "EvaluacionesAula",
                 column: "UnidadId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EvaluacionesEstudiante_EstudianteId",
+                table: "EvaluacionesEstudiante",
+                column: "EstudianteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EvaluacionesEstudiante_EvaluacionAulaId",
+                table: "EvaluacionesEstudiante",
+                column: "EvaluacionAulaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Grados_NivelId",
@@ -399,19 +466,34 @@ namespace Repository.Migrations
                 column: "NivelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Indicadores_EscalaId1",
+                name: "IX_Indicadores_EscalaId",
                 table: "Indicadores",
-                column: "EscalaId1");
+                column: "EscalaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PruebaGrados_GradoId",
-                table: "PruebaGrados",
+                name: "IX_Indicadores_EvaEstudianteId",
+                table: "Indicadores",
+                column: "EvaEstudianteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pixes_BankId",
+                table: "Pixes",
+                column: "BankId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PruebasGrado_GradoId",
+                table: "PruebasGrado",
                 column: "GradoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PruebaGrados_PruebaPsicologicaId",
-                table: "PruebaGrados",
-                column: "PruebaPsicologicaId");
+                name: "IX_PruebasGrado_PruebaId",
+                table: "PruebasGrado",
+                column: "PruebaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_PixId",
+                table: "Transactions",
+                column: "PixId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Unidades_EscuelaId",
@@ -421,37 +503,50 @@ namespace Repository.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_PersonaId",
                 table: "Usuarios",
-                column: "PersonaId");
+                column: "PersonaId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Estudiantes");
-
-            migrationBuilder.DropTable(
-                name: "EvaluacionEstudiantes");
-
-            migrationBuilder.DropTable(
-                name: "EvalucionAulas");
-
-            migrationBuilder.DropTable(
                 name: "Indicadores");
+
+            migrationBuilder.DropTable(
+                name: "Transactions");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");
 
             migrationBuilder.DropTable(
+                name: "Escalas");
+
+            migrationBuilder.DropTable(
+                name: "EvaluacionesEstudiante");
+
+            migrationBuilder.DropTable(
+                name: "Pixes");
+
+            migrationBuilder.DropTable(
+                name: "Dimensiones");
+
+            migrationBuilder.DropTable(
+                name: "Estudiantes");
+
+            migrationBuilder.DropTable(
+                name: "EvaluacionesAula");
+
+            migrationBuilder.DropTable(
+                name: "Banks");
+
+            migrationBuilder.DropTable(
                 name: "Aulas");
 
             migrationBuilder.DropTable(
-                name: "PruebaGrados");
+                name: "PruebasGrado");
 
             migrationBuilder.DropTable(
                 name: "Unidades");
-
-            migrationBuilder.DropTable(
-                name: "Escalas");
 
             migrationBuilder.DropTable(
                 name: "Docentes");
@@ -460,13 +555,10 @@ namespace Repository.Migrations
                 name: "Grados");
 
             migrationBuilder.DropTable(
-                name: "PruebaPsicologicas");
+                name: "PruebasPsicologicas");
 
             migrationBuilder.DropTable(
                 name: "Escuelas");
-
-            migrationBuilder.DropTable(
-                name: "Dimensiones");
 
             migrationBuilder.DropTable(
                 name: "Personas");

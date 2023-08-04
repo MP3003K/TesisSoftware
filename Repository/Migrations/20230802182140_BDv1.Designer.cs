@@ -12,8 +12,8 @@ using Repository.Context;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230802145049_BDv5")]
-    partial class BDv5
+    [Migration("20230802182140_BDv1")]
+    partial class BDv1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -509,7 +509,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Escuela", "Escuela")
                         .WithMany("Aulas")
                         .HasForeignKey("EscuelaId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Grado", "Grado")
@@ -521,7 +521,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Docente", "Tutor")
                         .WithMany("Aulas")
                         .HasForeignKey("TutorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Escuela");
@@ -547,7 +547,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Dimension", "Dimension")
                         .WithMany("Escalas")
                         .HasForeignKey("DimensionId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Dimension");
@@ -577,7 +577,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Aula", "Aula")
                         .WithMany("EvaluacionesAula")
                         .HasForeignKey("AulaId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.PruebaGrado", "PruebaGrado")
@@ -589,7 +589,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Unidad", "Unidad")
                         .WithMany("EvaluacionesAula")
                         .HasForeignKey("UnidadId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Aula");
@@ -604,13 +604,13 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Estudiante", "Estudiante")
                         .WithMany("EvaluacionesEstudiante")
                         .HasForeignKey("EstudianteId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.EvaluacionAula", "EvaluacionAula")
                         .WithMany("EvaluacionesEstudiante")
                         .HasForeignKey("EvaluacionAulaId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Estudiante");
@@ -623,7 +623,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Nivel", "Nivel")
                         .WithMany("Grados")
                         .HasForeignKey("NivelId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Nivel");
@@ -634,13 +634,13 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Escala", "Escala")
                         .WithMany("Indicadores")
                         .HasForeignKey("EscalaId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.EvaluacionEstudiante", "EvaluacionEstudiante")
                         .WithMany("Indicadores")
                         .HasForeignKey("EvaEstudianteId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Escala");
@@ -653,7 +653,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Bank", "Bank")
                         .WithMany("Pixes")
                         .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Bank");
@@ -664,13 +664,13 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Grado", "Grado")
                         .WithMany("PruebasGrado")
                         .HasForeignKey("GradoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.PruebaPsicologica", "PruebaPsicologica")
                         .WithMany("PruebasGrado")
                         .HasForeignKey("PruebaId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Grado");
@@ -683,7 +683,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Pix", "Pix")
                         .WithMany("Transactions")
                         .HasForeignKey("PixId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Pix");
@@ -694,7 +694,7 @@ namespace Repository.Migrations
                     b.HasOne("Domain.Entities.Escuela", "Escuela")
                         .WithMany("Unidades")
                         .HasForeignKey("EscuelaId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Escuela");
