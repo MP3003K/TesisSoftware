@@ -5,6 +5,13 @@ import { LoginRoutingModule } from './login-routing.module';
 import { LoginComponent } from './login.component';
 import { ModalComponent } from '../shared/components';
 
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms'; // Importa ReactiveFormsModule
+
+const ANGULAR_MATERIAL: any[] = [
+  MatFormFieldModule,
+  ReactiveFormsModule
+];
 const COMPONENTS_SHARED: any[] = [
   // Add components here
   ModalComponent,
@@ -17,7 +24,8 @@ const COMPONENTS_SHARED: any[] = [
   ],
   imports: [
     CommonModule,
-    LoginRoutingModule
+    LoginRoutingModule,
+    ...ANGULAR_MATERIAL
     ]
 })
 export class LoginModule { }
