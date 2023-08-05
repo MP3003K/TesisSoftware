@@ -1,35 +1,26 @@
 import { NgModule } from '@angular/core';
 
 import { Routes, RouterModule } from '@angular/router';
-import { ScaffoldComponent } from './core/scaffold/scaffold.component';
 
 const routes: Routes = [
   {
-    path: 'login',
+    path: 'pages',
     loadChildren: () =>
-      import('./pages/login/login.module').then((m) => m.LoginModule),
+      import('./modules/modules.module').then((m) => m.ModulesModule),
   },
   {
-    path: 'pages',
-    component: ScaffoldComponent,
-    children: [
-      {
-        path: 'test-psicologico',
-        loadChildren: () =>
-          import('./pages/test-psicologico/test-psicologico.module').then(
-            (m) => m.TestPsicologicoModule
-          ),
-      },
-    ],
+    path: 'login',
+    loadChildren: () =>
+      import('./modules/login/login.module').then((m) => m.LoginModule),
   },
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'pages',
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: 'pages',
     pathMatch: 'full'
   },
 ];

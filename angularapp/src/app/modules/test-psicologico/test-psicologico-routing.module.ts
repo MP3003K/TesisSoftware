@@ -11,8 +11,22 @@ const routes: Routes = [
     component: TestPsicologicoComponent,
     children: [
       {
-        path: '',
+        path: 'realizar-test',
         component: RealizarTestComponent,
+      },
+      {
+        path: 'resultados-test',
+        component: ResultadosTestComponent,
+      },
+      {
+        path: '',
+        redirectTo: 'realizar-test',
+        pathMatch: 'full'
+      },
+      {
+        path: '**',
+        redirectTo: 'realizar-test',
+        pathMatch: 'full'
       },
     ],
   },
