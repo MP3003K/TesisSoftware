@@ -5,7 +5,6 @@ import { ModulesRoutingModule } from './modules-routing.module';
 import {CoreModule} from "../core/core.module";
 
 
-
 @NgModule({
   imports: [
     CommonModule,
