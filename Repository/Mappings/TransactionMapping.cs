@@ -15,7 +15,7 @@ public class TransactionMapping : IEntityTypeConfiguration<Domain.Entities.Trans
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Property(x => x.Date)
-            .HasDefaultValueSql("GETDATE()");
+            .HasDefaultValueSql("now()");
 
         builder.ToTable("Transactions");
     }
