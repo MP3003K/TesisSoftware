@@ -12,8 +12,7 @@ namespace webapi.Controllers
         /// <summary>
         /// Lista de preguntas psicologicas
         /// </summary>
-        [HttpGet]
-        [Route("")]
+        [HttpGet("all")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<Response<IList<PreguntaPsicologicaDto>>>> ListAllBank()
         {
