@@ -10,11 +10,6 @@ namespace Repository.Mappings
         {
             builder.HasKey(x => x.Id);
 
-            builder.HasOne(x => x.Tutor)
-                .WithMany(x => x.Aulas)
-                .HasForeignKey(x => x.TutorId)
-                .OnDelete(DeleteBehavior.NoAction);
-
             builder.HasOne(x => x.Escuela)
                 .WithMany(x => x.Aulas)
                 .HasForeignKey(x => x.EscuelaId)

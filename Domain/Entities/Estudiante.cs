@@ -17,7 +17,7 @@ namespace Domain.Entities
         // Relaciones con otras tablas
         public virtual Aula? Aula { get; private set; }
         public virtual Persona? Persona { get; private set; }
-        public virtual IList<EvaluacionEstudiante>? EvaluacionesEstudiante { get; private set; }
+        public virtual IList<EvaluacionPsicologicaEstudiante>? EvaluacionesEstudiante { get; private set; }
 
 
         // Funciones
