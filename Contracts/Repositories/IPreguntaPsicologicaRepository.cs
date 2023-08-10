@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace Contracts.Repositories
 {
-    public interface IRespuestaPsicologicaRepository: IRepository<RespuestaPsicologica>
+    public interface IPreguntaPsicologicaRepository: IRepository<PreguntaPsicologica>
     {
-        Task<RespuestaPsicologica?> ObtenerRespuestasPsicologicasPorEstudianteId(int estudianteId);    
     }
 }

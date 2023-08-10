@@ -10,8 +10,8 @@ public static class RepositoryDependencyInjections
     {
         services.AddScoped<IBankRepository, BankRepository>()
             .AddScoped<ITransactionRepository, TransactionRepository>()
-            .AddScoped<IPixRepository, PixRepository>();
-
+            .AddScoped<IPixRepository, PixRepository>()
+            .AddScoped<IPreguntaPsicologicaRepository, PreguntaPsicologicaRepository>();
         return services;
     }
 }
