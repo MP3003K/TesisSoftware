@@ -4,8 +4,7 @@ import { EvaluarSalonesMenuComponent } from './evaluar-salones-menu/evaluar-salo
 import { EvaluarSalonComponent } from './components/evaluar-salon/evaluar-salon.component';
 import { EvaluarEstudianteComponent } from './components/evaluar-estudiante/evaluar-estudiante.component';
 import { EvaluarSalonesRoutingModule } from './evaluar-salones-routing.module';
-
-
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -13,9 +12,6 @@ import { EvaluarSalonesRoutingModule } from './evaluar-salones-routing.module';
     EvaluarSalonComponent,
     EvaluarEstudianteComponent,
   ],
-  imports: [
-    CommonModule,
-    EvaluarSalonesRoutingModule
-  ]
+  imports: [EvaluarSalonesRoutingModule],
 })
-export class EvaluarSalonesModule { }
+export class EvaluarSalonesModule {}

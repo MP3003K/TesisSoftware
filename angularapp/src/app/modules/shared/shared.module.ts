@@ -1,16 +1,22 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ModalComponent } from './components/modal/modal.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
-const COMPONENTS: any[] = [
-  // Add components here
+const COMPONENTS: any[] = [ModalComponent];
+
+const ANGULAR_MODULES: any[] = [
+  HttpClientModule,
+  FormsModule,
+  ReactiveFormsModule,
+  CommonModule,
 ];
 
-const ANGULAR_MODULES: any[] = [CommonModule];
-
 @NgModule({
+  declarations: [...COMPONENTS],
+
   imports: [...ANGULAR_MODULES],
   exports: [...ANGULAR_MODULES, ...COMPONENTS],
-  declarations: [...COMPONENTS],
 })
 export class SharedModule {}

@@ -4,11 +4,9 @@ import { RealizarTestComponent } from './components/realizar-test/realizar-test.
 import { ResultadosTestComponent } from './components/resultados-test/resultados-test.component';
 import { TestPsicologicoRoutingModule } from './test-psicologico-routing.module';
 import { TestPsicologicoComponent } from './test-psicologico.component';
-
-const SERVICES: any[] = [
-
-];
-
+import { MatRadioModule } from '@angular/material/radio';
+import { SharedModule } from '../shared/shared.module';
+const SERVICES: any[] = [];
 
 @NgModule({
   declarations: [
@@ -16,12 +14,7 @@ const SERVICES: any[] = [
     RealizarTestComponent,
     ResultadosTestComponent,
   ],
-  imports: [
-    CommonModule,
-    TestPsicologicoRoutingModule
-  ],
-  providers: [
-    ...SERVICES
-  ]
+  imports: [SharedModule, TestPsicologicoRoutingModule, MatRadioModule],
+  providers: [...SERVICES],
 })
-export class TestPsicologicoModule { }
+export class TestPsicologicoModule {}
