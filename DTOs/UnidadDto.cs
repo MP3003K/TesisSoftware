@@ -14,5 +14,6 @@ namespace DTOs
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
         public int EscuelaId { get; set; }
+        public string Estado { get; set; } = string.Empty;
     }
 }

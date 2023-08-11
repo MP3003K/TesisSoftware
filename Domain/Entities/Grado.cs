@@ -16,6 +16,7 @@ namespace Domain.Entities
         // Relaciones con otras tablas
         public virtual Nivel? Nivel { get; private set; }
         public virtual IList<Aula>? Aulas { get; private set; }
+        public IList<GradoEvaPsicologica>? GradosEvaPsicologicas { get; private set; }
 
         // Funciones
         public Grado(string nombre, int nGrado, int nivelId)

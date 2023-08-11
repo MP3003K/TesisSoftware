@@ -11,9 +11,6 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<Bank> Banks { get; private init; }
-    public DbSet<Pix> Pixes { get; private init; }
-    public DbSet<Domain.Entities.Transaction> Transactions { get; private init; }
     public DbSet<Aula> Aulas { get; private init; }
     public DbSet<DimensionPsicologica> Dimensiones { get; private init; }
     public DbSet<Docente> Docentes { get; private init; }
@@ -31,6 +28,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Usuario> Usuarios { get; private init; }
     public DbSet<RespuestaPsicologica> RespuestaPsicologicas { get; private init; }
     public DbSet<PreguntaPsicologica> PreguntaPsicologicas { get; private init; }
+    public DbSet<GradoEvaPsicologica> GradosEvaPsicologicas{ get; private init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

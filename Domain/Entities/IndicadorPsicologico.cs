@@ -10,32 +10,33 @@ namespace Domain.Entities
     public class IndicadorPsicologico: Entity
     {
         public string NombreIndicador { get; private set; }
-        public int EscalaId { get; private set; }
-        public virtual EscalaPsicologica? Escala { get; private set; }
+        public int EscalaPsicologicaId { get; private set; }
 
         // Relaciones con otras tablas
+        public virtual EscalaPsicologica? Escala { get; private set; }
         public virtual  IList<PreguntaPsicologica>? PreguntasPsicologicas { get; private set; }
         public virtual  EscalaPsicologica? EscalaPsicologica { get; private set; }
 
         //Funciones
-        public IndicadorPsicologico(string nombreIndicador, int escalaId)
+        public IndicadorPsicologico(string nombreIndicador, int escalaPsicologicaId)
         {
             NombreIndicador = nombreIndicador;
-            EscalaId = escalaId;
+            EscalaPsicologicaId = escalaPsicologicaId;
         }
         public void UpdateNombreIndicador(string nombreIndicador)
         {
             NombreIndicador = nombreIndicador;
         }
-        public void UpdateEscalaId(int escalaId)
+        public void UpdateEscalaPsicologicaId(int escalaPsicologicaId)
         {
-            EscalaId = escalaId;
+            EscalaPsicologicaId = escalaPsicologicaId;
         }
-        public void Update(string nombreIndicador, int escalaId)
+        public void Update(string nombreIndicador, int escalaPsicologicaId)
         {
             UpdateNombreIndicador(nombreIndicador);
-            UpdateEscalaId(escalaId);
+            UpdateEscalaPsicologicaId(escalaPsicologicaId);
         }
+
 
 
     }

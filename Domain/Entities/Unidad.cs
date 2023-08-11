@@ -15,14 +15,14 @@ namespace Domain.Entities
         public DateTime FechaFin { get; private set; }
         public int Año { get; private set; }
         public int EscuelaId { get; private set; }
-
+        public string Estado { get; private set; }
 
         // Relaciones con otras tablas
         public virtual Escuela? Escuela { get; private set; }
         public virtual IList<EvaluacionPsicologicaAula>? EvaluacionesPsicologicasAula { get; private set; }
 
         //Funciones
-        public Unidad(string nombre, int nUnidad, DateTime fechaInicio, DateTime fechaFin, int año, int escuelaId)
+        public Unidad (string nombre, int nUnidad, DateTime fechaInicio, DateTime fechaFin, int año, int escuelaId, string estado)
         {
             Nombre = nombre;
             NUnidad = nUnidad;
@@ -30,6 +30,7 @@ namespace Domain.Entities
             FechaFin = fechaFin;
             Año = año;
             EscuelaId = escuelaId;
+            Estado = estado;
         }
         public void UpdateNombre(string nombre)
         {
@@ -47,6 +48,7 @@ namespace Domain.Entities
         {
             FechaFin = fechaFin;
         }
+
         public void UpdateAño(int año)
         {
             Año = año;
@@ -55,7 +57,11 @@ namespace Domain.Entities
         {
             EscuelaId = escuelaId;
         }
-        public void Update(string nombre, int nUnidad, DateTime fechaInicio, DateTime fechaFin, int año, int escuelaId)
+        public void UpdateEstado(string estado)
+        {
+            Estado = estado;
+        }
+        public void Update(string nombre, int nUnidad, DateTime fechaInicio, DateTime fechaFin, int año, int escuelaId, string estado)
         {
             UpdateNombre(nombre);
             UpdateNUnidad(nUnidad);
@@ -63,7 +69,10 @@ namespace Domain.Entities
             UpdateFechaFin(fechaFin);
             UpdateAño(año);
             UpdateEscuelaId(escuelaId);
+            UpdateEstado(estado);
         }
+
+
 
     }
 }

@@ -8,9 +8,7 @@ public static class RepositoryDependencyInjections
 {
     public static IServiceCollection AddRepositoryInjections(this IServiceCollection services)
     {
-        services.AddScoped<IBankRepository, BankRepository>()
-            .AddScoped<ITransactionRepository, TransactionRepository>()
-            .AddScoped<IPixRepository, PixRepository>()
+        services.AddScoped<IUnidadRepository, UnidadRepository>()
             .AddScoped<IPreguntaPsicologicaRepository, PreguntaPsicologicaRepository>();
         return services;
     }

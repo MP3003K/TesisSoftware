@@ -17,7 +17,7 @@ namespace Repository.Mappings
 
             builder.HasOne(x => x.EscalaPsicologica)
                 .WithMany(x => x.IndicadoresPsicologicos)
-                .HasForeignKey(x => x.EscalaId)
+                .HasForeignKey(x => x.EscalaPsicologicaId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.ToTable("IndicadoresPsicologicos");

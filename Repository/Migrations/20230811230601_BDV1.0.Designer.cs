@@ -12,8 +12,8 @@ using Repository.Context;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230809230811_BDV2")]
-    partial class BDV2
+    [Migration("20230811230601_BDV1.0")]
+    partial class BDV10
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -316,6 +316,29 @@ namespace Repository.Migrations
                     b.ToTable("Grados", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.GradoEvaPsicologica", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EvaPsiId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GradoId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EvaPsiId");
+
+                    b.HasIndex("GradoId");
+
+                    b.ToTable("GradosEvaPsicologicas", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.IndicadorPsicologico", b =>
                 {
                     b.Property<int>("Id")
@@ -324,10 +347,10 @@ namespace Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EscalaId")
+                    b.Property<int?>("EscalaId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("EscalaId1")
+                    b.Property<int>("EscalaPsicologicaId")
                         .HasColumnType("integer");
 
                     b.Property<string>("NombreIndicador")
@@ -338,7 +361,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("EscalaId");
 
-                    b.HasIndex("EscalaId1");
+                    b.HasIndex("EscalaPsicologicaId");
 
                     b.ToTable("IndicadoresPsicologicos", (string)null);
                 });
@@ -350,6 +373,9 @@ namespace Repository.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("NNivel")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -376,9 +402,8 @@ namespace Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("DNI")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("DNI")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Nombres")
                         .IsRequired()
@@ -497,8 +522,15 @@ namespace Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Año")
+                        .HasColumnType("integer");
+
                     b.Property<int>("EscuelaId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("FechaFin")
                         .HasColumnType("timestamp with time zone");
@@ -668,17 +700,36 @@ namespace Repository.Migrations
                     b.Navigation("Nivel");
                 });
 
-            modelBuilder.Entity("Domain.Entities.IndicadorPsicologico", b =>
+            modelBuilder.Entity("Domain.Entities.GradoEvaPsicologica", b =>
                 {
-                    b.HasOne("Domain.Entities.EscalaPsicologica", "EscalaPsicologica")
-                        .WithMany("IndicadoresPsicologicos")
-                        .HasForeignKey("EscalaId")
+                    b.HasOne("Domain.Entities.EvaluacionPsicologica", "EvaluacionPsicologica")
+                        .WithMany("GradosEvaPsicologicas")
+                        .HasForeignKey("EvaPsiId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Grado", "Grado")
+                        .WithMany("GradosEvaPsicologicas")
+                        .HasForeignKey("GradoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("EvaluacionPsicologica");
+
+                    b.Navigation("Grado");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IndicadorPsicologico", b =>
+                {
                     b.HasOne("Domain.Entities.EscalaPsicologica", "Escala")
                         .WithMany()
-                        .HasForeignKey("EscalaId1");
+                        .HasForeignKey("EscalaId");
+
+                    b.HasOne("Domain.Entities.EscalaPsicologica", "EscalaPsicologica")
+                        .WithMany("IndicadoresPsicologicos")
+                        .HasForeignKey("EscalaPsicologicaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Escala");
 
@@ -801,6 +852,8 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.EvaluacionPsicologica", b =>
                 {
                     b.Navigation("EvaluacionesPsicologicasAula");
+
+                    b.Navigation("GradosEvaPsicologicas");
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionPsicologicaAula", b =>
@@ -816,6 +869,8 @@ namespace Repository.Migrations
             modelBuilder.Entity("Domain.Entities.Grado", b =>
                 {
                     b.Navigation("Aulas");
+
+                    b.Navigation("GradosEvaPsicologicas");
                 });
 
             modelBuilder.Entity("Domain.Entities.IndicadorPsicologico", b =>
