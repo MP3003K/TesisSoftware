@@ -10,7 +10,6 @@ namespace Domain.Entities
     public class RespuestaPsicologica: Entity
     {
         public string Respuesta { get; private set; }
-        public int Puntaje { get; private set; }
         public int PreguntaPsicologicaId { get; private set; }
         public int EvaPsiEstId { get; private set; }
 
@@ -19,20 +18,15 @@ namespace Domain.Entities
         public virtual EvaluacionPsicologicaEstudiante? EvaluacionPsicologicaEstudiante { get; private set; }
 
         // Funciones
-        public RespuestaPsicologica(string respuesta, int puntaje, int preguntaPsicologicaId, int evaPsiEstId)
+        public RespuestaPsicologica(string respuesta, int preguntaPsicologicaId, int evaPsiEstId)
         {
             Respuesta = respuesta;
-            Puntaje = puntaje;
             PreguntaPsicologicaId = preguntaPsicologicaId;
             EvaPsiEstId = evaPsiEstId;
         }
         public void UpdateRespuesta(string respuesta)
         {
             Respuesta = respuesta;
-        }
-        public void UpdatePuntaje(int puntaje)
-        {
-            Puntaje = puntaje;
         }
         public void UpdatePreguntaPsicologicaId(int preguntaPsicologicaId)
         {
@@ -42,14 +36,12 @@ namespace Domain.Entities
         {
             EvaPsiEstId = evaPsiEstId;
         }
-        public void Update(string respuesta, int puntaje, int preguntaPsicologicaId, int evaPsiEstId)
+        public void Update(string respuesta, int preguntaPsicologicaId, int evaPsiEstId)
         {
             UpdateRespuesta(respuesta);
-            UpdatePuntaje(puntaje);
             UpdatePreguntaPsicologicaId(preguntaPsicologicaId);
             UpdateEvaPsiEstId(evaPsiEstId);
         }
-
 
     }
 }
