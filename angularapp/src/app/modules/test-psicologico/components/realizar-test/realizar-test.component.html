@@ -1,156 +1,71 @@
-
-
-
-<section class="w-{400px}">
-  hola
-</section>
-<section class="w-{800px} overflow-y-auto ">
+<section #parentSection class=" overflow-y-auto h-full ">
   <header class="bg-white py-8 px-10">
-    <a class="text-sm font-semibold text-h1.2"> User Interface </a>
-    <h1 class="text-4xl font-bold   text-h1">Typography</h1>
+    <a class="text-sm font-semibold text-h1.2"> Encuestas </a>
+    <h1 class="text-4xl font-bold text-h1">Perfil Psicológico</h1>
   </header>
+  <div class="sticky top-0 py-2 px-4 flex justify-between">
+    <div class="flex flex-col gap-2">
+      <div class="h-4 w-52 rounded-full overflow-hidden bg-gray-300">
+        <div
+          class="h-full bg-green-500 text-end text-xs text-white"
+          [ngStyle]="{
+            width: getPValue()
+          }"
+        ></div>
+      </div>
+      <span class="text-[8px]"
+        >{{ countCompletedAnswers() }} de {{ paginator.length }}</span
+      >
+    </div>
+    <span class="text-[8px]">
+      Página {{ paginator.pageNumber }} de {{ paginator.pages }}
+    </span>
+  </div>
+  <body class="px-12 pt-8 pb-12 flex flex-col">
+    <div class="p-4 flex flex-col gap-4">
+      <div
+        class="p-4 shadow rounded-lg bg-white"
+        *ngFor="let question of filterQuestions(); let i = index"
+      >
+        <div class="font-medium">{{ question.question }}</div>
+        <div>
+          <mat-radio-group
+            aria-label="Select an option"
+            class="flex flex-col"
+            [(ngModel)]="question.answer"
+          >
+            <mat-radio-button value="1">Nunca</mat-radio-button>
+            <mat-radio-button value="2">Casi Nunca</mat-radio-button>
+            <mat-radio-button value="3">A Veces</mat-radio-button>
+            <mat-radio-button value="4">Casi Siempre</mat-radio-button>
+            <mat-radio-button value="5">Siempre</mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+    </div>
 
-  <body>
-    <h1 class="text-3xl font-bold underline">Hello world!</h1>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
-    <p class="lead">
-      Until now, trying to style an article, document, or blog post with
-      Tailwind has been a tedious task that required a keen eye for typography
-      and a lot of complex custom CSS.
-    </p>
+    <div class="py-2 flex justify-between items-end">
+      <div class="flex gap-4">
+        <button
+          class="text-indigo-700 rounded px-4 py-2 hover:bg-gray-200 font-light"
+        >
+          Guardar
+        </button>
+        <button
+          (click)="
+            paginator.pageNumber == paginator.pages
+              ? submitForm()
+              : getNextItem()
+          "
+          class="bg-indigo-700 text-white shadow rounded px-4 py-2 font-medium"
+        >
+          {{
+          paginator.pageNumber == paginator.pages
+            ? 'Enviar'
+            : 'Siguiente'
+        }}
+        </button>
+      </div>
+    </div>
   </body>
 </section>

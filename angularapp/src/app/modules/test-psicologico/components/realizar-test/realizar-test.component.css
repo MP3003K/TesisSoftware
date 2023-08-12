@@ -1,7 +1,6 @@
-.A{
-    width:400px; 
+details > summary {
+  list-style: none;
 }
-
-.B{
-    width: 500px;
+details > summary::-webkit-details-marker {
+  display: none;
 }
