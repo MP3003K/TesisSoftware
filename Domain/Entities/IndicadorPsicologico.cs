@@ -13,7 +13,6 @@ namespace Domain.Entities
         public int EscalaPsicologicaId { get; private set; }
 
         // Relaciones con otras tablas
-        public virtual EscalaPsicologica? Escala { get; private set; }
         public virtual  IList<PreguntaPsicologica>? PreguntasPsicologicas { get; private set; }
         public virtual  EscalaPsicologica? EscalaPsicologica { get; private set; }
 

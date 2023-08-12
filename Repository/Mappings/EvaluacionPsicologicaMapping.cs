@@ -15,7 +15,7 @@ namespace Repository.Mappings
         {
             builder.HasKey(x => x.Id);
 
-            builder.ToTable("PruebasPsicologicas");
+            builder.ToTable("EvaluacionesPsicologicas");
         }
     }
 }

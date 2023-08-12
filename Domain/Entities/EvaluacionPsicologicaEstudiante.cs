@@ -10,12 +10,11 @@ namespace Domain.Entities
 {
     public class EvaluacionPsicologicaEstudiante : Entity
     {
-        public DateTime FechaInicio { get; private set; }
-        public DateTime FechaFin { get; private set; }
+        public DateTime? FechaInicio { get; private set; }
+        public DateTime? FechaFin { get; private set; }
         public string Estado { get; private set; }
         public int EvaluacionAulaId { get; private set; }
         public int EstudianteId { get; private set; }
-        public int RespuestaPsicologicaId { get; private set; }
 
         // Relaciones con otras tablas
         public virtual Estudiante? Estudiante { get; private set; }
@@ -23,18 +22,26 @@ namespace Domain.Entities
         public virtual IList<RespuestaPsicologica>? RespuestasPsicologicas { get; private set; }
 
         // Funciones
-        public EvaluacionPsicologicaEstudiante(DateTime fechaInicio, DateTime fechaFin, string estado, int evaluacionAulaId, int estudianteId, int respuestaPsicologicaId)
+        public EvaluacionPsicologicaEstudiante(int evaluacionAulaId, int estudianteId)
         {
-            FechaInicio = fechaInicio;
-            FechaFin = fechaFin;
-            Estado = estado;
+            Estado = "N";
             EvaluacionAulaId = evaluacionAulaId;
             EstudianteId = estudianteId;
-            RespuestaPsicologicaId = respuestaPsicologicaId;
         }
         public void UpdateFechaInicio(DateTime fechaInicio)
         {
             FechaInicio = fechaInicio;
+        }
+
+        public void IniciarEvaluacion(DateTime fechaInicio)
+        {
+            FechaInicio = fechaInicio;
+            Estado = "P";
+        }
+        public void TerminarEvaluacion(DateTime fechaFin)
+        {
+            FechaFin = fechaFin;
+            Estado = "F";
         }
         public void UpdateFechaFin(DateTime fechaFin)
         {
@@ -52,19 +59,15 @@ namespace Domain.Entities
         {
             EstudianteId = estudianteId;
         }
-        public void UpdateRespuestaPsicologicaId(int respuestaPsicologicaId)
-        {
-            RespuestaPsicologicaId = respuestaPsicologicaId;
-        }
-        public void Update(DateTime fechaInicio, DateTime fechaFin, string estado, int evaluacionAulaId, int estudianteId, int respuestaPsicologicaId)
+        public void Update(DateTime fechaInicio, DateTime fechaFin, string estado, int evaluacionAulaId, int estudianteId)
         {
             UpdateFechaInicio(fechaInicio);
             UpdateFechaFin(fechaFin);
             UpdateEstado(estado);
             UpdateEvaluacionAulaId(evaluacionAulaId);
             UpdateEstudianteId(estudianteId);
-            UpdateRespuestaPsicologicaId(respuestaPsicologicaId);
         }
+
 
     }
 }

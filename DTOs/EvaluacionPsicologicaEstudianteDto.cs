@@ -14,6 +14,5 @@ namespace DTOs
         public string Estado { get; set; } = string.Empty;
         public int EstudianteId { get; set; }
         public int EvaluacionAulaId { get; set; }
-        public int RespuestaPsicologicaId { get; set; }
     }
 }

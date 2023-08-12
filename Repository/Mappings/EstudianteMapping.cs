@@ -19,11 +19,6 @@ namespace Repository.Mappings
                 .HasForeignKey<Estudiante>(x => x.PersonaId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(x => x.Aula)
-                .WithMany(x => x.Estudiantes)
-                .HasForeignKey(x => x.AulaId)
-                .OnDelete(DeleteBehavior.NoAction);
-
             builder.ToTable("Estudiantes");
         }
     }

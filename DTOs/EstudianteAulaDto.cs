@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace DTOs
 {
-    public class AulaDto
+    public class EstudianteAulaDto
     {
         public int Id { get; set; }
-        public string Seccion { get; set; } = string.Empty;
-        public int GradoId { get; set; }
-        public int EscuelaId { get; set; }
+        public int EstudianteId { get; set; }
+        public int AulaId { get; set; }
+        public string Estado { get; set; } = string.Empty;
     }
 }

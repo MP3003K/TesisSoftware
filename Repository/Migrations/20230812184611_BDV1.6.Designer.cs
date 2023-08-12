@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Repository.Context;
@@ -11,9 +12,11 @@ using Repository.Context;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230812184611_BDV1.6")]
+    partial class BDV16
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,8 +273,7 @@ namespace Repository.Migrations
 
                     b.Property<string>("Estado")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasComment("(No inicio= N, En proceso = P, Finalizo= F)");
+                        .HasColumnType("text");
 
                     b.Property<int>("EstudianteId")
                         .HasColumnType("integer");
@@ -279,10 +281,10 @@ namespace Repository.Migrations
                     b.Property<int>("EvaluacionAulaId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("FechaFin")
+                    b.Property<DateTime>("FechaFin")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("FechaInicio")
+                    b.Property<DateTime>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");

@@ -25,7 +25,12 @@ namespace Repository.Mappings
                 .HasForeignKey(x => x.EvaluacionAulaId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.ToTable("EvaluacionesEstudiante");
+            builder.Property(x => x.FechaFin).IsRequired(false);
+            builder.Property(x => x.FechaInicio).IsRequired(false);
+
+            builder.Property(x => x.Estado).HasComment("(No inicio= N, En proceso = P, Finalizo= F)");
+
+            builder.ToTable("EvaluacionesPsicologicasEstudiante");
         }
     }
 }

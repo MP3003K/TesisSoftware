@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Repository.Context;
@@ -11,9 +12,11 @@ using Repository.Context;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230812064902_BDV1.2")]
+    partial class BDV12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,11 +170,8 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Domain.Entities.EstudianteAula", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("EstudianteId")
                         .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AulaId")
                         .HasColumnType("integer");
@@ -180,14 +180,12 @@ namespace Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("EstudianteId")
+                    b.Property<int>("Id")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.HasKey("EstudianteId", "AulaId");
 
                     b.HasIndex("AulaId");
-
-                    b.HasIndex("EstudianteId");
 
                     b.ToTable("EstudiantesAulas", (string)null);
                 });
@@ -218,7 +216,7 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EvaluacionesPsicologicas", (string)null);
+                    b.ToTable("PruebasPsicologicas", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionPsicologicaAula", b =>
@@ -234,16 +232,15 @@ namespace Repository.Migrations
 
                     b.Property<string>("Estado")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasComment("(No inicio= N, En proceso = P, Finalizo= F)");
+                        .HasColumnType("text");
 
                     b.Property<int>("EvaluacionPsicologicaId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("FechaFin")
+                    b.Property<DateTime>("FechaFin")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("FechaInicio")
+                    b.Property<DateTime>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UnidadId")
@@ -257,7 +254,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("UnidadId");
 
-                    b.ToTable("EvaluacionesPsicologicasAula", (string)null);
+                    b.ToTable("EvaluacionesAula", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionPsicologicaEstudiante", b =>
@@ -270,8 +267,7 @@ namespace Repository.Migrations
 
                     b.Property<string>("Estado")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasComment("(No inicio= N, En proceso = P, Finalizo= F)");
+                        .HasColumnType("text");
 
                     b.Property<int>("EstudianteId")
                         .HasColumnType("integer");
@@ -279,10 +275,10 @@ namespace Repository.Migrations
                     b.Property<int>("EvaluacionAulaId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("FechaFin")
+                    b.Property<DateTime>("FechaFin")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("FechaInicio")
+                    b.Property<DateTime>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -291,7 +287,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("EvaluacionAulaId");
 
-                    b.ToTable("EvaluacionesPsicologicasEstudiante", (string)null);
+                    b.ToTable("EvaluacionesEstudiante", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Grado", b =>

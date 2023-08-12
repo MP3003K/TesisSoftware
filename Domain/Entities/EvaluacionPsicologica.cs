@@ -19,7 +19,7 @@ namespace Domain.Entities
         // Relaciones con otras tablas
         public virtual IList<EvaluacionPsicologicaAula>? EvaluacionesPsicologicasAula { get; private set; }
         public IList<GradoEvaPsicologica>? GradosEvaPsicologicas { get; private set; }
-
+        public IList<DimensionPsicologica>? DimensionesPsicologicas { get; private set; }
 
 
         // Funciones

@@ -10,6 +10,6 @@ namespace DTOs
     {
         public int Id { get; set; }
         public string NombreIndicador { get; set; } = string.Empty;
-        public int EscalaId { get; set; }
+        public int EscalaPsicologicaId { get; set; }
     }
 }

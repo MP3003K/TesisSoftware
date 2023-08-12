@@ -9,7 +9,7 @@ namespace Domain.Entities
 {
     public class Aula: Entity
     {
-        public int Secccion { get; private set; }
+        public string Secccion { get; private set; }
         public int GradoId { get; private set; }
 
         public int EscuelaId { get; private set; }
@@ -18,16 +18,18 @@ namespace Domain.Entities
         // Relaciones con otras tablas
         public virtual Grado? Grado { get; private set; }
         public virtual Escuela? Escuela { get; private set; }
-        public virtual IList<Estudiante>? Estudiantes { get; private set; }
+        public virtual IList<EstudianteAula>? EstudiantesAulas { get; private set; }
         public virtual IList<EvaluacionPsicologicaAula>? EvaluacionesPsicologicasAula { get; private set; }
 
-        public Aula(int secccion, int gradoId, int escuelaId)
+
+        // Funciones
+        public Aula(string secccion, int gradoId, int escuelaId)
         {
             Secccion = secccion;
             GradoId = gradoId;
             EscuelaId = escuelaId;
         }
-        public void UpdateSecccion(int secccion)
+        public void UpdateSecccion(string secccion)
         {
             Secccion = secccion;
         }
@@ -39,11 +41,12 @@ namespace Domain.Entities
         {
             EscuelaId = escuelaId;
         }
-        public void Update(int secccion, int gradoId, int escuelaId)
+        public void Update(string secccion, int gradoId, int escuelaId)
         {
             UpdateSecccion(secccion);
             UpdateGradoId(gradoId);
             UpdateEscuelaId(escuelaId);
         }
+
     }
 }

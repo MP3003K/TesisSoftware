@@ -15,6 +15,11 @@ namespace Repository.Mappings
         {
             builder.HasKey(x => x.Id);
 
+            builder.HasOne(x => x.EvaluacionPsicologica)
+                .WithMany(x => x.DimensionesPsicologicas)
+                .HasForeignKey(x => x.EvaluacionPsicologicaId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder.ToTable("DimensionesPsicologicas");
         }
     }

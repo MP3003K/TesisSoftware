@@ -12,8 +12,8 @@ using Repository.Context;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230811230601_BDV1.0")]
-    partial class BDV10
+    [Migration("20230812183945_BDV1.5")]
+    partial class BDV15
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,8 +42,9 @@ namespace Repository.Migrations
                     b.Property<int>("GradoId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Secccion")
-                        .HasColumnType("integer");
+                    b.Property<string>("Secccion")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -54,27 +55,6 @@ namespace Repository.Migrations
                     b.HasIndex("GradoId");
 
                     b.ToTable("Aulas", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.Bank", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Banks", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.DimensionPsicologica", b =>
@@ -89,11 +69,16 @@ namespace Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("EvaluacionPsicologicaId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EvaluacionPsicologicaId");
 
                     b.ToTable("DimensionesPsicologicas", (string)null);
                 });
@@ -168,9 +153,6 @@ namespace Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AulaId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("CodigoEstudiante")
                         .IsRequired()
                         .HasColumnType("text");
@@ -180,12 +162,37 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AulaId");
-
                     b.HasIndex("PersonaId")
                         .IsUnique();
 
                     b.ToTable("Estudiantes", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.EstudianteAula", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AulaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("EstudianteId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AulaId");
+
+                    b.HasIndex("EstudianteId");
+
+                    b.ToTable("EstudiantesAulas", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionPsicologica", b =>
@@ -214,7 +221,7 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PruebasPsicologicas", (string)null);
+                    b.ToTable("EvaluacionesPsicologicas", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionPsicologicaAula", b =>
@@ -235,10 +242,10 @@ namespace Repository.Migrations
                     b.Property<int>("EvaluacionPsicologicaId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("FechaFin")
+                    b.Property<DateTime?>("FechaFin")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("FechaInicio")
+                    b.Property<DateTime?>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UnidadId")
@@ -252,7 +259,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("UnidadId");
 
-                    b.ToTable("EvaluacionesAula", (string)null);
+                    b.ToTable("EvaluacionesPsicologicasAula", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionPsicologicaEstudiante", b =>
@@ -279,16 +286,13 @@ namespace Repository.Migrations
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("RespuestaPsicologicaId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EstudianteId");
 
                     b.HasIndex("EvaluacionAulaId");
 
-                    b.ToTable("EvaluacionesEstudiante", (string)null);
+                    b.ToTable("EvaluacionesPsicologicasEstudiante", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Grado", b =>
@@ -347,9 +351,6 @@ namespace Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("EscalaId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("EscalaPsicologicaId")
                         .HasColumnType("integer");
 
@@ -358,8 +359,6 @@ namespace Repository.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EscalaId");
 
                     b.HasIndex("EscalaPsicologicaId");
 
@@ -414,28 +413,6 @@ namespace Repository.Migrations
                     b.ToTable("Personas", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Pix", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BankId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BankId");
-
-                    b.ToTable("Pixes", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.PreguntaPsicologica", b =>
                 {
                     b.Property<int>("Id")
@@ -486,32 +463,6 @@ namespace Repository.Migrations
                     b.HasIndex("PreguntaPsicologicaId");
 
                     b.ToTable("RespuestasPsicologicas", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.Transaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<int>("PixId")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("Value")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PixId");
-
-                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Unidad", b =>
@@ -602,6 +553,17 @@ namespace Repository.Migrations
                     b.Navigation("Grado");
                 });
 
+            modelBuilder.Entity("Domain.Entities.DimensionPsicologica", b =>
+                {
+                    b.HasOne("Domain.Entities.EvaluacionPsicologica", "EvaluacionPsicologica")
+                        .WithMany("DimensionesPsicologicas")
+                        .HasForeignKey("EvaluacionPsicologicaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("EvaluacionPsicologica");
+                });
+
             modelBuilder.Entity("Domain.Entities.Docente", b =>
                 {
                     b.HasOne("Domain.Entities.Persona", "Persona")
@@ -626,21 +588,32 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Domain.Entities.Estudiante", b =>
                 {
-                    b.HasOne("Domain.Entities.Aula", "Aula")
-                        .WithMany("Estudiantes")
-                        .HasForeignKey("AulaId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.Persona", "Persona")
                         .WithOne("Estudiante")
                         .HasForeignKey("Domain.Entities.Estudiante", "PersonaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("Persona");
+                });
+
+            modelBuilder.Entity("Domain.Entities.EstudianteAula", b =>
+                {
+                    b.HasOne("Domain.Entities.Aula", "Aula")
+                        .WithMany("EstudiantesAulas")
+                        .HasForeignKey("AulaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Estudiante", "Estudiante")
+                        .WithMany("EstudiantesAulas")
+                        .HasForeignKey("EstudianteId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Aula");
 
-                    b.Navigation("Persona");
+                    b.Navigation("Estudiante");
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionPsicologicaAula", b =>
@@ -721,30 +694,13 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Domain.Entities.IndicadorPsicologico", b =>
                 {
-                    b.HasOne("Domain.Entities.EscalaPsicologica", "Escala")
-                        .WithMany()
-                        .HasForeignKey("EscalaId");
-
                     b.HasOne("Domain.Entities.EscalaPsicologica", "EscalaPsicologica")
                         .WithMany("IndicadoresPsicologicos")
                         .HasForeignKey("EscalaPsicologicaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Escala");
-
                     b.Navigation("EscalaPsicologica");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Pix", b =>
-                {
-                    b.HasOne("Domain.Entities.Bank", "Bank")
-                        .WithMany("Pixes")
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Bank");
                 });
 
             modelBuilder.Entity("Domain.Entities.PreguntaPsicologica", b =>
@@ -777,17 +733,6 @@ namespace Repository.Migrations
                     b.Navigation("PreguntaPsicologica");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Transaction", b =>
-                {
-                    b.HasOne("Domain.Entities.Pix", "Pix")
-                        .WithMany("Transactions")
-                        .HasForeignKey("PixId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Pix");
-                });
-
             modelBuilder.Entity("Domain.Entities.Unidad", b =>
                 {
                     b.HasOne("Domain.Entities.Escuela", "Escuela")
@@ -812,14 +757,9 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Domain.Entities.Aula", b =>
                 {
-                    b.Navigation("Estudiantes");
+                    b.Navigation("EstudiantesAulas");
 
                     b.Navigation("EvaluacionesPsicologicasAula");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Bank", b =>
-                {
-                    b.Navigation("Pixes");
                 });
 
             modelBuilder.Entity("Domain.Entities.DimensionPsicologica", b =>
@@ -846,11 +786,15 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Domain.Entities.Estudiante", b =>
                 {
+                    b.Navigation("EstudiantesAulas");
+
                     b.Navigation("EvaluacionesEstudiante");
                 });
 
             modelBuilder.Entity("Domain.Entities.EvaluacionPsicologica", b =>
                 {
+                    b.Navigation("DimensionesPsicologicas");
+
                     b.Navigation("EvaluacionesPsicologicasAula");
 
                     b.Navigation("GradosEvaPsicologicas");
@@ -890,11 +834,6 @@ namespace Repository.Migrations
                     b.Navigation("Estudiante");
 
                     b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Pix", b =>
-                {
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.PreguntaPsicologica", b =>

@@ -9,8 +9,8 @@ namespace Domain.Entities
 {
     public class EvaluacionPsicologicaAula : Entity
     {
-        public DateTime FechaInicio { get; private set; }
-        public DateTime FechaFin { get; private set; }
+        public DateTime? FechaInicio { get; private set; }
+        public DateTime? FechaFin { get; private set; }
         public string Estado { get; private set; }
         public int UnidadId { get; private set; }
         public int AulaId { get; private set; }
@@ -23,11 +23,9 @@ namespace Domain.Entities
         public virtual EvaluacionPsicologica? EvaluacionPsicologica { get; private set; }
 
         // Funciones
-        public EvaluacionPsicologicaAula(DateTime fechaInicio, DateTime fechaFin, string estado, int unidadId, int aulaId, int evaluacionPsicologicaId)
+        public EvaluacionPsicologicaAula(int unidadId, int aulaId, int evaluacionPsicologicaId)
         {
-            FechaInicio = fechaInicio;
-            FechaFin = fechaFin;
-            Estado = estado;
+            Estado = "N";
             UnidadId = unidadId;
             AulaId = aulaId;
             EvaluacionPsicologicaId = evaluacionPsicologicaId;
@@ -39,6 +37,16 @@ namespace Domain.Entities
         public void UpdateFechaFin(DateTime fechaFin)
         {
             FechaFin = fechaFin;
+        }
+        public void IniciarEvaluacion(DateTime fechaInicio)
+        {
+            FechaInicio = fechaInicio;
+            Estado = "P";
+        }
+        public void TerminarEvaluacion(DateTime fechaFin)
+        {
+            FechaFin= fechaFin;
+            Estado = "F";
         }
         public void UpdateEstado(string estado)
         {
