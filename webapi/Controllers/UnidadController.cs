@@ -18,5 +18,16 @@ namespace webapi.Controllers
         {
             return Ok(await Mediator.Send(new ListaUnidadesQuery()));
         }
+
+        /// <summary>
+        /// Unidad escolar actual
+        /// </summary>
+        /// 
+        [HttpGet("unidadActual")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<Response<UnidadDto>>> UnidadActual()
+        {
+            return Ok(await Mediator.Send(new UnidadActualQuery()));
+        }
     }
 }

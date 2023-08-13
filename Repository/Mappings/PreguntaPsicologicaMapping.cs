@@ -19,6 +19,8 @@ namespace Repository.Mappings
                 .HasForeignKey(x => x.IndicadorPsicologicoId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder.Property(x => x.NPregunta).IsRequired(false);
+
             builder.ToTable("PreguntasPsicologicas");
         }
     }

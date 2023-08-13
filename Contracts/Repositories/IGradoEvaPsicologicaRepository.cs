@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace Contracts.Repositories
 {
-    public interface IPreguntaPsicologicaRepository: IRepository<PreguntaPsicologica>
+    public interface IGradoEvaPsicologicaRepository: IRepository<GradoEvaPsicologica>
     {
-        Task<IList<PreguntaPsicologica>> PreguntaPsicologicasPaginadas(int idEvaPsi, int pageSize, int pageNumber); 
     }
 }

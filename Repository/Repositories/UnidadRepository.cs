@@ -1,5 +1,6 @@
 ﻿using Contracts.Repositories;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Repository.Context;
 using Repository.Repositories.Base;
 using System;
@@ -14,6 +15,12 @@ namespace Repository.Repositories
     {
         public UnidadRepository(ApplicationDbContext dBContext) : base(dBContext)
         {
+        }
+
+        public async Task<Unidad?> UnidadActual()
+        {
+            /* Cuando el estado es "O" = "Operativa"*/
+            return await Table.Where(u => u.Estado == "O").FirstOrDefaultAsync();
         }
     }
 }

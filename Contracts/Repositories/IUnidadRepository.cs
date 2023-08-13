@@ -10,5 +10,6 @@ namespace Contracts.Repositories
 {
     public interface IUnidadRepository: IRepository<Unidad>
     {
+        Task<Unidad?> UnidadActual ();
     }
 }
