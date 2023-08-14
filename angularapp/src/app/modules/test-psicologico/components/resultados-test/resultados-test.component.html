@@ -9,12 +9,21 @@
     </a>
   </nav>
   <body class="px-12 pt-8 pb-12 flex flex-col gap-4">
-    <mat-form-field appearance="outline">
-      <mat-label>Año</mat-label>
-      <mat-select>
-        <mat-option [value]="1">Bendiciones</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="flex items-center gap-4">
+      <mat-form-field appearance="outline">
+        <mat-label>Unidad</mat-label>
+        <mat-select>
+          <mat-option [value]="1">2023-1</mat-option>
+          <mat-option [value]="1">2023-1</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Año</mat-label>
+        <mat-select>
+          <mat-option [value]="1">Bendiciones</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
     <details
       *ngFor="let student of [1, 2, 3, 4, 5, 6]"
       class="px-4 rounded bg-white shadow"

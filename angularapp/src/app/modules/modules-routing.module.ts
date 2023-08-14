@@ -15,6 +15,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'evaluar-salones',
+        loadChildren: () =>
+          import('./evaluar-salones/evaluar-salones.module').then(
+            (m) => m.EvaluarSalonesModule
+          ),
+      },
+      {
         path: '',
         redirectTo: 'test-psicologico',
         pathMatch: 'full',

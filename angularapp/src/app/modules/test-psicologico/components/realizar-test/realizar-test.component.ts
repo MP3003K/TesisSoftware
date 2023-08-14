@@ -22,6 +22,7 @@ export class RealizarTestComponent implements OnInit {
     this.formValues = this.generateFormValues();
     this.questions = this.getQuestions();
     this.updatePaginator();
+    console.log(this.formValues);
   }
   updatePaginator() {
     this.paginator.pageNumber = 1;
