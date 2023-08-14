@@ -3,7 +3,7 @@ version: '3.8'
 services:
   webapp:
     build:
-      context: .
+      context: ./webapi/Dockerfile
       dockerfile: Dockerfile
     ports:
       - "80:80"
