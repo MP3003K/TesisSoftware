@@ -13,7 +13,7 @@ namespace Application.Mappings
     {
         public RolAccesoMapping()
         {
-            CreateMap<Acceso, RolAccesoDto>()
+            CreateMap<RolAcceso, RolAccesoDto>()
                 .ReverseMap();
         }
     }

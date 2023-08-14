@@ -14,7 +14,7 @@ namespace webapi.Controllers
 
         [HttpGet("all")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<IList<UnidadDto>>>> ListaDeUnidadesEscolares()
+        public async Task<ActionResult<Response<IList<UsuarioDto>>>> ListaDeUnidadesEscolares()
         {
             return Ok(await Mediator.Send(new ListaUnidadesQuery()));
         }
@@ -25,7 +25,7 @@ namespace webapi.Controllers
         /// 
         [HttpGet("unidadActual")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<UnidadDto>>> UnidadActual()
+        public async Task<ActionResult<Response<UsuarioDto>>> UnidadActual()
         {
             return Ok(await Mediator.Send(new UnidadActualQuery()));
         }

@@ -17,7 +17,7 @@ namespace Domain.Entities
         
         // Relaciones con otras tablas
         public virtual Persona? Persona{get ; private set; }
-
+        public virtual IList<RolUsuario>? RolesUsuarios { get; private set; }
 
         // Funciones
         public Usuario(string username, string password)

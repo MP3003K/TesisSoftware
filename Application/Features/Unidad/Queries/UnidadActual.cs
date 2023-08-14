@@ -11,26 +11,26 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Unidad.Queries
 {
-    public class UnidadActualQuery: IRequest<Response<UnidadDto>>
+    public class UnidadActualQuery: IRequest<Response<UsuarioDto>>
     {
     }
-    public class UnidadActualHandler: IRequestHandler<UnidadActualQuery, Response<UnidadDto>>
+    public class UnidadActualHandler: IRequestHandler<UnidadActualQuery, Response<UsuarioDto>>
     {
         private readonly IUnidadRepository _unidadRepository;
         private readonly IMapper _mapper;
 
         public UnidadActualHandler(
-                                             IUnidadRepository unidadRepository,
-                                                                                                               IMapper mapper)
+            IUnidadRepository unidadRepository,
+            IMapper mapper)
         {
             _unidadRepository = unidadRepository;
             _mapper = mapper;
         }
-        public async Task<Response<UnidadDto>> Handle(UnidadActualQuery request, CancellationToken cancellationToken)
+        public async Task<Response<UsuarioDto>> Handle(UnidadActualQuery request, CancellationToken cancellationToken)
         {
             var unidad = await _unidadRepository.UnidadActual();
-            var unidadDto = _mapper.Map<UnidadDto>(unidad);
-            return new Response<UnidadDto>(unidadDto);
+            var unidadDto = _mapper.Map<UsuarioDto>(unidad);
+            return new Response<UsuarioDto>(unidadDto);
         }
     }
 }

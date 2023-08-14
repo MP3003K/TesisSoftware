@@ -15,5 +15,10 @@ namespace Repository.Repositories
         public UsuarioRepository (ApplicationDbContext dBContext) : base(dBContext)
         {
         }
+
+        public Task<Usuario?> ObtenerUsuario(string username, string password)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

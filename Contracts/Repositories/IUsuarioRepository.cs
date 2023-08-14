@@ -10,5 +10,6 @@ namespace Contracts.Repositories
 {
     public interface IUsuarioRepository: IRepository<Usuario>
     {
+        Task<Usuario?> ObtenerUsuario(string username, string password);
     }
 }

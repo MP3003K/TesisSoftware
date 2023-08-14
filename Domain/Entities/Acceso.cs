@@ -13,7 +13,7 @@ namespace Domain.Entities
         public string Estado { get;private set; }
 
         // Relaciones con otras tablas
-        public virtual  IList<RolAcceso>? RolAccesos { get; private set; }
+        public virtual  IList<RolAcceso>? RolesAccesos { get; private set; }
 
         // Funciones
 

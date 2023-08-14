@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Unidad.Queries
 {
-    public class ListaUnidadesQuery: IRequest<Response<IList<UnidadDto>>>
+    public class ListaUnidadesQuery: IRequest<Response<IList<UsuarioDto>>>
     {
     }
-    public class ListaUnidadesHandler: IRequestHandler<ListaUnidadesQuery, Response<IList<UnidadDto>>>
+    public class ListaUnidadesHandler: IRequestHandler<ListaUnidadesQuery, Response<IList<UsuarioDto>>>
     {
         private readonly IUnidadRepository _unidadRepository;
         private readonly IMapper _mapper;
@@ -26,11 +26,11 @@ namespace Application.Features.Unidad.Queries
             _unidadRepository = unidadRepository;
             _mapper = mapper;
         }
-        public async Task<Response<IList<UnidadDto>>> Handle(ListaUnidadesQuery request, CancellationToken cancellationToken)
+        public async Task<Response<IList<UsuarioDto>>> Handle(ListaUnidadesQuery request, CancellationToken cancellationToken)
         {
             var unidades = await _unidadRepository.ListAllAsync();
-            var unidadesDto = _mapper.Map<IList<UnidadDto>>(unidades);
-            return new Response<IList<UnidadDto>>(unidadesDto);
+            var unidadesDto = _mapper.Map<IList<UsuarioDto>>(unidades);
+            return new Response<IList<UsuarioDto>>(unidadesDto);
         }
     }
 }
