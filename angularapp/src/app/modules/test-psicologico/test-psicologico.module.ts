@@ -5,6 +5,11 @@ import { ResultadosTestComponent } from './components/resultados-test/resultados
 import { TestPsicologicoRoutingModule } from './test-psicologico-routing.module';
 import { TestPsicologicoComponent } from './test-psicologico.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+
 import { SharedModule } from '../shared/shared.module';
 const SERVICES: any[] = [];
 
@@ -14,7 +19,15 @@ const SERVICES: any[] = [];
     RealizarTestComponent,
     ResultadosTestComponent,
   ],
-  imports: [SharedModule, TestPsicologicoRoutingModule, MatRadioModule],
+  imports: [
+    SharedModule,
+    TestPsicologicoRoutingModule,
+    MatRadioModule,
+    MatSnackBarModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
+  ],
   providers: [...SERVICES],
 })
 export class TestPsicologicoModule {}
