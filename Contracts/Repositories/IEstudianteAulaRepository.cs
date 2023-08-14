@@ -10,5 +10,7 @@ namespace Contracts.Repositories
 {
     public interface IEstudianteAulaRepository : IRepository<EstudianteAula>
     {
+        Task<int?> AulaIdPorEstudianteId (int estudianteId);
+
     }
 }

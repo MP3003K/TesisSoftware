@@ -13,7 +13,7 @@ namespace Application.Mappings
     {
         public UnidadMapping()
         {
-            CreateMap<Unidad, UsuarioDto>()
+            CreateMap<Unidad, UnidadDto>()
                 .ReverseMap();
         }
     }

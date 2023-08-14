@@ -10,5 +10,6 @@ namespace Contracts.Repositories
 {
     public interface IEvaluacionPsicologicaAulaRepository: IRepository<EvaluacionPsicologicaAula>
     {
+        Task<int?> EvaluacionPsicologicaAulaIdPorAulaId(int aulaId, int unidadId, int evaPsiId);
     }
 }

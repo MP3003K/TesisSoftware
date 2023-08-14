@@ -10,5 +10,6 @@ namespace Contracts.Repositories
 {
     public interface IGradoEvaPsicologicaRepository: IRepository<GradoEvaPsicologica>
     {
+        Task<int?> GetTestPsicologicoIdPorGrado(int aulaId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Contracts.Repositories;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Repository.Context;
 using Repository.Repositories.Base;
 using System;
@@ -14,6 +15,16 @@ namespace Repository.Repositories
     {
         public EstudianteAulaRepository(ApplicationDbContext dBContext) : base(dBContext)
         {
+        }
+
+        public async Task<int?> AulaIdPorEstudianteId(int estudianteId)
+        {
+            var aulaId = await Table
+                .Where(ea => ea.EstudianteId == estudianteId && ea.Estado == "1")
+                .Select(ea => ea.AulaId)
+                .FirstOrDefaultAsync();
+
+            return aulaId;
         }
     }
 }
