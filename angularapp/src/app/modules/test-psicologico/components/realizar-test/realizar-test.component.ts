@@ -1,4 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
 @Component({
@@ -17,15 +18,16 @@ export class RealizarTestComponent implements OnInit {
     pageNumber: 1,
     pages: 1,
   };
-  constructor(private router: Router) {
+  constructor(private router: Router, private _snackbar: MatSnackBar) {
     this.formValues = this.generateFormValues();
     this.questions = this.getQuestions();
     this.updatePaginator();
+    console.log(this.formValues);
   }
   updatePaginator() {
     this.paginator.pageNumber = 1;
     this.paginator.length = this.questions.length;
-    this.paginator.pages = Math.floor(
+    this.paginator.pages = Math.ceil(
       this.paginator.length / this.paginator.pageSize
     );
   }
@@ -35,7 +37,28 @@ export class RealizarTestComponent implements OnInit {
   public goToLogin() {
     this.router.navigate(['../../login']);
   }
-
+  itemOptions: any[] = [
+    {
+      name: 'Nunca',
+      value: 1,
+    },
+    {
+      name: 'Casi Nunca',
+      value: 2,
+    },
+    {
+      name: 'A veces',
+      value: 3,
+    },
+    {
+      name: 'Casi Siempre',
+      value: 4,
+    },
+    {
+      name: 'Siempre',
+      value: 5,
+    },
+  ];
   scales = [
     {
       id: 1,
@@ -185,7 +208,7 @@ export class RealizarTestComponent implements OnInit {
       questions: Array.from({ length: this.scales[i]['kpis'] }, (_, j) => ({
         questionId: `${i + 1}${j + 1}`,
         question: `¿Te gusta la forma en la que se llevan las clases?`,
-        answer: '',
+        answer: null,
       })),
     }));
   }
@@ -194,11 +217,11 @@ export class RealizarTestComponent implements OnInit {
       .reduce((a, b) => {
         return [...a, ...b.questions];
       }, [] as any[])
-      .map((e, i) => ({ ...e, question: `${i + 1}. ${e.question}` }));
+      .map((e, i) => ({ ...e, questionIndex: i }));
     return questionsArray;
   }
   public filterQuestions() {
-    const { pageSize, pageNumber, pages, length } = this.paginator;
+    const { pageSize, pageNumber } = this.paginator;
     const firstItemIndex = (pageNumber - 1) * pageSize;
     const lastItemIndex = firstItemIndex + pageSize;
     return this.questions.slice(firstItemIndex, lastItemIndex);
@@ -210,10 +233,20 @@ export class RealizarTestComponent implements OnInit {
     }, 0);
     return completedAnswersCount;
   }
+  getPreviousItem() {
+    this.paginator.pageNumber -= 1;
+  }
 
   getNextItem() {
+    if (!this.validatePage()) {
+      this._snackbar.open('Datos Faltantes', '', { duration: 1000 });
+      return;
+    }
     this.paginator.pageNumber += 1;
     this.scrollToTop();
+  }
+  endForm() {
+    console.log('ending form');
   }
 
   scrollToTop() {
@@ -224,9 +257,12 @@ export class RealizarTestComponent implements OnInit {
     });
   }
   submitForm() {
-    console.log(this.formValues);
+    console.log(this.questions);
   }
   public getPValue() {
     return `${(this.countCompletedAnswers() * 100) / this.paginator.length}%`;
+  }
+  validatePage() {
+    return this.filterQuestions().every((e) => e.answer);
   }
 }

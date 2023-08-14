@@ -1,4 +1,4 @@
-<section #parentSection class=" overflow-y-auto h-full ">
+<section #parentSection class="overflow-y-auto h-full">
   <header class="bg-white py-8 px-10">
     <a class="text-sm font-semibold text-h1.2"> Encuestas </a>
     <h1 class="text-4xl font-bold text-h1">Perfil Psicológico</h1>
@@ -25,20 +25,22 @@
     <div class="p-4 flex flex-col gap-4">
       <div
         class="p-4 shadow rounded-lg bg-white"
-        *ngFor="let question of filterQuestions(); let i = index"
+        *ngFor="let question of filterQuestions()"
       >
-        <div class="font-medium">{{ question.question }}</div>
+        <div class="font-medium">
+          {{ question.questionIndex + 1 }}. {{ question.question }}
+        </div>
         <div>
           <mat-radio-group
             aria-label="Select an option"
             class="flex flex-col"
-            [(ngModel)]="question.answer"
+            [(ngModel)]="questions[question.questionIndex]['answer']"
           >
-            <mat-radio-button value="1">Nunca</mat-radio-button>
-            <mat-radio-button value="2">Casi Nunca</mat-radio-button>
-            <mat-radio-button value="3">A Veces</mat-radio-button>
-            <mat-radio-button value="4">Casi Siempre</mat-radio-button>
-            <mat-radio-button value="5">Siempre</mat-radio-button>
+            <mat-radio-button
+              *ngFor="let option of itemOptions"
+              [value]="option.value"
+              >{{ option.name }}</mat-radio-button
+            >
           </mat-radio-group>
         </div>
       </div>
@@ -47,9 +49,11 @@
     <div class="py-2 flex justify-between items-end">
       <div class="flex gap-4">
         <button
-          class="text-indigo-700 rounded px-4 py-2 hover:bg-gray-200 font-light"
+          (click)="getPreviousItem()"
+          [disabled]="paginator.pageNumber == 1"
+          class="text-indigo-700 rounded px-4 py-2 hover:bg-gray-200 font-light disabled:hover:bg-transparent disabled:text-gray-400"
         >
-          Guardar
+          Anterior
         </button>
         <button
           (click)="
@@ -59,13 +63,12 @@
           "
           class="bg-indigo-700 text-white shadow rounded px-4 py-2 font-medium"
         >
-          {{
-          paginator.pageNumber == paginator.pages
-            ? 'Enviar'
-            : 'Siguiente'
-        }}
+          {{ paginator.pageNumber == paginator.pages ? "Enviar" : "Siguiente" }}
         </button>
       </div>
+      <a routerLink="../resultados-test" class="rounded-full text-xs gray-400">
+        Ver Resultados
+      </a>
     </div>
   </body>
 </section>

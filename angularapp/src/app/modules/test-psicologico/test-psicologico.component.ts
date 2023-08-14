@@ -3,8 +3,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-test-psicologico',
   templateUrl: './test-psicologico.component.html',
-  styleUrls: ['./test-psicologico.component.css']
+  styleUrls: ['./test-psicologico.component.css'],
 })
-export class TestPsicologicoComponent {
-
-}
+export class TestPsicologicoComponent {}
