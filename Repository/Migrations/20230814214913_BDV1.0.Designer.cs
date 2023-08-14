@@ -12,8 +12,8 @@ using Repository.Context;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230812183945_BDV1.5")]
-    partial class BDV15
+    [Migration("20230814214913_BDV1.0")]
+    partial class BDV10
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,27 @@ namespace Repository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.Entities.Acceso", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Accesos", (string)null);
+                });
 
             modelBuilder.Entity("Domain.Entities.Aula", b =>
                 {
@@ -237,7 +258,8 @@ namespace Repository.Migrations
 
                     b.Property<string>("Estado")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasComment("(No inicio= N, En proceso = P, Finalizo= F)");
 
                     b.Property<int>("EvaluacionPsicologicaId")
                         .HasColumnType("integer");
@@ -272,7 +294,8 @@ namespace Repository.Migrations
 
                     b.Property<string>("Estado")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasComment("(No inicio= N, En proceso = P, Finalizo= F)");
 
                     b.Property<int>("EstudianteId")
                         .HasColumnType("integer");
@@ -280,10 +303,10 @@ namespace Repository.Migrations
                     b.Property<int>("EvaluacionAulaId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("FechaFin")
+                    b.Property<DateTime?>("FechaFin")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("FechaInicio")
+                    b.Property<DateTime?>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -424,6 +447,9 @@ namespace Repository.Migrations
                     b.Property<int>("IndicadorPsicologicoId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("NPregunta")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Pregunta")
                         .IsRequired()
                         .HasColumnType("text");
@@ -449,9 +475,6 @@ namespace Repository.Migrations
                     b.Property<int>("PreguntaPsicologicaId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Puntaje")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Respuesta")
                         .IsRequired()
                         .HasColumnType("text");
@@ -463,6 +486,73 @@ namespace Repository.Migrations
                     b.HasIndex("PreguntaPsicologicaId");
 
                     b.ToTable("RespuestasPsicologicas", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Rol", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.RolAcceso", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccesoId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RolId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccesoId");
+
+                    b.HasIndex("RolId");
+
+                    b.ToTable("RolesAccesos", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.RolUsuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("RolId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RolId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("RolesUsuarios", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Unidad", b =>
@@ -733,6 +823,44 @@ namespace Repository.Migrations
                     b.Navigation("PreguntaPsicologica");
                 });
 
+            modelBuilder.Entity("Domain.Entities.RolAcceso", b =>
+                {
+                    b.HasOne("Domain.Entities.Acceso", "Acceso")
+                        .WithMany("RolesAccesos")
+                        .HasForeignKey("AccesoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Rol", "Rol")
+                        .WithMany("RolesAccesos")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Acceso");
+
+                    b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RolUsuario", b =>
+                {
+                    b.HasOne("Domain.Entities.Rol", "Rol")
+                        .WithMany("RolesUsuarios")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany("RolesUsuarios")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Domain.Entities.Unidad", b =>
                 {
                     b.HasOne("Domain.Entities.Escuela", "Escuela")
@@ -753,6 +881,11 @@ namespace Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Persona");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Acceso", b =>
+                {
+                    b.Navigation("RolesAccesos");
                 });
 
             modelBuilder.Entity("Domain.Entities.Aula", b =>
@@ -841,9 +974,21 @@ namespace Repository.Migrations
                     b.Navigation("RespuestasPsicologicas");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Rol", b =>
+                {
+                    b.Navigation("RolesAccesos");
+
+                    b.Navigation("RolesUsuarios");
+                });
+
             modelBuilder.Entity("Domain.Entities.Unidad", b =>
                 {
                     b.Navigation("EvaluacionesPsicologicasAula");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Usuario", b =>
+                {
+                    b.Navigation("RolesUsuarios");
                 });
 #pragma warning restore 612, 618
         }

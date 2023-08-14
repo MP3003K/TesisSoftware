@@ -7,11 +7,25 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class BDV11 : Migration
+    public partial class BDV10 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Accesos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre = table.Column<string>(type: "text", nullable: false),
+                    Estado = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accesos", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Escuelas",
                 columns: table => new
@@ -24,6 +38,22 @@ namespace Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Escuelas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EvaluacionesPsicologicas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre = table.Column<string>(type: "text", nullable: false),
+                    Descripcion = table.Column<string>(type: "text", nullable: false),
+                    Tipo = table.Column<string>(type: "text", nullable: false),
+                    Estado = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EvaluacionesPsicologicas", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,19 +87,17 @@ namespace Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PruebasPsicologicas",
+                name: "Roles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Nombre = table.Column<string>(type: "text", nullable: false),
-                    Descripcion = table.Column<string>(type: "text", nullable: false),
-                    Tipo = table.Column<string>(type: "text", nullable: false),
                     Estado = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PruebasPsicologicas", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,6 +121,26 @@ namespace Repository.Migrations
                         name: "FK_Unidades_Escuelas_EscuelaId",
                         column: x => x.EscuelaId,
                         principalTable: "Escuelas",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DimensionesPsicologicas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Codigo = table.Column<string>(type: "text", nullable: false),
+                    Nombre = table.Column<string>(type: "text", nullable: false),
+                    EvaluacionPsicologicaId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DimensionesPsicologicas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DimensionesPsicologicas_EvaluacionesPsicologicas_Evaluacion~",
+                        column: x => x.EvaluacionPsicologicaId,
+                        principalTable: "EvaluacionesPsicologicas",
                         principalColumn: "Id");
                 });
 
@@ -174,22 +222,45 @@ namespace Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DimensionesPsicologicas",
+                name: "RolesAccesos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Codigo = table.Column<string>(type: "text", nullable: false),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    EvaluacionPsicologicaId = table.Column<int>(type: "integer", nullable: false)
+                    RolId = table.Column<int>(type: "integer", nullable: false),
+                    AccesoId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DimensionesPsicologicas", x => x.Id);
+                    table.PrimaryKey("PK_RolesAccesos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DimensionesPsicologicas_PruebasPsicologicas_EvaluacionPsico~",
-                        column: x => x.EvaluacionPsicologicaId,
-                        principalTable: "PruebasPsicologicas",
+                        name: "FK_RolesAccesos_Accesos_AccesoId",
+                        column: x => x.AccesoId,
+                        principalTable: "Accesos",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RolesAccesos_Roles_RolId",
+                        column: x => x.RolId,
+                        principalTable: "Roles",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EscalasPsicologicas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre = table.Column<string>(type: "text", nullable: false),
+                    DimensionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EscalasPsicologicas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EscalasPsicologicas_DimensionesPsicologicas_DimensionId",
+                        column: x => x.DimensionId,
+                        principalTable: "DimensionesPsicologicas",
                         principalColumn: "Id");
                 });
 
@@ -206,14 +277,14 @@ namespace Repository.Migrations
                 {
                     table.PrimaryKey("PK_GradosEvaPsicologicas", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_GradosEvaPsicologicas_EvaluacionesPsicologicas_EvaPsiId",
+                        column: x => x.EvaPsiId,
+                        principalTable: "EvaluacionesPsicologicas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_GradosEvaPsicologicas_Grados_GradoId",
                         column: x => x.GradoId,
                         principalTable: "Grados",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GradosEvaPsicologicas_PruebasPsicologicas_EvaPsiId",
-                        column: x => x.EvaPsiId,
-                        principalTable: "PruebasPsicologicas",
                         principalColumn: "Id");
                 });
 
@@ -250,78 +321,26 @@ namespace Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EscalasPsicologicas",
+                name: "RolesUsuarios",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    DimensionId = table.Column<int>(type: "integer", nullable: false)
+                    UsuarioId = table.Column<int>(type: "integer", nullable: false),
+                    RolId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EscalasPsicologicas", x => x.Id);
+                    table.PrimaryKey("PK_RolesUsuarios", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EscalasPsicologicas_DimensionesPsicologicas_DimensionId",
-                        column: x => x.DimensionId,
-                        principalTable: "DimensionesPsicologicas",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EstudiantesAulas",
-                columns: table => new
-                {
-                    EstudianteId = table.Column<int>(type: "integer", nullable: false),
-                    AulaId = table.Column<int>(type: "integer", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EstudiantesAulas", x => new { x.EstudianteId, x.AulaId });
-                    table.ForeignKey(
-                        name: "FK_EstudiantesAulas_Aulas_AulaId",
-                        column: x => x.AulaId,
-                        principalTable: "Aulas",
+                        name: "FK_RolesUsuarios_Roles_RolId",
+                        column: x => x.RolId,
+                        principalTable: "Roles",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_EstudiantesAulas_Estudiantes_EstudianteId",
-                        column: x => x.EstudianteId,
-                        principalTable: "Estudiantes",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EvaluacionesAula",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FechaInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FechaFin = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false),
-                    UnidadId = table.Column<int>(type: "integer", nullable: false),
-                    AulaId = table.Column<int>(type: "integer", nullable: false),
-                    EvaluacionPsicologicaId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EvaluacionesAula", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EvaluacionesAula_Aulas_AulaId",
-                        column: x => x.AulaId,
-                        principalTable: "Aulas",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_EvaluacionesAula_PruebasPsicologicas_EvaluacionPsicologicaId",
-                        column: x => x.EvaluacionPsicologicaId,
-                        principalTable: "PruebasPsicologicas",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_EvaluacionesAula_Unidades_UnidadId",
-                        column: x => x.UnidadId,
-                        principalTable: "Unidades",
+                        name: "FK_RolesUsuarios_Usuarios_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuarios",
                         principalColumn: "Id");
                 });
 
@@ -345,30 +364,60 @@ namespace Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EvaluacionesEstudiante",
+                name: "EstudiantesAulas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FechaInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FechaFin = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false),
-                    EvaluacionAulaId = table.Column<int>(type: "integer", nullable: false),
                     EstudianteId = table.Column<int>(type: "integer", nullable: false),
-                    RespuestaPsicologicaId = table.Column<int>(type: "integer", nullable: false)
+                    AulaId = table.Column<int>(type: "integer", nullable: false),
+                    Estado = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EvaluacionesEstudiante", x => x.Id);
+                    table.PrimaryKey("PK_EstudiantesAulas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EvaluacionesEstudiante_Estudiantes_EstudianteId",
+                        name: "FK_EstudiantesAulas_Aulas_AulaId",
+                        column: x => x.AulaId,
+                        principalTable: "Aulas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_EstudiantesAulas_Estudiantes_EstudianteId",
                         column: x => x.EstudianteId,
                         principalTable: "Estudiantes",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EvaluacionesPsicologicasAula",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FechaInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    FechaFin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Estado = table.Column<string>(type: "text", nullable: false, comment: "(No inicio= N, En proceso = P, Finalizo= F)"),
+                    UnidadId = table.Column<int>(type: "integer", nullable: false),
+                    AulaId = table.Column<int>(type: "integer", nullable: false),
+                    EvaluacionPsicologicaId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EvaluacionesPsicologicasAula", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EvaluacionesEstudiante_EvaluacionesAula_EvaluacionAulaId",
-                        column: x => x.EvaluacionAulaId,
-                        principalTable: "EvaluacionesAula",
+                        name: "FK_EvaluacionesPsicologicasAula_Aulas_AulaId",
+                        column: x => x.AulaId,
+                        principalTable: "Aulas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_EvaluacionesPsicologicasAula_EvaluacionesPsicologicas_Evalu~",
+                        column: x => x.EvaluacionPsicologicaId,
+                        principalTable: "EvaluacionesPsicologicas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_EvaluacionesPsicologicasAula_Unidades_UnidadId",
+                        column: x => x.UnidadId,
+                        principalTable: "Unidades",
                         principalColumn: "Id");
                 });
 
@@ -379,7 +428,8 @@ namespace Repository.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Pregunta = table.Column<string>(type: "text", nullable: false),
-                    IndicadorPsicologicoId = table.Column<int>(type: "integer", nullable: false)
+                    IndicadorPsicologicoId = table.Column<int>(type: "integer", nullable: false),
+                    NPregunta = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -392,13 +442,39 @@ namespace Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EvaluacionesPsicologicasEstudiante",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FechaInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    FechaFin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Estado = table.Column<string>(type: "text", nullable: false, comment: "(No inicio= N, En proceso = P, Finalizo= F)"),
+                    EvaluacionAulaId = table.Column<int>(type: "integer", nullable: false),
+                    EstudianteId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EvaluacionesPsicologicasEstudiante", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EvaluacionesPsicologicasEstudiante_Estudiantes_EstudianteId",
+                        column: x => x.EstudianteId,
+                        principalTable: "Estudiantes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_EvaluacionesPsicologicasEstudiante_EvaluacionesPsicologicas~",
+                        column: x => x.EvaluacionAulaId,
+                        principalTable: "EvaluacionesPsicologicasAula",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RespuestasPsicologicas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Respuesta = table.Column<string>(type: "text", nullable: false),
-                    Puntaje = table.Column<int>(type: "integer", nullable: false),
                     PreguntaPsicologicaId = table.Column<int>(type: "integer", nullable: false),
                     EvaPsiEstId = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -406,9 +482,9 @@ namespace Repository.Migrations
                 {
                     table.PrimaryKey("PK_RespuestasPsicologicas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RespuestasPsicologicas_EvaluacionesEstudiante_EvaPsiEstId",
+                        name: "FK_RespuestasPsicologicas_EvaluacionesPsicologicasEstudiante_E~",
                         column: x => x.EvaPsiEstId,
-                        principalTable: "EvaluacionesEstudiante",
+                        principalTable: "EvaluacionesPsicologicasEstudiante",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RespuestasPsicologicas_PreguntasPsicologicas_PreguntaPsicol~",
@@ -460,28 +536,33 @@ namespace Repository.Migrations
                 column: "AulaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EvaluacionesAula_AulaId",
-                table: "EvaluacionesAula",
-                column: "AulaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EvaluacionesAula_EvaluacionPsicologicaId",
-                table: "EvaluacionesAula",
-                column: "EvaluacionPsicologicaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EvaluacionesAula_UnidadId",
-                table: "EvaluacionesAula",
-                column: "UnidadId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EvaluacionesEstudiante_EstudianteId",
-                table: "EvaluacionesEstudiante",
+                name: "IX_EstudiantesAulas_EstudianteId",
+                table: "EstudiantesAulas",
                 column: "EstudianteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EvaluacionesEstudiante_EvaluacionAulaId",
-                table: "EvaluacionesEstudiante",
+                name: "IX_EvaluacionesPsicologicasAula_AulaId",
+                table: "EvaluacionesPsicologicasAula",
+                column: "AulaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EvaluacionesPsicologicasAula_EvaluacionPsicologicaId",
+                table: "EvaluacionesPsicologicasAula",
+                column: "EvaluacionPsicologicaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EvaluacionesPsicologicasAula_UnidadId",
+                table: "EvaluacionesPsicologicasAula",
+                column: "UnidadId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EvaluacionesPsicologicasEstudiante_EstudianteId",
+                table: "EvaluacionesPsicologicasEstudiante",
+                column: "EstudianteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EvaluacionesPsicologicasEstudiante_EvaluacionAulaId",
+                table: "EvaluacionesPsicologicasEstudiante",
                 column: "EvaluacionAulaId");
 
             migrationBuilder.CreateIndex(
@@ -520,6 +601,26 @@ namespace Repository.Migrations
                 column: "PreguntaPsicologicaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RolesAccesos_AccesoId",
+                table: "RolesAccesos",
+                column: "AccesoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RolesAccesos_RolId",
+                table: "RolesAccesos",
+                column: "RolId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RolesUsuarios_RolId",
+                table: "RolesUsuarios",
+                column: "RolId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RolesUsuarios_UsuarioId",
+                table: "RolesUsuarios",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Unidades_EscuelaId",
                 table: "Unidades",
                 column: "EscuelaId");
@@ -544,19 +645,31 @@ namespace Repository.Migrations
                 name: "RespuestasPsicologicas");
 
             migrationBuilder.DropTable(
-                name: "Usuarios");
+                name: "RolesAccesos");
 
             migrationBuilder.DropTable(
-                name: "EvaluacionesEstudiante");
+                name: "RolesUsuarios");
+
+            migrationBuilder.DropTable(
+                name: "EvaluacionesPsicologicasEstudiante");
 
             migrationBuilder.DropTable(
                 name: "PreguntasPsicologicas");
 
             migrationBuilder.DropTable(
+                name: "Accesos");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Usuarios");
+
+            migrationBuilder.DropTable(
                 name: "Estudiantes");
 
             migrationBuilder.DropTable(
-                name: "EvaluacionesAula");
+                name: "EvaluacionesPsicologicasAula");
 
             migrationBuilder.DropTable(
                 name: "IndicadoresPsicologicos");
@@ -589,7 +702,7 @@ namespace Repository.Migrations
                 name: "Niveles");
 
             migrationBuilder.DropTable(
-                name: "PruebasPsicologicas");
+                name: "EvaluacionesPsicologicas");
         }
     }
 }
