@@ -10,5 +10,6 @@ namespace Contracts.Repositories
 {
     public interface IIndicadorPsicologicoRepository: IRepository<IndicadorPsicologico>
     {
+        Task<double?> PromedioIndicadorPsicologicoEstudiante(int evaPsiEstId, int indicadorId);
     }
 }

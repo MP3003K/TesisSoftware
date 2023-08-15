@@ -11,5 +11,7 @@ namespace DTOs
         public int Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
         public int DimensionId { get; set; }
+        public double? promedioIndicesPsicologicos { get; set; }
+        public IList<IndicadorPsicologicoDto>? IndicadoresPsicologicos { get; set; }
     }
 }

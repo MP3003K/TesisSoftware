@@ -10,5 +10,6 @@ namespace Contracts.Repositories
 {
     public interface IEscalaPsicologicaRepository: IRepository<EscalaPsicologica>
     {
+        Task<IList<EscalaPsicologica>?> ObtenerEscalaPorDimensionId(int evaPsiId, int dimensionId); 
     }
 }
