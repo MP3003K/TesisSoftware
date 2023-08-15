@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 @layer base {
-  *,
+  /* *,
   ::after,
   ::before {
     border-style: none;
-  }
+  } */
 }
 :root {
   font-family: "Inter", sans-serif;
@@ -20,6 +20,12 @@ body {
 html,
 body {
   height: 100%;
+}
+details:first-child {
+  @apply rounded-t;
+}
+details:last-child {
+  @apply rounded-b;
 }
 details > summary {
   list-style: none;

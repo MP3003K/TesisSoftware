@@ -9,6 +9,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { SharedModule } from '../shared/shared.module';
 const SERVICES: any[] = [];
@@ -27,6 +28,7 @@ const SERVICES: any[] = [];
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatButtonToggleModule,
   ],
   providers: [...SERVICES],
 })

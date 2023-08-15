@@ -9,46 +9,76 @@
     </a>
   </nav>
   <body class="px-12 pt-8 pb-12 flex flex-col gap-4">
-    <div class="flex items-center gap-4">
-      <mat-form-field appearance="outline">
-        <mat-label>Unidad</mat-label>
-        <mat-select>
-          <mat-option [value]="1">2023-1</mat-option>
-          <mat-option [value]="1">2023-1</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Año</mat-label>
-        <mat-select>
-          <mat-option [value]="1">Bendiciones</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <details
-      *ngFor="let student of [1, 2, 3, 4, 5, 6]"
-      class="px-4 rounded bg-white shadow"
-    >
-      <summary class="py-2 cursor-pointer border-b">
-        Estudiante {{ student }}
-      </summary>
-      <div class="py-2">
-        <div class="text-lg font-bold">Resultados</div>
-        <div>Estado Dimensiones</div>
-        <ul class="flex flex-col px-4">
-          <li>
-            <span>HSE:</span>
-            <span class="px-4 py-0.5 rounded text-white bg-red-500 text-xs"
-              >Crítico</span
+    <div class="border rounded border-dashed p-4">
+      <div class="flex justify-between items-start gap-4">
+        <div class="flex items-center gap-4">
+          <mat-form-field appearance="outline" (change)="unityChange($event)">
+            <mat-label>Unidad</mat-label>
+            <mat-select (selectionChange)="unityChange($event)">
+              <mat-option
+                [value]="i"
+                *ngFor="let unity of unities; let i = index"
+              >
+                {{ unity.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Año</mat-label>
+            <mat-select
+              [disabled]="!selectedUnity"
+              (selectionChange)="yearChange($event)"
             >
-          </li>
-          <li>
-            <span>FR:</span>
-            <span class="px-4 py-0.5 rounded text-white bg-blue-500 text-xs"
-              >En Proceso</span
-            >
-          </li>
-        </ul>
+              <mat-option
+                *ngFor="let year of selectedUnity?.years"
+                [value]="year"
+              >
+                {{ year }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <mat-button-toggle-group
+          name="fontStyle"
+          aria-label="Font Style"
+          (change)="onDimensionChange($event)"
+        >
+          <mat-button-toggle
+            [value]="dimension.id"
+            *ngFor="let dimension of dimensions"
+            >{{ dimension.name }}</mat-button-toggle
+          >
+        </mat-button-toggle-group>
       </div>
-    </details>
+
+      <div class="scale_container flex flex-col divide-y">
+        <details
+          *ngFor="let student of [1, 2, 3, 4, 5, 6]"
+          class="px-4 bg-white shadow"
+        >
+          <summary class="py-2 cursor-pointer">
+            Estudiante {{ student }}
+          </summary>
+          <div class="py-2">
+            <div class="text-lg font-bold">Resultados</div>
+            <div>Estado Dimensiones</div>
+            <ul class="flex flex-col px-4">
+              <li>
+                <span>HSE:</span>
+                <span class="px-4 py-0.5 rounded text-white bg-red-500 text-xs"
+                  >Crítico</span
+                >
+              </li>
+              <li>
+                <span>FR:</span>
+                <span class="px-4 py-0.5 rounded text-white bg-blue-500 text-xs"
+                  >En Proceso</span
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
   </body>
 </section>

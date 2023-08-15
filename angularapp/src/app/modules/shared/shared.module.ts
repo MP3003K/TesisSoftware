@@ -6,12 +6,7 @@ import { CommonModule } from '@angular/common';
 
 const COMPONENTS: any[] = [ModalComponent];
 
-const ANGULAR_MODULES: any[] = [
-  HttpClientModule,
-  FormsModule,
-  ReactiveFormsModule,
-  CommonModule,
-];
+const ANGULAR_MODULES: any[] = [FormsModule, ReactiveFormsModule, CommonModule];
 
 @NgModule({
   declarations: [...COMPONENTS],
