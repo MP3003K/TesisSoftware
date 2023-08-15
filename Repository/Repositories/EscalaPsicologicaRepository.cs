@@ -20,23 +20,6 @@ namespace Repository.Repositories
 
         public async Task<IList<EscalaPsicologica>?> ObtenerEscalaPorDimensionId(int evaPsiId, int dimensionId)
         {
-            /*
-            var escalasPsicologicas = await Table
-                .Include(ep => ep.DimensionPsicologica)
-                    .ThenInclude(dp => dp.EvaluacionPsicologica)
-                .Where(ep => ep.DimensionPsicologica.EvaluacionPsicologica.Id == evaPsiId)
-                .ToListAsync();
-            */
-
-            /*var escalasPsicologicas = await Table
-              .Include(ep => ep.DimensionPsicologica)
-                  .ThenInclude(dp => dp.EvaluacionPsicologica)
-              .Include(ep => ep.IndicadoresPsicologicos) // Incluir indicadores relacionados
-              .Where(ep => ep.DimensionPsicologica.EvaluacionPsicologica.Id == evaPsiId)
-              .ToListAsync();
-            */
-
-
             var escalas = await Table
                 .Include(ep => ep.DimensionPsicologica)
                     .ThenInclude(dp => dp.EvaluacionPsicologica)

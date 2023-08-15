@@ -9,6 +9,6 @@ namespace DTOs
 {
     public class ResultadosPsicologicosEstudiantesDto
     {
-        public IList<EscalaPsicologicaDto>? EscalaPsicologica { get; set; }
+        public IList<UnidadDto>? EscalaPsicologica { get; set; }
     }
 }

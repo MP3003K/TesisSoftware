@@ -18,7 +18,7 @@ namespace webapi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<Response<UnidadDto>>> UnidadActual()
         {
-            return Ok(await Mediator.Send(new ResultadosEstudianteQuery()));
+            return Ok(await Mediator.Send(new ResultadosPsicologicosEstudiantesQuery()));
         }
     }
 }
