@@ -1,39 +1,140 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { polygon, map, tileLayer, Map } from 'leaflet';
+import * as L from 'leaflet';
+import 'leaflet-editable';
+import 'leaflet.path.drag';
+declare global {
+  interface Window {
+    LAYER: any;
+  }
+}
 
 @Component({
   selector: 'app-evaluar-salones-menu',
   templateUrl: './evaluar-salones-menu.component.html',
   styleUrls: ['./evaluar-salones-menu.component.css'],
 })
-export class EvaluarSalonesMenuComponent implements OnInit, AfterViewInit {
-  public map!: Map;
-  constructor() {}
-  ngAfterViewInit(): void {
-    this.initMap();
+export class EvaluarSalonesMenuComponent implements OnInit {
+  lines: any[] = [];
+  lineLayer: any = null;
+  totalDistance = 0;
+  ngOnInit(): void {
+    this.initializeMap();
   }
-  ngOnInit(): void {}
-  onMapClick(e:any) {
-    console.log(e);
-  }
-  initMap() {
-    this.map = map('map').setView([51.505, -0.09], 13);
-    this.map.on('click', this.onMapClick);
 
-    tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
+  initializeMap() {
+    const map = L.map('map', { editable: true }).setView([43.1249, 1.254], 16);
+    L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      maxZoom: 20,
       attribution:
-        'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(this.map);
-    polygon(
-      [
-        [51.509, -0.08],
-        [51.503, -0.06],
-        [51.51, -0.047],
-      ],
-      { color: 'red' }
-    )
-      .addTo(this.map)
-      .bindPopup('¡Este es un polígono!');
+        '\u00a9 <a href="http://www.openstreetmap.org/copyright"> OpenStreetMap Contributors </a>',
+    }).addTo(map);
+    map.on('editable:drawing:end', (e: any) => {
+      if (e.layer instanceof L.Polyline) {
+        this.lineLayer = e.layer;
+        const latlngs = this.lineLayer.getLatLngs();
+
+        this.totalDistance = 0;
+        for (let i = 0; i < latlngs.length - 1; i++) {
+          this.totalDistance += latlngs[i].distanceTo(latlngs[i + 1]);
+        }
+      }
+    });
+
+    map.on('editable:vertex:drag', () => {
+      if (this.lineLayer) {
+        const latlngs = this.lineLayer.getLatLngs();
+
+        this.totalDistance = 0;
+        for (let i = 0; i < latlngs.length - 1; i++) {
+          this.totalDistance += latlngs[i].distanceTo(latlngs[i + 1]);
+        }
+      }
+    });
+    const EditControl = L.Control.extend({
+      options: {
+        position: 'topleft',
+        callback: null,
+        kind: '',
+        html: '',
+      },
+
+      onAdd: function (map: L.Map) {
+        const container = L.DomUtil.create(
+          'div',
+          'leaflet-control leaflet-bar'
+        );
+        const link = L.DomUtil.create('a', '', container);
+
+        link.href = '#';
+        link.title = 'Create a new ' + this.options.kind;
+        link.innerHTML = this.options.html;
+        L.DomEvent.on(link, 'click', L.DomEvent.stop).on(
+          link,
+          'click',
+          () => {
+            const callback: any = this['options']['callback'];
+            window.LAYER = callback.call(map.editTools);
+          },
+          this
+        );
+
+        return container;
+      },
+    });
+
+    const NewLineControl = EditControl.extend({
+      options: {
+        position: 'topleft',
+        callback: () => {
+          const line = map.editTools.startPolyline();
+          this.lines.push(line);
+          console.log(line);
+        },
+        kind: 'line',
+        html: '\\/\\',
+      },
+    });
+
+    const NewPolygonControl = EditControl.extend({
+      options: {
+        position: 'topleft',
+        callback: map.editTools.startPolygon,
+        kind: 'polygon',
+        html: '▰',
+      },
+    });
+
+    const NewMarkerControl = EditControl.extend({
+      options: {
+        position: 'topleft',
+        callback: map.editTools.startMarker,
+        kind: 'marker',
+        html: '🖈',
+      },
+    });
+
+    const NewRectangleControl = EditControl.extend({
+      options: {
+        position: 'topleft',
+        callback: map.editTools.startRectangle,
+        kind: 'rectangle',
+        html: '⬛',
+      },
+    });
+
+    const NewCircleControl = EditControl.extend({
+      options: {
+        position: 'topleft',
+        callback: map.editTools.startCircle,
+        kind: 'circle',
+        html: '⬤',
+      },
+    });
+
+    // map.addControl(new NewMarkerControl());
+    map.addControl(new NewLineControl());
+    // map.addControl(new NewPolygonControl());
+    // map.addControl(new NewRectangleControl());
+    // map.addControl(new NewCircleControl());
   }
 }
