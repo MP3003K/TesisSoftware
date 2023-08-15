@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace Contracts.Repositories
 {
-    public interface IUnidadRepository: IRepository<Unidad>
+    public interface IUnidadRepository : IRepository<Unidad>
     {
-        Task<Unidad?> UnidadActual ();
+        Task<Unidad?> UnidadActual();
+        Task<Unidad?> ObtenerUnidadPorAnioYNUnidad(int anio, int nUnidad);
     }
 }

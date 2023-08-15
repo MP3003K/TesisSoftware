@@ -1,6 +1,7 @@
 ﻿using Contracts.Repositories;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Repository.Context;
 using Repository.Repositories.Base;
 using System;
@@ -17,13 +18,25 @@ namespace Repository.Repositories
         {
         }
 
-        public async Task<int?> EvaluacionPsicologicaAulaIdPorAulaId(int aulaId, int unidadId, int evaPsiId)
+        public async Task<EvaluacionPsicologicaAula?> EvaPsiAulaPorAulaIdYUnidadId(int aulaId, int unidadId)
         {
-            var Id = await Table
-                .Where(epa => epa.AulaId == aulaId && epa.UnidadId == unidadId && epa.EvaluacionPsicologicaId == evaPsiId)
+            var evaPsiAula = await Table
+                .Where(epa => epa.AulaId == aulaId && epa.UnidadId == unidadId)
+                .FirstOrDefaultAsync();
+
+            return evaPsiAula;
+
+        }
+
+        public async Task<int?> EvaPsiAulaIdPorAulaIdYUnidadId(int aulaId, int unidadId)
+        {
+            var evaluacionesAulaIds = await Table
+                .Where(epa => epa.AulaId == 1 && epa.UnidadId == 1)
                 .Select(epa => epa.Id)
                 .FirstOrDefaultAsync();
-            return Id;
+
+            return evaluacionesAulaIds;
+
         }
     }
 }

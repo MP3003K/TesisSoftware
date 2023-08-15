@@ -24,6 +24,8 @@ namespace Repository.Mappings
                 .HasForeignKey(x => x.AulaId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder.Property(x => x.Anio).IsRequired(false);
+
             builder.ToTable("EstudiantesAulas");
         }
     }

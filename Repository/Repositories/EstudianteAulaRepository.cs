@@ -26,5 +26,16 @@ namespace Repository.Repositories
 
             return aulaId;
         }
+
+        public async Task<Aula?> AulaPorEstudianteIdYAnio(int estudianteId, int anio)
+        {
+            var aulas = await Table
+                .Where(ea => ea.EstudianteId == 1 && ea.Anio == 2023)
+                .Select(ea => ea.Aula)
+                .FirstOrDefaultAsync();
+
+            return aulas;
+
+        }
     }
 }

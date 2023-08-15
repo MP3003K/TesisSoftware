@@ -66,9 +66,9 @@ namespace Application.Features.PreguntaPsicologica.Queries
             // Encontrar Unidad actual
             var unidadActual = await _unidadRepository.UnidadActual();
             // Encontrar evaluacion psicologica del Aula
-            var evaPsiAulaId = await _evaluacionPsicologicaAulaRepository.EvaluacionPsicologicaAulaIdPorAulaId((int)aulaId, unidadActual.Id, (int)evaPsiId);
+            var evaPsiAulaId = await _evaluacionPsicologicaAulaRepository.EvaPsiAulaIdPorAulaIdYUnidadId((int)aulaId, unidadActual.Id);
             // Encontrar evalucion psicologica del Estudiante
-            var evaPsiEstId = await _evaluacionPsicologicaEstudianteRepository.EvalucionPsicologicaEstudianteIdPorEstudianteId((int)evaPsiAulaId, estudianteId);
+            var evaPsiEstId = await _evaluacionPsicologicaEstudianteRepository.EvaPsiEstudianteIdPorEstudianteId((int)evaPsiAulaId, estudianteId);
             // Buscar preguntas
             var preguntasPsicologicas = await _preguntaPsicologicaRepository.PreguntaPsicologicasPaginadas((int)evaPsiId, pageSize, pageNumber);
             var preguntasPsicologicasDto = _mapper.Map<IList<PreguntaPsicologicaDto>>(preguntasPsicologicas);         

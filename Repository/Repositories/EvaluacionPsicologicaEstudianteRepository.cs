@@ -17,7 +17,7 @@ namespace Repository.Repositories
         {
         }
 
-        public async Task<int?> EvalucionPsicologicaEstudianteIdPorEstudianteId(int evaPsiAulaId, int estudianteId)
+        public async Task<int?> EvaPsiEstudianteIdPorEstudianteId(int evaPsiAulaId, int estudianteId)
         {
             return await Table
                 .Where(epe => epe.EvaluacionAulaId == evaPsiAulaId && epe.EstudianteId == estudianteId)
