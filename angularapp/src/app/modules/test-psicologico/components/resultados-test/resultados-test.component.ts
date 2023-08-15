@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
 import { TestPsicologicoService } from '../../test-psicologico.service';
 interface Unity {
   name: string;
@@ -12,7 +11,10 @@ interface Unity {
 })
 export class ResultadosTestComponent implements OnInit, AfterViewInit {
   public selectedUnity!: Unity;
+  public selectedDimension!: number;
+  selectedStudent: any;
   dimensions: any[] = [];
+
   unities: Unity[] = [
     {
       name: '2021-1',
@@ -53,7 +55,13 @@ export class ResultadosTestComponent implements OnInit, AfterViewInit {
   public yearChange(event: any) {
     console.log(event);
   }
-  onDimensionChange({ value }: any) {
-    this.selectedScales = this.testService.getScalesByDimension(value);
+  onDimensionChange(event: any) {
+    this.selectedScales = this.testService.getScalesByDimension(event.value);
+  }
+  redirectStudent(index: number) {
+    this.selectedStudent = this.getStudents()[index];
+  }
+  getStudents() {
+    return this.testService.students;
   }
 }

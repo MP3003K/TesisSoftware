@@ -10,8 +10,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatButtonModule } from '@angular/material/button';
 
 import { SharedModule } from '../shared/shared.module';
+import { MatIconModule } from '@angular/material/icon';
 const SERVICES: any[] = [];
 
 @NgModule({
@@ -29,6 +31,8 @@ const SERVICES: any[] = [];
     MatFormFieldModule,
     MatSelectModule,
     MatButtonToggleModule,
+    MatButtonModule,
+    MatIconModule,
   ],
   providers: [...SERVICES],
 })
