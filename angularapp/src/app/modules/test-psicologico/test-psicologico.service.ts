@@ -522,7 +522,7 @@ export class TestPsicologicoService {
     },
   ];
   initialValues;
-  constructor(http: HttpClient) {
+  constructor(private http: HttpClient) {
     this.initialValues = this.initializeValues();
     this.getQuestions();
   }
@@ -556,5 +556,8 @@ export class TestPsicologicoService {
   }
   getScalesByDimension(id: number) {
     return this.initialValues.find((e) => e.id == id)?.scales ?? [];
+  }
+  getTechs() {
+    return this.http.get<any>('/');
   }
 }
