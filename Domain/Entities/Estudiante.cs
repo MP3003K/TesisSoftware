@@ -11,21 +11,19 @@ namespace Domain.Entities
     {
         public string CodigoEstudiante { get; private set; }
         public int PersonaId { get; private set; }
-        public int AulaId { get; private set; }
 
 
         // Relaciones con otras tablas
-        public virtual Aula? Aula { get; private set; }
+        public virtual IList<EstudianteAula>? EstudiantesAulas{ get; private set; }
         public virtual Persona? Persona { get; private set; }
-        public virtual IList<EvaluacionEstudiante>? EvaluacionesEstudiante { get; private set; }
+        public virtual IList<EvaluacionPsicologicaEstudiante>? EvaluacionesEstudiante { get; private set; }
 
 
         // Funciones
-        public Estudiante(string codigoEstudiante, int personaId, int aulaId)
+        public Estudiante(string codigoEstudiante, int personaId)
         {
             CodigoEstudiante = codigoEstudiante;
             PersonaId = personaId;
-            AulaId = aulaId;
         }
         public void UpdateCodigoEstudiante(string codigoEstudiante)
         {
@@ -35,15 +33,11 @@ namespace Domain.Entities
         {
             PersonaId = personaId;
         }
-        public void UpdateAulaId(int aulaId)
-        {
-            AulaId = aulaId;
-        }
-        public void Update(string codigoEstudiante, int personaId, int aulaId)
+        public void Update(string codigoEstudiante, int personaId)
         {
             UpdateCodigoEstudiante(codigoEstudiante);
             UpdatePersonaId(personaId);
-            UpdateAulaId(aulaId);
         }
+
     }
 }

@@ -9,9 +9,8 @@ namespace DTOs
     public class AulaDto
     {
         public int Id { get; set; }
-        public int Seccion { get; set; }
+        public string Seccion { get; set; } = string.Empty;
         public int GradoId { get; set; }
-        public int TutorId { get; set; }
         public int EscuelaId { get; set; }
     }
 }

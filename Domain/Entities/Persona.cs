@@ -12,7 +12,7 @@ namespace Domain.Entities
         public string Nombres { get; private set; }
         public string ApellidoPaterno { get; private set; }
         public string ApellidoMaterno { get; private set; }
-        public string DNI { get; private set; }
+        public int DNI { get; private set; }
 
         // Relaciones con otras tablas
         public virtual Docente? Docente { get; private set; }
@@ -21,14 +21,13 @@ namespace Domain.Entities
         
         
         // Funciones
-        public Persona(string nombres, string apellidoPaterno, string apellidoMaterno, string dNI)
+        public Persona(string nombres, string apellidoPaterno, string apellidoMaterno, int dNI)
         {
             Nombres = nombres;
             ApellidoPaterno = apellidoPaterno;
             ApellidoMaterno = apellidoMaterno;
             DNI = dNI;
         }
-
         public void UpdateNombres(string nombres)
         {
             Nombres = nombres;
@@ -41,16 +40,17 @@ namespace Domain.Entities
         {
             ApellidoMaterno = apellidoMaterno;
         }
-        public void UpdateDNI(string dNI)
+        public void UpdateDNI(int dNI)
         {
             DNI = dNI;
         }
-        public void Update(string nombres, string apellidoPaterno, string apellidoMaterno, string dNI)
+        public void Update(string nombres, string apellidoPaterno, string apellidoMaterno, int dNI)
         {
             UpdateNombres(nombres);
             UpdateApellidoPaterno(apellidoPaterno);
             UpdateApellidoMaterno(apellidoMaterno);
             UpdateDNI(dNI);
         }
+
     }
 }
