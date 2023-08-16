@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 @layer base {
-  /* *,
+  *,
   ::after,
   ::before {
     border-style: none;
-  } */
+  }
 }
 :root {
   font-family: "Inter", sans-serif;

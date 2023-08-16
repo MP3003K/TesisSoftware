@@ -14,28 +14,30 @@
     <div class="border rounded border-dashed p-4 flex flex-col gap-4">
       <div class="flex justify-between items-start gap-4">
         <div class="flex items-center gap-4" *ngIf="!selectedStudent?.name">
-          <mat-form-field appearance="outline" (change)="unityChange($event)">
+          <mat-form-field appearance="outline">
+            <mat-label>Año</mat-label>
+            <mat-select [(ngModel)]="selectedYear">
+              <mat-option [value]="year" *ngFor="let year of years">
+                {{ year }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
             <mat-label>Unidad</mat-label>
-            <mat-select (selectionChange)="unityChange($event)">
+            <mat-select [(ngModel)]="selectedUnity" [disabled]="!selectedYear">
               <mat-option
-                [value]="i"
-                *ngFor="let unity of unities; let i = index"
+                [value]="unity.nUnidad"
+                *ngFor="let unity of filterUnities(); let i = index"
               >
                 {{ unity.nombre }}
               </mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Año</mat-label>
-            <mat-select
-              [disabled]="!selectedUnity"
-              (selectionChange)="yearChange($event)"
-            >
-              <mat-option
-                *ngFor="let year of selectedUnity?.years"
-                [value]="year"
-              >
-                {{ year }}
+            <mat-label>Grado</mat-label>
+            <mat-select [disabled]="!selectedUnity" [(ngModel)]="selectedGrade">
+              <mat-option *ngFor="let grade of [1, 2, 3, 4, 5]" [value]="grade">
+                {{ grade }}° Grado
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -45,11 +47,8 @@
           aria-label="Font Style"
           (change)="onDimensionChange($event)"
         >
-          <mat-button-toggle
-            [value]="dimension.id"
-            *ngFor="let dimension of dimensions"
-            >{{ dimension.name }}</mat-button-toggle
-          >
+          <mat-button-toggle [value]="1">HSE</mat-button-toggle>
+          <mat-button-toggle [value]="2">FR</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
 
@@ -72,7 +71,7 @@
                   <div
                     class="bg-green-800 rounded-full text-white w-8 h-8 font-bold text-xs flex items-center justify-center"
                   >
-                    1.1
+                    {{ indicator.mean }}
                   </div>
                 </li>
               </ul>

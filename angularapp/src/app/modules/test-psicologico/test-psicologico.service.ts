@@ -560,11 +560,11 @@ export class TestPsicologicoService {
   }
   getTechs(): Observable<any> {
     console.log('hola');
-    return this.http.get<any>('/Unidad/all');
+    return this.http.get<any>('https://localhost:7040/Unidad/all');
   }
-  getAnswersApi(): Observable<any> {
+  getClasroomAnswers(classroomId:number, dimensionId:number, unityId:number): Observable<any> {
     return this.http
-      .get<any>('https://localhost:7040/RespuestasPsicologicas/1/1/2023/1')
+      .get<any>(`https://localhost:7040/RespuestasPsicologicas/RespuestasAula/${classroomId}/${dimensionId}/${unityId}`)
       .pipe(
         map(({ data }) => {
           return data;
