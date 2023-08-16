@@ -21,14 +21,25 @@ export class EvaluarSalonesMenuComponent implements OnInit {
     this.initializeMap();
   }
 
-  initializeMap() {
-    const map = L.map('map', { editable: true }).setView([43.1249, 1.254], 16);
+  async initializeMap() {
+    const map = L.map('map', { editable: true }).setView([0, 0], 16);
     L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       maxZoom: 20,
       attribution:
         '\u00a9 <a href="http://www.openstreetmap.org/copyright"> OpenStreetMap Contributors </a>',
     }).addTo(map);
+
+    const {
+      coords: { latitude, longitude },
+    } = await this.getPosition();
+    L.marker([latitude, longitude])
+      .addTo(map)
+      .bindPopup('¡Estás aquí!')
+      .openPopup();
+    map.setView([latitude, longitude], 13);
+
     map.on('editable:drawing:end', (e: any) => {
+      console.log(e);
       if (e.layer instanceof L.Polyline) {
         this.lineLayer = e.layer;
         const latlngs = this.lineLayer.getLatLngs();
@@ -57,7 +68,6 @@ export class EvaluarSalonesMenuComponent implements OnInit {
         kind: '',
         html: '',
       },
-
       onAdd: function (map: L.Map) {
         const container = L.DomUtil.create(
           'div',
@@ -88,13 +98,11 @@ export class EvaluarSalonesMenuComponent implements OnInit {
         callback: () => {
           const line = map.editTools.startPolyline();
           this.lines.push(line);
-          console.log(line);
         },
         kind: 'line',
         html: '\\/\\',
       },
     });
-
     const NewPolygonControl = EditControl.extend({
       options: {
         position: 'topleft',
@@ -103,38 +111,13 @@ export class EvaluarSalonesMenuComponent implements OnInit {
         html: '▰',
       },
     });
-
-    const NewMarkerControl = EditControl.extend({
-      options: {
-        position: 'topleft',
-        callback: map.editTools.startMarker,
-        kind: 'marker',
-        html: '🖈',
-      },
-    });
-
-    const NewRectangleControl = EditControl.extend({
-      options: {
-        position: 'topleft',
-        callback: map.editTools.startRectangle,
-        kind: 'rectangle',
-        html: '⬛',
-      },
-    });
-
-    const NewCircleControl = EditControl.extend({
-      options: {
-        position: 'topleft',
-        callback: map.editTools.startCircle,
-        kind: 'circle',
-        html: '⬤',
-      },
-    });
-
-    // map.addControl(new NewMarkerControl());
     map.addControl(new NewLineControl());
-    // map.addControl(new NewPolygonControl());
-    // map.addControl(new NewRectangleControl());
-    // map.addControl(new NewCircleControl());
+    map.addControl(new NewPolygonControl());
+  }
+
+  private getPosition(options?: PositionOptions): Promise<GeolocationPosition> {
+    return new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    });
   }
 }
