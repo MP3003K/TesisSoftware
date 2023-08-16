@@ -10,11 +10,14 @@ interface Unity {
   styleUrls: ['./resultados-test.component.css'],
 })
 export class ResultadosTestComponent implements OnInit, AfterViewInit {
-  public selectedUnity!: Unity;
+  public years: number[] = [];
+  public selectedUnity!: number;
   public selectedDimension!: number;
+  public selectedYear!: number;
+  public selectedGrade!: number;
   selectedStudent: any;
   dimensions: any[] = [];
-  unities: any;
+  unities: any[] = [];
   selectedScales: any[] = [];
   answers: any;
   constructor(private testService: TestPsicologicoService) {}
@@ -23,16 +26,34 @@ export class ResultadosTestComponent implements OnInit, AfterViewInit {
     this.getTechs();
   }
   ngAfterViewInit(): void {}
-
-  public unityChange({ value }: any) {
-    this.selectedUnity = this.unities[value];
+  filterUnities() {
+    return this.unities.filter((e) => e['año'] == this.selectedYear) ?? [];
   }
-
-  public yearChange(event: any) {
-    console.log(event);
-  }
-  onDimensionChange(event: any) {
-    this.selectedScales = this.testService.getScalesByDimension(event.value);
+  onDimensionChange({ value }: any) {
+    console.log(this.selectedYear, this.selectedUnity, this.selectedGrade);
+    this.testService
+      .getClasroomAnswers(this.selectedGrade, value, this.selectedUnity)
+      .subscribe((data: any[]) => {
+        this.selectedScales = data.map(
+          ({
+            indicadoresPsicologicos,
+            nombre: name,
+          }: {
+            indicadoresPsicologicos: any[];
+            nombre: string;
+          }) => ({
+            name,
+            indicators: indicadoresPsicologicos.map(
+              ({ nombreIndicador: name, promedioIndicador: mean }) => ({
+                name,
+                mean,
+              })
+            ),
+          })
+        );
+      });
+    return;
+    this.selectedScales = this.testService.getScalesByDimension(value);
   }
   redirectStudent(index: number) {
     this.selectedStudent = this.getStudents()[index];
@@ -43,13 +64,10 @@ export class ResultadosTestComponent implements OnInit, AfterViewInit {
 
   getTechs() {
     this.testService.getTechs().subscribe(({ data }) => {
-      this.unities = data;
-    });
-  }
-  getAnswers() {
-    this.testService.getAnswersApi().subscribe((data) => {
       console.log(data);
-      this.answers = data;
+      this.years = [...new Set(data.map((e: any) => e['año']))] as number[];
+      console.log(this.years);
+      this.unities = data;
     });
   }
 }
