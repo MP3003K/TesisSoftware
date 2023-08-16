@@ -14,37 +14,14 @@ export class ResultadosTestComponent implements OnInit, AfterViewInit {
   public selectedDimension!: number;
   selectedStudent: any;
   dimensions: any[] = [];
-
-  unities: Unity[] = [
-    {
-      name: '2021-1',
-      years: [1, 2, 3, 4, 5],
-    },
-    {
-      name: '2021-2',
-      years: [1, 2, 3, 4, 5],
-    },
-    {
-      name: '2022-1',
-      years: [1, 2, 3, 4, 5],
-    },
-    {
-      name: '2022-2',
-      years: [1, 2, 3, 4, 5],
-    },
-    {
-      name: '2023-1',
-      years: [1, 2, 3, 4, 5],
-    },
-    {
-      name: '2023-2',
-      years: [1, 2, 3, 4, 5],
-    },
-  ];
+  unities: any;
   selectedScales: any[] = [];
   constructor(private testService: TestPsicologicoService) {}
   ngOnInit(): void {
     this.dimensions = this.testService.getDimensions();
+    this.testService.getTechs().subscribe(({ data }) => {
+      this.unities = data
+    });
   }
   ngAfterViewInit(): void {}
 

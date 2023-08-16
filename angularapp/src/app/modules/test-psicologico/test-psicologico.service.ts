@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-
+import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
@@ -557,7 +557,8 @@ export class TestPsicologicoService {
   getScalesByDimension(id: number) {
     return this.initialValues.find((e) => e.id == id)?.scales ?? [];
   }
-  getTechs() {
-    return this.http.get<any>('/');
+  getTechs(): Observable<any> {
+    console.log('hola');
+    return this.http.get<any>('/Unidad/all');
   }
 }
