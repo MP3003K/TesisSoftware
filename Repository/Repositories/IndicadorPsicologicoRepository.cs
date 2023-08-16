@@ -19,14 +19,14 @@ namespace Repository.Repositories
 
         public async Task<double?> PromedioIndicadorPsicologicoEstudiante(int evaPsiEstId, int indicadorId)
         {
-            var promedio = await Table
+            var promedioIndicador = await Table
                 .Where(i => i.Id == indicadorId)
                 .SelectMany(i => i.PreguntasPsicologicas.SelectMany(p => p.RespuestasPsicologicas))
                 .Where(r => r.EvaPsiEstId == evaPsiEstId)
                 .AverageAsync(r => Convert.ToDouble(r.Respuesta));
 
-            return Math.Round(promedio, 4); // Redondear a 2 decimales
+            return Math.Round(promedioIndicador, 4); // Redondear a 2 decimales
         }
-
+        
     }
 }

@@ -35,5 +35,16 @@ namespace Repository.Repositories
 
                 return respuesta;
         }
+
+        public async Task<double?> PromedioRespuestasIndicadorEnAula(int aulaId, int indicadorId)
+        {
+            var promedioRespuestas = await Table
+                .Where(rp => rp.PreguntaPsicologica.IndicadorPsicologicoId == indicadorId &&
+                             rp.EvaluacionPsicologicaEstudiante.EvaluacionAula.AulaId == aulaId)
+                .Select(rp => Convert.ToDouble(rp.Respuesta))
+                .AverageAsync();
+
+            return Math.Round(promedioRespuestas, 4);
+        }
     }
 }

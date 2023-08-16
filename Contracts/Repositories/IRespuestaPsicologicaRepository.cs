@@ -13,5 +13,6 @@ namespace Contracts.Repositories
     {
         Task<IList<RespuestaPsicologica>> ObtenerRespuestasDeEstudiante(int evaPsiEstId, int pageNumber, int pageSize);
         Task<string?> RespuestaDeUnaPregunta(int evaPsiEstId, int pregunta);
+        Task<double?> PromedioRespuestasIndicadorEnAula(int aulaId, int indicadorId);
     }
 }

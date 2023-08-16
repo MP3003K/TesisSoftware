@@ -11,21 +11,35 @@ namespace webapi.Controllers
 {
     public class RespuestasPsicologicasController: BaseController
     {
-
         /// <summary>
-        /// Resultados psicologicos de un estudiante
+        /// Resultados psicologicos obtenido por un Aula en una Unidad
         /// </summary>
         /// 
-        [HttpGet("{estudianteId:int}/{dimensionId:int}/{anio:int}/{nUnidad:int}")]
+        [HttpGet("RespuestasAula/{aulaId:int}/{dimensionId:int}/{unidadId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<UnidadDto>>> RespuestasPsicologicasEstudiante(int estudianteId, int dimensionId, int anio, int nUnidad)
+        public async Task<ActionResult<Response<UnidadDto>>> RespuestasPsicologicasAula(int aulaId, int dimensionId, int unidadId)
+        {
+            return Ok(await Mediator.Send(new ResultadosPsicologicosAulaQuery()
+            {
+                AulaId = aulaId,
+                DimensionId = dimensionId,
+                UnidadId = unidadId
+            }));
+        }
+
+        /// <summary>
+        /// Resultados psicologicos obtenido por un Estudiante en un Unidad
+        /// </summary>
+        /// 
+        [HttpGet("RespuestasEstudiante/{estudianteId:int}/{dimensionId:int}/{unidadId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<Response<UnidadDto>>> RespuestasPsicologicasEstudiante(int estudianteId, int dimensionId, int unidadId)
         {
             return Ok(await Mediator.Send(new ResultadosPsicologicosEstudiantesQuery()
             {
                 EstudianteId = estudianteId,
                 DimensionId = dimensionId,
-                Anio = anio,
-                NUnidad = nUnidad,
+                UnidadId = unidadId,
             }));
         }
 
