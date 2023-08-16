@@ -20,7 +20,7 @@ namespace Repository.Repositories
         public async Task<Unidad?> ObtenerUnidadPorAnioYNUnidad(int anio, int nUnidad)
         {
             var unidad = await Table
-                            .Where(u => u.Año == 2023 && u.NUnidad == 8)
+                            .Where(u => u.Año == anio && u.NUnidad == nUnidad)
                             .FirstOrDefaultAsync();
 
             return unidad;
