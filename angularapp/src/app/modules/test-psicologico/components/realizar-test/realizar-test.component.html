@@ -27,14 +27,12 @@
         class="p-4 shadow rounded-lg bg-white"
         *ngFor="let question of filterQuestions()"
       >
-        <div class="font-medium">
-          {{ question.questionIndex + 1 }}. {{ question.question }}
-        </div>
+        <div class="font-medium">{{ question.id }}. {{ question.name }}</div>
         <div>
           <mat-radio-group
             aria-label="Select an option"
             class="flex flex-col"
-            [(ngModel)]="questions[question.questionIndex]['answer']"
+            [(ngModel)]="questions[question.id - 1]['answer']"
           >
             <mat-radio-button
               *ngFor="let option of itemOptions"

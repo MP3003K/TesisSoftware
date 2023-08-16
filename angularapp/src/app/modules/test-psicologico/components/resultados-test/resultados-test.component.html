@@ -1,7 +1,9 @@
 <section #parentSection class="overflow-y-auto h-full">
   <header class="bg-white py-8 px-10">
     <a class="text-sm font-semibold text-h1.2"> Encuestas </a>
-    <h1 class="text-4xl font-bold text-h1">Resultados Evaluación</h1>
+    <h1 class="text-4xl font-bold text-h1">
+      Resultados Evaluación {{ selectedStudent?.name }}
+    </h1>
   </header>
   <nav class="sticky top-0 px-4 py-2">
     <a routerLink="../realizar-test" class="text-xs text-gray-400">
@@ -9,46 +11,103 @@
     </a>
   </nav>
   <body class="px-12 pt-8 pb-12 flex flex-col gap-4">
-    <div class="flex items-center gap-4">
-      <mat-form-field appearance="outline">
-        <mat-label>Unidad</mat-label>
-        <mat-select>
-          <mat-option [value]="1">2023-1</mat-option>
-          <mat-option [value]="1">2023-1</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Año</mat-label>
-        <mat-select>
-          <mat-option [value]="1">Bendiciones</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <details
-      *ngFor="let student of [1, 2, 3, 4, 5, 6]"
-      class="px-4 rounded bg-white shadow"
-    >
-      <summary class="py-2 cursor-pointer border-b">
-        Estudiante {{ student }}
-      </summary>
-      <div class="py-2">
-        <div class="text-lg font-bold">Resultados</div>
-        <div>Estado Dimensiones</div>
-        <ul class="flex flex-col px-4">
-          <li>
-            <span>HSE:</span>
-            <span class="px-4 py-0.5 rounded text-white bg-red-500 text-xs"
-              >Crítico</span
+    <div class="border rounded border-dashed p-4 flex flex-col gap-4">
+      <div class="flex justify-between items-start gap-4">
+        <div class="flex items-center gap-4" *ngIf="!selectedStudent?.name">
+          <mat-form-field appearance="outline" (change)="unityChange($event)">
+            <mat-label>Unidad</mat-label>
+            <mat-select (selectionChange)="unityChange($event)">
+              <mat-option
+                [value]="i"
+                *ngFor="let unity of unities; let i = index"
+              >
+                {{ unity.nombre }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Año</mat-label>
+            <mat-select
+              [disabled]="!selectedUnity"
+              (selectionChange)="yearChange($event)"
             >
-          </li>
-          <li>
-            <span>FR:</span>
-            <span class="px-4 py-0.5 rounded text-white bg-blue-500 text-xs"
-              >En Proceso</span
-            >
-          </li>
-        </ul>
+              <mat-option
+                *ngFor="let year of selectedUnity?.years"
+                [value]="year"
+              >
+                {{ year }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <mat-button-toggle-group
+          name="fontStyle"
+          aria-label="Font Style"
+          (change)="onDimensionChange($event)"
+        >
+          <mat-button-toggle
+            [value]="dimension.id"
+            *ngFor="let dimension of dimensions"
+            >{{ dimension.name }}</mat-button-toggle
+          >
+        </mat-button-toggle-group>
       </div>
-    </details>
+
+      <div *ngIf="selectedScales.length > 0" class="flex flex-col gap-4">
+        <div class="scale_container flex flex-col divide-y">
+          <details
+            *ngFor="let scale of selectedScales"
+            class="px-4 bg-white shadow"
+          >
+            <summary class="py-2 cursor-pointer">
+              {{ scale.name }}
+            </summary>
+            <div class="py-2">
+              <ul class="flex flex-col p-4 gap-4">
+                <li
+                  *ngFor="let indicator of scale.indicators"
+                  class="p-2 flex gap-2 items-center"
+                >
+                  <span> {{ indicator.name }}</span>
+                  <div
+                    class="bg-green-800 rounded-full text-white w-8 h-8 font-bold text-xs flex items-center justify-center"
+                  >
+                    1.1
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+        <div class="relative overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Nombre Completo</th>
+                <th scope="col">Documento de identidad</th>
+                <th scope="col" class="text-center">Opcion</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let student of getStudents(); let i = index">
+                <th scope="row">{{ student.name }}</th>
+                <td>{{ student.dni }}</td>
+                <td class="text-center">
+                  <button mat-icon-button (click)="redirectStudent(i)">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div
+        *ngIf="selectedScales.length == 0"
+        class="text-center py-4 font-light text-gray-300"
+      >
+        Seleccione un formulario
+      </div>
+    </div>
   </body>
 </section>

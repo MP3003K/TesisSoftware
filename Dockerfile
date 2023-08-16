@@ -1,14 +1,20 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
+EXPOSE 80
+EXPOSE 443
 
-COPY *.csproj ./
-RUN dotnet restore
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["webapi/webapi.csproj", "webapi/"]
+RUN dotnet restore "webapi/webapi.csproj"
+COPY . .
+WORKDIR "/src/webapi"
+RUN dotnet build "webapi.csproj" -c Release -o /app/build
 
-COPY . ./
-RUN dotnet publish -c Release -o out
+FROM build AS publish
+RUN dotnet publish "webapi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM base AS final
 WORKDIR /app
-COPY --from=build /app/out .
-
-ENTRYPOINT ["dotnet", "NombreDeTuApp.dll"]
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "webapi.dll"]
