@@ -19,9 +19,7 @@ export class ResultadosTestComponent implements OnInit, AfterViewInit {
   constructor(private testService: TestPsicologicoService) {}
   ngOnInit(): void {
     this.dimensions = this.testService.getDimensions();
-    this.testService.getTechs().subscribe(({ data }) => {
-      this.unities = data
-    });
+    this.getTechs();
   }
   ngAfterViewInit(): void {}
 
@@ -40,5 +38,11 @@ export class ResultadosTestComponent implements OnInit, AfterViewInit {
   }
   getStudents() {
     return this.testService.students;
+  }
+
+  getTechs() {
+    this.testService.getTechs().subscribe(({ data }) => {
+      this.unities = data;
+    });
   }
 }
