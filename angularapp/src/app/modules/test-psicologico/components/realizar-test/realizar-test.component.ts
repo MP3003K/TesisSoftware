@@ -85,9 +85,6 @@ export class RealizarTestComponent implements OnInit {
     this.paginator.pageNumber += 1;
     this.scrollToTop();
   }
-  endForm() {
-    console.log('ending form');
-  }
 
   scrollToTop() {
     const miDivElement: HTMLElement = this.miDivRef.nativeElement;
@@ -107,7 +104,6 @@ export class RealizarTestComponent implements OnInit {
   }
   getQuestionsApi() {
     this.testPsicologicoService.getQuestionsApi().subscribe((res: any) => {
-      console.log(res);
       this.questions = res;
       this.updatePaginator();
     });

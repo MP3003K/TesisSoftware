@@ -21,8 +21,27 @@
       Página {{ paginator.pageNumber }} de {{ paginator.pages }}
     </span>
   </div>
-  <body class="px-12 pt-8 pb-12 flex flex-col items-center">
-    <mat-spinner *ngIf="questions.length == 0"></mat-spinner>
+  <body class="px-12 pt-8 pb-12 flex flex-col">
+    <div class="p-4 flex flex-col gap-4" *ngIf="questions.length == 0">
+      <div
+        class="p-4 shadow rounded-lg bg-white flex flex-col gap-8"
+        *ngFor="let item of [1, 2, 3]"
+      >
+        <div class="flex flex-col gap-1">
+          <div class="bg-gray-200 h-4 w-full animate-pulse"></div>
+          <div class="bg-gray-200 h-4 w-24 animate-pulse"></div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div
+            class="flex items-center gap-4 "
+            *ngFor="let ii of [1, 2, 3, 4, 5]"
+          >
+            <div class="rounded-full w-6 h-6 bg-gray-200 animate-pulse"></div>
+            <div class="h-4 w-36 bg-gray-200 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="p-4 flex flex-col gap-4" *ngIf="questions.length > 0">
       <div
         class="p-4 shadow rounded-lg bg-white"
