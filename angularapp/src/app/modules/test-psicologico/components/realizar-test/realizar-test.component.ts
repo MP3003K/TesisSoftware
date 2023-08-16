@@ -33,7 +33,9 @@ export class RealizarTestComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getQuestionsApi();
+  }
 
   public goToLogin() {
     this.router.navigate(['../../login']);
@@ -105,5 +107,10 @@ export class RealizarTestComponent implements OnInit {
   }
   validatePage() {
     return this.filterQuestions().every((e) => e.answer);
+  }
+  getQuestionsApi() {
+    this.testPsicologicoService.getQuestionsApi().subscribe((res) => {
+      console.log(res);
+    });
   }
 }

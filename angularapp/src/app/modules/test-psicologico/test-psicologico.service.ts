@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class TestPsicologicoService {
+export class TestPsicologicoService  {
   students = [
     {
       name: 'Jezer Rázuri',
@@ -526,6 +526,8 @@ export class TestPsicologicoService {
     this.initialValues = this.initializeValues();
     this.getQuestions();
   }
+  ngOnInit(): void {
+  }
   private initializeValues() {
     return this.scales.map(({ scales, name }, i) => ({
       id: i + 1,
@@ -560,5 +562,8 @@ export class TestPsicologicoService {
   getTechs(): Observable<any> {
     console.log('hola');
     return this.http.get<any>('/Unidad/all');
+  }
+  getQuestionsApi(): Observable<any> {
+    return this.http.get<any>('/PreguntasPsicologicas');
   }
 }
