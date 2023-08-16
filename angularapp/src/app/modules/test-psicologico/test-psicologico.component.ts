@@ -5,4 +5,6 @@ import { Component } from '@angular/core';
   templateUrl: './test-psicologico.component.html',
   styleUrls: ['./test-psicologico.component.css'],
 })
+
+
 export class TestPsicologicoComponent {}
