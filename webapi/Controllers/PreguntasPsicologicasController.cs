@@ -13,7 +13,6 @@ namespace webapi.Controllers
         /// <summary>
         /// Lista de preguntas psicologicas de una evaluacion psicologica (Test Psicologico)
         /// </summary>
-        [HttpGet()]
         [HttpGet("{estudianteId:int}/{pageNumber:int}/{pageSize:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<Response<IList<PreguntaPsicologicaDto>>>> ListaDePreguntasPsicologicas(int estudianteId, int pageNumber, int pageSize)

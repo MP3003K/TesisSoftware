@@ -564,6 +564,6 @@ export class TestPsicologicoService  {
     return this.http.get<any>('/Unidad/all');
   }
   getQuestionsApi(): Observable<any> {
-    return this.http.get<any>('/PreguntasPsicologicas');
+    return this.http.get<any>('/PreguntasPsicologicas/1/1/10');
   }
 }

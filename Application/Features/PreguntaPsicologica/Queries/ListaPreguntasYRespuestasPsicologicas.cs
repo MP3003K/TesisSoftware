@@ -57,16 +57,14 @@ namespace Application.Features.PreguntaPsicologica.Queries
             var pageSize = request.PageSize;
             var estudianteId = request.EstudianteId;
 
-            // Encontrar AulaId del estudiante
-            var aulaId = await _estudianteAulaRepository.AulaIdPorEstudianteId(estudianteId);
             // Encontrar Aula del estudiante
-            var aula = await _aulaRepository.GetByIdAsync((int)aulaId);
+            var aula = await _estudianteAulaRepository.AulaActualEstudiante(estudianteId);
             // Encontrar Evalucion Psicologica del Aula
             var evaPsiId = await _gradoEvaPsicologicaRepository.GetTestPsicologicoIdPorGrado(aula.GradoId);
             // Encontrar Unidad actual
             var unidadActual = await _unidadRepository.UnidadActual();
             // Encontrar evaluacion psicologica del Aula
-            var evaPsiAulaId = await _evaluacionPsicologicaAulaRepository.EvaPsiAulaIdPorAulaIdYUnidadId((int)aulaId, unidadActual.Id);
+            var evaPsiAulaId = await _evaluacionPsicologicaAulaRepository.EvaPsiAulaIdPorAulaIdYUnidadId((int)aula.Id, unidadActual.Id);
             // Encontrar evalucion psicologica del Estudiante
             var evaPsiEstId = await _evaluacionPsicologicaEstudianteRepository.EvaPsiEstudianteIdPorEstudianteId((int)evaPsiAulaId, estudianteId);
             // Buscar preguntas

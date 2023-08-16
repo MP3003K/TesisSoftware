@@ -16,7 +16,6 @@ namespace webapi.Controllers
         /// Resultados psicologicos de un estudiante
         /// </summary>
         /// 
-        [HttpGet()]
         [HttpGet("{estudianteId:int}/{dimensionId:int}/{anio:int}/{nUnidad:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<Response<UnidadDto>>> RespuestasPsicologicasEstudiante(int estudianteId, int dimensionId, int anio, int nUnidad)
