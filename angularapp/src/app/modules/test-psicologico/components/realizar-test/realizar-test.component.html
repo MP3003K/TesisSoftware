@@ -21,8 +21,9 @@
       Página {{ paginator.pageNumber }} de {{ paginator.pages }}
     </span>
   </div>
-  <body class="px-12 pt-8 pb-12 flex flex-col">
-    <div class="p-4 flex flex-col gap-4">
+  <body class="px-12 pt-8 pb-12 flex flex-col items-center">
+    <mat-spinner *ngIf="questions.length == 0"></mat-spinner>
+    <div class="p-4 flex flex-col gap-4" *ngIf="questions.length > 0">
       <div
         class="p-4 shadow rounded-lg bg-white"
         *ngFor="let question of filterQuestions()"
@@ -44,7 +45,7 @@
       </div>
     </div>
 
-    <div class="py-2 flex justify-between items-end">
+    <div class="py-2 flex justify-between items-end w-full">
       <div class="flex gap-4">
         <button
           (click)="getPreviousItem()"

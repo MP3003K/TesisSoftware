@@ -8,7 +8,7 @@ import { TestPsicologicoService } from '../../test-psicologico.service';
   styleUrls: ['./realizar-test.component.css'],
 })
 export class RealizarTestComponent implements OnInit {
-  public questions;
+  public questions: any = [];
   @ViewChild('parentSection') miDivRef!: ElementRef;
 
   paginator = {
@@ -21,10 +21,7 @@ export class RealizarTestComponent implements OnInit {
     private router: Router,
     private _snackbar: MatSnackBar,
     public testPsicologicoService: TestPsicologicoService
-  ) {
-    this.questions = this.testPsicologicoService.getQuestions();
-    this.updatePaginator();
-  }
+  ) {}
   updatePaginator() {
     this.paginator.pageNumber = 1;
     this.paginator.length = this.questions.length;
@@ -70,7 +67,7 @@ export class RealizarTestComponent implements OnInit {
     return this.questions.slice(firstItemIndex, lastItemIndex);
   }
   public countCompletedAnswers() {
-    const completedAnswersCount = this.questions.reduce((a, b) => {
+    const completedAnswersCount = this.questions.reduce((a: number, b: any) => {
       if (b.answer) return a + 1;
       return a;
     }, 0);
@@ -106,11 +103,13 @@ export class RealizarTestComponent implements OnInit {
     return `${(this.countCompletedAnswers() * 100) / this.paginator.length}%`;
   }
   validatePage() {
-    return this.filterQuestions().every((e) => e.answer);
+    return this.filterQuestions().every((e: any) => e.answer);
   }
   getQuestionsApi() {
-    this.testPsicologicoService.getQuestionsApi().subscribe((res) => {
+    this.testPsicologicoService.getQuestionsApi().subscribe((res: any) => {
       console.log(res);
+      this.questions = res;
+      this.updatePaginator();
     });
   }
 }
