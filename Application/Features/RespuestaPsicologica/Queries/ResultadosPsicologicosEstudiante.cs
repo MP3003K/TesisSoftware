@@ -13,13 +13,13 @@ using System.Threading.Tasks;
 
 namespace Application.Features.RespuestaPsicologica.Queries
 {
-    public class ResultadosPsicologicosEstudiantesQuery: IRequest<Response<IList<EscalaPsicologicaDto>>>
+    public class ResultadosPsicologicosEstudiantesQuery: IRequest<Response<RespuestasEstudianteDto>>
     {
         public int EstudianteId { get; set; }
         public int DimensionId { get; set; }
         public int UnidadId { get; set; }
     }
-    public class ResultadosPsicologicosEstudiantesHandler: IRequestHandler<ResultadosPsicologicosEstudiantesQuery, Response<IList<EscalaPsicologicaDto>>>
+    public class ResultadosPsicologicosEstudiantesHandler: IRequestHandler<ResultadosPsicologicosEstudiantesQuery, Response<RespuestasEstudianteDto>>
     {
         private readonly IEstudianteAulaRepository _estudianteAulaRepository;
         private readonly IAulaRepository _aulaRepository;
@@ -52,7 +52,7 @@ namespace Application.Features.RespuestaPsicologica.Queries
             _unidadRepository = unidadRepository;
             _mapper = mapper;
         }
-        public async Task<Response<IList<EscalaPsicologicaDto>>> Handle(ResultadosPsicologicosEstudiantesQuery request, CancellationToken cancellationToken)
+        public async Task<Response<RespuestasEstudianteDto>> Handle(ResultadosPsicologicosEstudiantesQuery request, CancellationToken cancellationToken)
         {
 
 
@@ -71,9 +71,19 @@ namespace Application.Features.RespuestaPsicologica.Queries
 
             var escalasPsicologicas = await _escalaPsicologicaRepository.ObtenerEscalaPorDimensionId((int)evaPsiId, dimensionId);
             var escalasPsicologicasDto = _mapper.Map<IList<EscalaPsicologicaDto>>(escalasPsicologicas);
+            var respuestasEstudianteDto = new RespuestasEstudianteDto();
+            respuestasEstudianteDto.EscalasPsicologicas = escalasPsicologicasDto;
 
+            // Funcion para poder guardar los resultados en las escalas
+            int countIndicadoresEnInicio = 0;
+            int countIndicadoresEnProceso = 0;
+            int countIndicadoresSatisfactorio = 0;
 
-            foreach (var escalaDto in escalasPsicologicasDto)
+            int countEscalasEnInicio = 0;
+            int countEscalasEnProceso = 0;
+            int countEscalasSatisfactorio = 0;
+
+            foreach (var escalaDto in respuestasEstudianteDto.EscalasPsicologicas)
             {
                 double? promedioEscala = null;
 
@@ -82,16 +92,47 @@ namespace Application.Features.RespuestaPsicologica.Queries
                     foreach (var indicador in escalaDto.IndicadoresPsicologicos)
                     {
                         indicador.PromedioIndicador = await _indicadorPsicologicoRepository.PromedioIndicadorPsicologicoEstudiante((int)evaPsiEstId, indicador.Id);
+                        // Contar indicadores en cada categoría
+                        if (indicador.PromedioIndicador <= 1)
+                        {
+                            countIndicadoresEnInicio++;
+                        }
+                        else if (indicador.PromedioIndicador > 1 && indicador.PromedioIndicador < 3)
+                        {
+                            countIndicadoresEnProceso++;
+                        }
+                        else if (indicador.PromedioIndicador >= 3)
+                        {
+                            countIndicadoresSatisfactorio++;
+                        }
                     }
                     var totalPromedioIndicadores = escalaDto.IndicadoresPsicologicos.Sum(i => i.PromedioIndicador ?? 0.0);
                     promedioEscala = Math.Round(totalPromedioIndicadores / escalaDto.IndicadoresPsicologicos.Count, 4);
+                    // Contar escalas en cada categoría
+                    if (promedioEscala <= 1)
+                    {
+                        countEscalasEnInicio++;
+                    }
+                    else if (promedioEscala > 1 && promedioEscala < 3)
+                    {
+                        countEscalasEnProceso++;
+                    }
+                    else if (promedioEscala >= 3)
+                    {
+                        countEscalasSatisfactorio++;
+                    }
                 }
-
                 escalaDto.PromedioEscala = promedioEscala;
             }
-            Console.WriteLine(escalasPsicologicasDto);
+            respuestasEstudianteDto.TotalEscalasEnInicio = countEscalasEnInicio;
+            respuestasEstudianteDto.TotalEscalasEnProceso = countEscalasEnProceso;
+            respuestasEstudianteDto.TotalEscalasSatisfactorio = countEscalasSatisfactorio;
+            respuestasEstudianteDto.TotalIndicadoresEnInicio = countIndicadoresEnInicio;
+            respuestasEstudianteDto.TotalIndicadoresEnProceso = countIndicadoresEnProceso;
+            respuestasEstudianteDto.TotalIndicadoresSatisfactorio = countIndicadoresSatisfactorio;
+            Console.WriteLine(respuestasEstudianteDto);
 
-            return new Response<IList<EscalaPsicologicaDto>>(escalasPsicologicasDto);
+            return new Response<RespuestasEstudianteDto>(respuestasEstudianteDto);
         }
     }
 }
