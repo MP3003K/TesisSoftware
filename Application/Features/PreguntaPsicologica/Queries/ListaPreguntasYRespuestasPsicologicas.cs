@@ -72,7 +72,7 @@ namespace Application.Features.PreguntaPsicologica.Queries
             var preguntasPsicologicasDto = _mapper.Map<IList<PreguntaPsicologicaDto>>(preguntasPsicologicas);         
            // Agregar respuestas 
             foreach (var pregunta in preguntasPsicologicasDto)
-                pregunta.Respuesta = await _respuestaPsicologicaRepository.RespuestaDeUnaPregunta((int)evaPsiEstId, pregunta.Id);
+                pregunta.Respuesta = await _respuestaPsicologicaRepository.GetRespuestaDeUnaPreguntaPorEvaPsiEstIdYPreguntaId((int)evaPsiEstId, pregunta.Id);
 
 
             return new Response<IList<PreguntaPsicologicaDto>>(preguntasPsicologicasDto);

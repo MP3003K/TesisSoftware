@@ -1,14 +1,9 @@
 ﻿using Application.Exceptions;
+using Application.Wrappers;
 using AutoMapper;
-using Azure;
 using Contracts.Repositories;
 using DTOs;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.RespuestaPsicologica.Commands
 {
@@ -36,15 +31,24 @@ namespace Application.Features.RespuestaPsicologica.Commands
             AgregarRespuestaPsicologicaRequest request,
             CancellationToken cancellationToken)
         {
+            var respuesta = request.Respuesta;
             
             // Verificar si la pregunta ya teniene respuesta
+            var respuestaPsicologica = await _respuestaPsicologicaRepository
+                .GetRespuestaPsicologica((int)request.EvaPsiEstId, (int)request.PreguntaPsicologicaId);
 
-            // Crear pregunta
-            var respuestaPsicologica = new Domain.Entities.RespuestaPsicologica(request.Respuesta, (int)request.PreguntaPsicologicaId, (int)request.EvaPsiEstId);
-            
-
-            await _respuestaPsicologicaRepository.InsertAsync(respuestaPsicologica);
-
+            if(respuestaPsicologica != null)
+            {
+                // Actualizar Respuesta Psicologica
+                respuestaPsicologica.UpdateRespuesta(respuesta);
+                await _respuestaPsicologicaRepository.UpdateAsync(respuestaPsicologica);
+            }
+            else
+            {
+                // Crear Respuesta Psicologica
+                respuestaPsicologica = new Domain.Entities.RespuestaPsicologica(request.Respuesta, (int)request.PreguntaPsicologicaId,  (int)request.EvaPsiEstId);
+                await _respuestaPsicologicaRepository.InsertAsync(respuestaPsicologica);
+            }
             var respuestaPsicologicaDto = _mapper.Map<RespuestaPsicologicaDto>(respuestaPsicologica);
 
             return new Response<RespuestaPsicologicaDto>(respuestaPsicologicaDto);
