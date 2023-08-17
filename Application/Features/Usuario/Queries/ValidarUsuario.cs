@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 namespace Application.Features.Usuario.Queries
 {
 
-    public class ValidarUsuarioQuery : IRequest<Response<UnidadDto>>
+    public class ValidarUsuarioQuery : IRequest<Response<InformacionUsuarioDto>>
     {
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
-    public class ValidarUsuarioHandler : IRequestHandler<ValidarUsuarioQuery, Response<UnidadDto>>
+    public class ValidarUsuarioHandler : IRequestHandler<ValidarUsuarioQuery, Response<InformacionUsuarioDto>>
     {
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IMapper _mapper;
@@ -29,14 +29,18 @@ namespace Application.Features.Usuario.Queries
             _usuarioRepository = usuarioRepository;
             _mapper = mapper;
         }
-        public async Task<Response<UnidadDto>> Handle(ValidarUsuarioQuery request, CancellationToken cancellationToken)
+        public async Task<Response<InformacionUsuarioDto>> Handle(ValidarUsuarioQuery request, CancellationToken cancellationToken)
         {
             var userName = request.UserName;
             var password = request.Password;
 
-            var unidad = await _usuarioRepository.ObtenerUsuario(userName, password);
-            var unidadDto = _mapper.Map<UnidadDto>(unidad);
-            return new Response<UnidadDto>(unidadDto);
+            var usuario = await _usuarioRepository.ObtenerUsuario(userName, password);
+            var informacionUsuarioDto = new InformacionUsuarioDto()
+            {
+                Persona = _mapper.Map<PersonaDto>(usuario.Persona),
+                Rol = _mapper.Map<RolDto>(usuario.RolesUsuarios.FirstOrDefault().Rol)
+            };
+            return new Response<InformacionUsuarioDto>(informacionUsuarioDto);
         }
     }
 }

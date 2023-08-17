@@ -7,9 +7,6 @@ import { Component } from '@angular/core';
 })
 export class BarraLateralComponent {
   menuItems = [
-    { icon: 'school', name: 'Materias' },
-    { icon: 'subscriptions', name: 'Tarjetas' },
-    { icon: 'list_alt', name: 'Listas' },
-    { icon: 'code', name: 'Oportunidades' },
+    { icon: 'school', name: 'Evaluar Salones' },
   ];
 }

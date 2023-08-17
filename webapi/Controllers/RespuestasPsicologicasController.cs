@@ -47,7 +47,7 @@ namespace webapi.Controllers
         [Route("")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Response<RespuestaPsicologicaDto>>> AddAccount([FromBody] AgregarRespuestaPsicologicaRequest request)
+        public async Task<ActionResult<Response<RespuestaPsicologicaDto>>> AddRespuestaPsicologica([FromBody] AgregarRespuestaPsicologicaRequest request)
         {
             return Created("", await Mediator.Send(request));
         }

@@ -26,7 +26,6 @@ namespace Application.Features.PreguntaPsicologica.Queries
         private readonly IEvaluacionPsicologicaEstudianteRepository _evaluacionPsicologicaEstudianteRepository;
         private readonly IEstudianteAulaRepository _estudianteAulaRepository;
         private readonly IUnidadRepository  _unidadRepository;
-        private readonly IAulaRepository _aulaRepository;
         private readonly IMapper _mapper;
         private readonly IGradoEvaPsicologicaRepository _gradoEvaPsicologicaRepository;
         public ListaPreguntasYRespuestasPsicologicasHandler(
@@ -46,7 +45,6 @@ namespace Application.Features.PreguntaPsicologica.Queries
             _evaluacionPsicologicaEstudianteRepository = evaluacionPsicologicaEstudianteRepository;
             _estudianteAulaRepository = estudianteAulaRepository;
             _unidadRepository = unidadRepository;
-            _aulaRepository = aulaRepository;
             _gradoEvaPsicologicaRepository = gradoEvaPsicologicaRepository;
             _mapper = mapper;
         }
@@ -73,8 +71,6 @@ namespace Application.Features.PreguntaPsicologica.Queries
            // Agregar respuestas 
             foreach (var pregunta in preguntasPsicologicasDto)
                 pregunta.Respuesta = await _respuestaPsicologicaRepository.GetRespuestaDeUnaPreguntaPorEvaPsiEstIdYPreguntaId((int)evaPsiEstId, pregunta.Id);
-
-
             return new Response<IList<PreguntaPsicologicaDto>>(preguntasPsicologicasDto);
         }
     }

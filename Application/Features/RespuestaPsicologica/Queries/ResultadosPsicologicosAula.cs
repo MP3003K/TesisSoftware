@@ -33,24 +33,15 @@ namespace Application.Features.RespuestaPsicologica.Queries
         private readonly IMapper _mapper;
 
         public ResultadosPsicologicosAulaHandler(
-            IEstudianteAulaRepository estudianteAulaRepository,
             IAulaRepository aulaRepository,
-            IGradoEvaPsicologicaRepository gradoEvaPsicologicaRepository,
-            IIndicadorPsicologicoRepository indicadorPsicologicoRepository,
             IEscalaPsicologicaRepository escalaPsicologicaRepository,
-            IEvaluacionPsicologicaEstudianteRepository evaluacionPsicologicaEstudianteRepository,
             IEvaluacionPsicologicaAulaRepository evaluacionPsicologicaAulaRepository,
             IUnidadRepository unidadRepository,
             IRespuestaPsicologicaRepository respuestaPsicologicaRepository,
             IMapper mapper)
-        {
-            _estudianteAulaRepository = estudianteAulaRepository;
-            
+        {            
             _aulaRepository = aulaRepository;
-            _gradoEvaPsicologicaRepository = gradoEvaPsicologicaRepository;
-            _indicadorPsicologicoRepository = indicadorPsicologicoRepository;
             _escalaPsicologicaRepository = escalaPsicologicaRepository;
-            _evaluacionPsicologicaEstudianteRepository = evaluacionPsicologicaEstudianteRepository;
             _evaluacionPsicologicaAulaRepository = evaluacionPsicologicaAulaRepository;
             _unidadRepository = unidadRepository;
             _respuestaPsicologicaRepository = respuestaPsicologicaRepository;
@@ -81,13 +72,11 @@ namespace Application.Features.RespuestaPsicologica.Queries
                 if (escalaDto.IndicadoresPsicologicos != null && escalaDto.IndicadoresPsicologicos.Any())
                 {
                     foreach (var indicador in escalaDto.IndicadoresPsicologicos)
-                    {
                         indicador.PromedioIndicador = await _respuestaPsicologicaRepository.PromedioRespuestasIndicadorEnAula((int)evaPsiAula.Id, indicador.Id);
-                    }
+                    
                     var totalPromedioIndicadores = escalaDto.IndicadoresPsicologicos.Sum(i => i.PromedioIndicador ?? 0.0);
                     promedioEscala = Math.Round(totalPromedioIndicadores / escalaDto.IndicadoresPsicologicos.Count, 2);
                 }
-
                 escalaDto.PromedioEscala = promedioEscala;
             }
             Console.WriteLine(escalasPsicologicasDto);
