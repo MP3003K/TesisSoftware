@@ -559,7 +559,7 @@ export class TestPsicologicoService {
     return this.initialValues.find((e) => e.id == id)?.scales ?? [];
   }
   getTechs(): Observable<any> {
-    return this.http.get<any>('/api/Unidad/all');
+    return this.http.get<any>('/unidad/all');
   }
   getClasroomAnswers(
     classroomId: number,
@@ -577,7 +577,7 @@ export class TestPsicologicoService {
       );
   }
   getQuestionsApi(): Observable<any> {
-    return this.http.get<any>('/api/PreguntasPsicologicas/1/1/66').pipe(
+    return this.http.get<any>('/preguntasPsicologicas/1/1/66').pipe(
       map(({ data }: { data: any[] }) => {
         return data.map(
           ({ pregunta: name, respuesta: answer, nPregunta: id }) => ({
