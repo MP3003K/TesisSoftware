@@ -84,6 +84,8 @@
               <tr>
                 <th scope="col">Nombre Completo</th>
                 <th scope="col">Documento de identidad</th>
+                <th scope="col">Indicador</th>
+
                 <th scope="col" class="text-center">Opcion</th>
               </tr>
             </thead>
@@ -91,6 +93,13 @@
               <tr *ngFor="let student of getStudents(); let i = index">
                 <th scope="row">{{ student.name }}</th>
                 <td>{{ student.dni }}</td>
+                <td>
+                  <div
+                    class="w-6 h-6 bg-green-500 rounded-full text-white flex items-center justify-center text-center"
+                  >
+                    1.1
+                  </div>
+                </td>
                 <td class="text-center">
                   <button mat-icon-button (click)="redirectStudent(i)">
                     <mat-icon>visibility</mat-icon>

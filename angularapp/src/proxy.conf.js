@@ -1,10 +1,15 @@
+
 const PROXY_CONFIG = [
   {
-    context: ["/*"],
+    context: [
+      "/unidad",
+      "/preguntasPsicologicas",
+      "/weatherforecast",
+      "/bank",
+    ],
     target: "https://localhost:7040",
-    secure: false,
-    changeOrigin: true,
-  },
-];
+    secure: false
+  }
+]
 
 module.exports = PROXY_CONFIG;

@@ -559,12 +559,17 @@ export class TestPsicologicoService {
     return this.initialValues.find((e) => e.id == id)?.scales ?? [];
   }
   getTechs(): Observable<any> {
-    console.log('hola');
-    return this.http.get<any>('https://localhost:7040/Unidad/all');
+    return this.http.get<any>('/unidad/all');
   }
-  getClasroomAnswers(classroomId:number, dimensionId:number, unityId:number): Observable<any> {
+  getClasroomAnswers(
+    classroomId: number,
+    dimensionId: number,
+    unityId: number
+  ): Observable<any> {
     return this.http
-      .get<any>(`https://localhost:7040/RespuestasPsicologicas/RespuestasAula/${classroomId}/${dimensionId}/${unityId}`)
+      .get<any>(
+        `/api/RespuestasPsicologicas/RespuestasAula/${classroomId}/${dimensionId}/${unityId}`
+      )
       .pipe(
         map(({ data }) => {
           return data;
@@ -572,18 +577,16 @@ export class TestPsicologicoService {
       );
   }
   getQuestionsApi(): Observable<any> {
-    return this.http
-      .get<any>('https://localhost:7040/PreguntasPsicologicas/1/1/66')
-      .pipe(
-        map(({ data }: { data: any[] }) => {
-          return data.map(
-            ({ pregunta: name, respuesta: answer, nPregunta: id }) => ({
-              id,
-              name,
-              answer,
-            })
-          );
-        })
-      );
+    return this.http.get<any>('/preguntasPsicologicas/1/1/66').pipe(
+      map(({ data }: { data: any[] }) => {
+        return data.map(
+          ({ pregunta: name, respuesta: answer, nPregunta: id }) => ({
+            id,
+            name,
+            answer,
+          })
+        );
+      })
+    );
   }
 }
