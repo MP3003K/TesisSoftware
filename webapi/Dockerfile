@@ -7,15 +7,15 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["../angularapp/nuget.config", "angularapp/"]
-COPY ["../webapi/webapi.csproj", "webapi/"]
-COPY ["../angularapp/angularapp.esproj", "angularapp/"]
-COPY ["../IoC/IoC.csproj", "IoC/"]
-COPY ["../Application/Application.csproj", "Application/"]
-COPY ["../DTOs/DTOs.csproj", "DTOs/"]
-COPY ["../Domain/Domain.csproj", "Domain/"]
-COPY ["../Repository/Repository.csproj", "Repository/"]
-COPY ["../Contracts/Contracts.csproj", "Contracts/"]
+COPY ["angularapp/nuget.config", "angularapp/"]
+COPY ["webapi/webapi.csproj", "webapi/"]
+COPY ["angularapp/angularapp.esproj", "angularapp/"]
+COPY ["IoC/IoC.csproj", "IoC/"]
+COPY ["Application/Application.csproj", "Application/"]
+COPY ["DTOs/DTOs.csproj", "DTOs/"]
+COPY ["Domain/Domain.csproj", "Domain/"]
+COPY ["Repository/Repository.csproj", "Repository/"]
+COPY ["Contracts/Contracts.csproj", "Contracts/"]
 RUN dotnet restore "webapi/webapi.csproj"
 COPY . .
 WORKDIR "/src/webapi"
