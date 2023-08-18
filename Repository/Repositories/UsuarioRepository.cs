@@ -1,5 +1,6 @@
 ﻿using Contracts.Repositories;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Repository.Context;
 using Repository.Repositories.Base;
 using System;
@@ -16,9 +17,15 @@ namespace Repository.Repositories
         {
         }
 
-        public Task<Usuario?> ObtenerUsuario(string username, string password)
+        public async Task<Usuario?> ObtenerUsuario(string username, string password)
         {
-            throw new NotImplementedException();
+            var usuario = await Table
+                .Include(u => u.RolesUsuarios).ThenInclude(ru => ru.Rol)
+                .Include(u => u.Persona)
+                .Where(u => u.Username == username && u.Password == password)
+                .FirstOrDefaultAsync();
+
+            return usuario;
         }
     }
 }

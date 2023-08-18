@@ -10,6 +10,6 @@ namespace Contracts.Repositories
 {
     public interface IAulaRepository : IRepository<Aula>
     {
-        
+        Task<IList<Aula>> ObtenerTodasLasAulas();
     }
 }

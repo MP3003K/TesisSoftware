@@ -17,7 +17,7 @@ namespace Repository.Repositories
         {
         }
 
-        public async Task<IList<RespuestaPsicologica>> ObtenerRespuestasDeEstudiante(int evaPsiEstId, int pageNumber, int pageSize)
+        public async Task<IList<RespuestaPsicologica>> GetAllRespuestasPsicologicas(int evaPsiEstId, int pageNumber, int pageSize)
         {
             var respuestaPsicologica = await Table.Where(x => x.EvaPsiEstId == evaPsiEstId)
                 .Skip((pageNumber - 1) * pageSize)
@@ -27,7 +27,15 @@ namespace Repository.Repositories
             return respuestaPsicologica;
         }
 
-        public async Task<string?> RespuestaDeUnaPregunta(int evaPsiEstId, int preguntaId)
+        public async Task<RespuestaPsicologica?> GetRespuestaPsicologica(int evaPsiEstId, int preguntaId)
+        {
+            var respuesta = await Table.Where(x => x.EvaPsiEstId == evaPsiEstId && x.PreguntaPsicologicaId == preguntaId)
+                .FirstOrDefaultAsync();
+
+            return respuesta;
+        }
+
+        public async Task<string?> GetRespuestaDeUnaPreguntaPorEvaPsiEstIdYPreguntaId(int evaPsiEstId, int preguntaId)
         {
             var respuesta = await Table.Where(x => x.EvaPsiEstId == evaPsiEstId && x.PreguntaPsicologicaId == preguntaId)
                 .Select(x => x.Respuesta)

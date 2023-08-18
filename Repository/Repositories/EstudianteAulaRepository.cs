@@ -29,6 +29,7 @@ namespace Repository.Repositories
         {
             var aula = await Table
                 .Where(ea => ea.EstudianteId == estudianteId && ea.Estado == "1")
+                .Include(ea => ea.Aula.Grado)
                 .Select(ea => ea.Aula)
                 .FirstOrDefaultAsync();
 

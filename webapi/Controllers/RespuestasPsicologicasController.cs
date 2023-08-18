@@ -1,5 +1,6 @@
 ﻿using API.Controllers.Base;
 using Application.Features.PreguntaPsicologica.Queries;
+using Application.Features.RespuestaPsicologica.Commands;
 using Application.Features.RespuestaPsicologica.Queries;
 using Application.Features.Unidad.Queries;
 using Application.Wrappers;
@@ -41,6 +42,14 @@ namespace webapi.Controllers
                 DimensionId = dimensionId,
                 UnidadId = unidadId,
             }));
+        }
+        [HttpPost]
+        [Route("")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Response<RespuestaPsicologicaDto>>> AddRespuestaPsicologica([FromBody] AgregarRespuestaPsicologicaRequest request)
+        {
+            return Created("", await Mediator.Send(request));
         }
 
     }

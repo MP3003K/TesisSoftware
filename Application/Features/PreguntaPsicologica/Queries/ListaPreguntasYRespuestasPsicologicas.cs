@@ -26,7 +26,6 @@ namespace Application.Features.PreguntaPsicologica.Queries
         private readonly IEvaluacionPsicologicaEstudianteRepository _evaluacionPsicologicaEstudianteRepository;
         private readonly IEstudianteAulaRepository _estudianteAulaRepository;
         private readonly IUnidadRepository  _unidadRepository;
-        private readonly IAulaRepository _aulaRepository;
         private readonly IMapper _mapper;
         private readonly IGradoEvaPsicologicaRepository _gradoEvaPsicologicaRepository;
         public ListaPreguntasYRespuestasPsicologicasHandler(
@@ -46,7 +45,6 @@ namespace Application.Features.PreguntaPsicologica.Queries
             _evaluacionPsicologicaEstudianteRepository = evaluacionPsicologicaEstudianteRepository;
             _estudianteAulaRepository = estudianteAulaRepository;
             _unidadRepository = unidadRepository;
-            _aulaRepository = aulaRepository;
             _gradoEvaPsicologicaRepository = gradoEvaPsicologicaRepository;
             _mapper = mapper;
         }
@@ -67,14 +65,14 @@ namespace Application.Features.PreguntaPsicologica.Queries
             var evaPsiAulaId = await _evaluacionPsicologicaAulaRepository.EvaPsiAulaIdPorAulaIdYUnidadId((int)aula.Id, unidadActual.Id);
             // Encontrar evalucion psicologica del Estudiante
             var evaPsiEstId = await _evaluacionPsicologicaEstudianteRepository.EvaPsiEstudianteIdPorEstudianteId((int)evaPsiAulaId, estudianteId);
+            
+            
             // Buscar preguntas
             var preguntasPsicologicas = await _preguntaPsicologicaRepository.PreguntaPsicologicasPaginadas((int)evaPsiId, pageSize, pageNumber);
             var preguntasPsicologicasDto = _mapper.Map<IList<PreguntaPsicologicaDto>>(preguntasPsicologicas);         
            // Agregar respuestas 
             foreach (var pregunta in preguntasPsicologicasDto)
-                pregunta.Respuesta = await _respuestaPsicologicaRepository.RespuestaDeUnaPregunta((int)evaPsiEstId, pregunta.Id);
-
-
+                pregunta.Respuesta = await _respuestaPsicologicaRepository.GetRespuestaDeUnaPreguntaPorEvaPsiEstIdYPreguntaId((int)evaPsiEstId, pregunta.Id);
             return new Response<IList<PreguntaPsicologicaDto>>(preguntasPsicologicasDto);
         }
     }
