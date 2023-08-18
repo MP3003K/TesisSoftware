@@ -10,5 +10,6 @@ namespace Contracts.Repositories
 {
     public interface IPersonaRepository: IRepository<Persona>
     {
+        Task<Estudiante?> ObtenerEstudiantePorPersonaId(int personaId);
     }
 }

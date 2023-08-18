@@ -1,5 +1,6 @@
 ﻿using Contracts.Repositories;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Repository.Context;
 using Repository.Repositories.Base;
 using System;
@@ -14,6 +15,17 @@ namespace Repository.Repositories
     {
         public PersonaRepository(ApplicationDbContext dBContext) : base(dBContext)
         {
+        }
+
+        public async Task<Estudiante> ObtenerEstudiantePorPersonaId(int personaId)
+        {
+            var estudiante = await Table
+                .Include(p => p.Estudiante)
+                .Where(p => p.Id == personaId)
+                .Select(p => p.Estudiante)
+                .FirstOrDefaultAsync();
+
+            return estudiante;
         }
     }
 }

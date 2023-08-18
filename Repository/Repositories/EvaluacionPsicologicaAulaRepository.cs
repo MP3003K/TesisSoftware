@@ -31,7 +31,7 @@ namespace Repository.Repositories
         public async Task<int?> EvaPsiAulaIdPorAulaIdYUnidadId(int aulaId, int unidadId)
         {
             var evaluacionesAulaIds = await Table
-                .Where(epa => epa.AulaId == 1 && epa.UnidadId == 1)
+                .Where(epa => epa.AulaId == aulaId && epa.UnidadId == unidadId)
                 .Select(epa => epa.Id)
                 .FirstOrDefaultAsync();
 
