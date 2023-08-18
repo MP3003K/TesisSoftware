@@ -12,7 +12,7 @@
   </nav>
   <body class="px-12 pt-8 pb-12 flex flex-col gap-4">
     <div class="border rounded border-dashed p-4 flex flex-col gap-4">
-      <div class="flex justify-between items-start gap-4">
+      <div class="flex flex-col items-start">
         <div class="flex items-center gap-4" *ngIf="!selectedStudent?.name">
           <mat-form-field appearance="outline">
             <mat-label>Año</mat-label>
@@ -38,6 +38,17 @@
             <mat-select [disabled]="!selectedUnity" [(ngModel)]="selectedGrade">
               <mat-option *ngFor="let grade of [1, 2, 3, 4, 5]" [value]="grade">
                 {{ grade }}° Grado
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Salón</mat-label>
+            <mat-select [disabled]="!selectedGrade" [(ngModel)]="selectedClass">
+              <mat-option
+                *ngFor="let class of filterClass()"
+                [value]="class.id"
+              >
+                {{ class.secccion }}
               </mat-option>
             </mat-select>
           </mat-form-field>

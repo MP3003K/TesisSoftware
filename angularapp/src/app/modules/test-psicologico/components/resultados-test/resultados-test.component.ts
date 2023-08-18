@@ -15,24 +15,27 @@ export class ResultadosTestComponent implements OnInit, AfterViewInit {
   public selectedDimension!: number;
   public selectedYear!: number;
   public selectedGrade!: number;
+  public selectedClass!: number;
+
   selectedStudent: any;
   dimensions: any[] = [];
   unities: any[] = [];
   selectedScales: any[] = [];
+  clasrooms: any[] = [];
   answers: any;
   constructor(private testService: TestPsicologicoService) {}
   ngOnInit(): void {
     this.dimensions = this.testService.getDimensions();
     this.getTechs();
+    this.getClasses();
   }
   ngAfterViewInit(): void {}
   filterUnities() {
     return this.unities.filter((e) => e['año'] == this.selectedYear) ?? [];
   }
   onDimensionChange({ value }: any) {
-    console.log(this.selectedYear, this.selectedUnity, this.selectedGrade);
     this.testService
-      .getClasroomAnswers(this.selectedGrade, value, this.selectedUnity)
+      .getClasroomAnswers(this.selectedGrade, value, this.selectedClass)
       .subscribe((data: any[]) => {
         this.selectedScales = data.map(
           ({
@@ -55,6 +58,12 @@ export class ResultadosTestComponent implements OnInit, AfterViewInit {
     return;
     this.selectedScales = this.testService.getScalesByDimension(value);
   }
+  onGradeChange(event: any) {
+    console.log(event);
+  }
+  filterClass() {
+    return this.clasrooms.filter((e) => e.gradoId == this.selectedGrade) ?? [];
+  }
   redirectStudent(index: number) {
     this.selectedStudent = this.getStudents()[index];
   }
@@ -64,10 +73,15 @@ export class ResultadosTestComponent implements OnInit, AfterViewInit {
 
   getTechs() {
     this.testService.getTechs().subscribe(({ data }) => {
-      console.log(data);
       this.years = [...new Set(data.map((e: any) => e['año']))] as number[];
-      console.log(this.years);
       this.unities = data;
+    });
+  }
+
+  getClasses() {
+    this.testService.getClassrooms().subscribe(({ data }) => {
+      console.log(data);
+      this.clasrooms = data;
     });
   }
 }

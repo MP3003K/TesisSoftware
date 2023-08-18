@@ -1,6 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from "@angular/router";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LoginService } from '../../login.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-main',
@@ -9,30 +16,35 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 export class MainComponent implements OnInit {
   hide: boolean = true;
-  formRegistro: any = FormGroup;
-
+  public userForm = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required]),
+  });
   constructor(
     private formBuilder: FormBuilder,
     private activateRoute: ActivatedRoute,
-    private router: Router
-    ) {}
+    private router: Router,
+    private loginService: LoginService,
+    private _snackbar: MatSnackBar
+  ) {}
 
-  ngOnInit(): void {
-    this.buildForm();
-  }
+  ngOnInit(): void {}
 
-  private buildForm() {
-    const controls = {
-      username: [null, Validators.required],
-      password: [null, Validators.required],
-    };
-    this.formRegistro = this.formBuilder.group(controls);
-  }
-
-  public goToTestPsicologico() {
-    console.log(this.formRegistro.value);
-    if(this.formRegistro.valid){
-      this.router.navigate(['pages']);
+  public onSubmit() {
+    if (this.userForm.valid) {
+      const { username, password } = this.userForm.value;
+      this.loginService
+        .authenticate(username, password)
+        .subscribe(({ succeeded, data }) => {
+          if (succeeded) {
+            const { persona, rol } = data;
+            localStorage.setItem('persona', JSON.stringify(persona));
+            localStorage.setItem('rol', JSON.stringify(rol));
+            this.router.navigate(['pages']);
+            return;
+          }
+          this._snackbar.open('Datos Invalidos', '', { duration: 1000 });
+        });
     }
   }
 }

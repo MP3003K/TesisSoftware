@@ -568,13 +568,16 @@ export class TestPsicologicoService {
   ): Observable<any> {
     return this.http
       .get<any>(
-        `/api/RespuestasPsicologicas/RespuestasAula/${classroomId}/${dimensionId}/${unityId}`
+        `/respuestasPsicologicas/RespuestasAula/${classroomId}/${dimensionId}/${unityId}`
       )
       .pipe(
         map(({ data }) => {
           return data;
         })
       );
+  }
+  getClassrooms() {
+    return this.http.get<any>('/aula/all');
   }
   getQuestionsApi(): Observable<any> {
     return this.http.get<any>('/preguntasPsicologicas/1/1/66').pipe(
