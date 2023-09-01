@@ -1,0 +1,8 @@
+version: '3.9'
+services:
+  angularapp:
+    build: 
+      context: .
+      dockerfile: Dockerfile.production
+    ports:
+      - 80:80
