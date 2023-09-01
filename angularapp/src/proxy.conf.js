@@ -1,17 +1,18 @@
+
 const PROXY_CONFIG = [
-    {
-        context: [
-            "/weatherforecast",
-            "/usuario",
-            "/unidad",
-            "/respuestasPsicologicas",
-            "/preguntasPsicologicas",
-            "/estudiante",
-            "/aula",
-        ],
-        target: "http://localhost:5000",
-        secure: false,
-    },
-];
+  {
+    context: [
+      "/unidad",
+      "/preguntasPsicologicas",
+      "/aula",
+      "/weatherforecast",
+      "/bank",
+      "/usuario",
+      "/respuestasPsicologicas"
+    ],
+    target: "https://localhost:7040",
+    secure: false
+  }
+]
 
 module.exports = PROXY_CONFIG;
