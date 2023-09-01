@@ -1,17 +1,20 @@
-import { NgModule } from '@angular/core';
-import { MainPageComponent, HeaderComponent } from './';
-import { BarraLateralComponent } from './main-page/barra-lateral/barra-lateral.component';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-const CORE_COMPONENTS: any[] = [
-  HeaderComponent,
-  MainPageComponent,
-  BarraLateralComponent,
-];
+import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { AuthModule } from 'app/core/auth/auth.module';
+import { IconsModule } from 'app/core/icons/icons.module';
+
 @NgModule({
-  declarations: [...CORE_COMPONENTS],
-  imports: [CommonModule, HttpClientModule, MatIconModule],
-  exports: [...CORE_COMPONENTS],
+    imports: [AuthModule, IconsModule],
 })
-export class CoreModule {}
+export class CoreModule {
+    /**
+     * Constructor
+     */
+    constructor(@Optional() @SkipSelf() parentModule?: CoreModule) {
+        // Do not allow multiple injections
+        if (parentModule) {
+            throw new Error(
+                'CoreModule has already been loaded. Import this module in the AppModule only.'
+            );
+        }
+    }
+}

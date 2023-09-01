@@ -1,0 +1,46 @@
+<mat-card class="w-full flex flex-col gap-4">
+    <div class="p-2 flex items-center justify-between">
+        <mat-button-toggle-group
+            name="fontStyle"
+            aria-label="Font Style"
+            [(ngModel)]="selectedDimension"
+        >
+            <mat-button-toggle [value]="1">HSE</mat-button-toggle>
+            <mat-button-toggle [value]="2">FR</mat-button-toggle>
+        </mat-button-toggle-group>
+        <button mat-button (click)="returnRoute()">Regresar</button>
+    </div>
+    <mat-card-content>
+        <h1 mat-dialog-title>
+            {{ student?.name }} - {{ student?.dni }} | {{ student?.mean }}
+        </h1>
+        <div>
+            <details *ngFor="let scale of scales" class="px-4 bg-white shadow">
+                <summary
+                    class="py-2 cursor-pointer flex items-center justify-between"
+                >
+                    <span>{{ scale.name }}</span>
+                    <span
+                        class="text-xs bg-green-500 text-white px-4 py-2 rounded"
+                        >{{ scale.mean }}</span
+                    >
+                </summary>
+                <div class="py-2">
+                    <ul class="flex flex-col p-4 gap-4">
+                        <li
+                            *ngFor="let indicator of scale.indicators"
+                            class="p-2 flex gap-2 items-center"
+                        >
+                            <span> {{ indicator.name }}</span>
+                            <div
+                                class="bg-green-600 px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center"
+                            >
+                                {{ indicator.mean }}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </mat-card-content>
+</mat-card>
