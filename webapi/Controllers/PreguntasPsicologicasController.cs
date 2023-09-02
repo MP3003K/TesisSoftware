@@ -13,12 +13,12 @@ namespace webapi.Controllers
         /// <summary>
         /// Lista de preguntas psicologicas de una evaluacion psicologica (Test Psicologico)
         /// </summary>
-        [HttpGet("{estudianteId:int}/{pageNumber:int}/{pageSize:int}")]
+        [HttpGet("{evaPsiEstId:int}/{pageNumber:int}/{pageSize:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<IList<PreguntaPsicologicaDto>>>> ListaDePreguntasPsicologicas(int estudianteId, int pageNumber, int pageSize)
+        public async Task<ActionResult<Response<IList<PreguntaPsicologicaDto>>>> ListaDePreguntasPsicologicas(int evaPsiEstId, int pageNumber, int pageSize)
         {
             return Ok(await Mediator.Send(new ListaPreguntasPsicologicasQuery() {
-                EstudianteId = estudianteId, 
+                EvaPsiEstId = evaPsiEstId, 
                 PageNumber = pageNumber,
                 PageSize = pageSize}));
         }

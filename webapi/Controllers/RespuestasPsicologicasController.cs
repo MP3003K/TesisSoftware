@@ -32,15 +32,16 @@ namespace webapi.Controllers
         /// Resultados psicologicos obtenido por un Estudiante en un Unidad
         /// </summary>
         /// 
-        [HttpGet("RespuestasEstudiante/{estudianteId:int}/{dimensionId:int}/{unidadId:int}")]
+        [HttpGet("RespuestasEstudiante/{estudianteId:int}/{unidadId:int}/{aulaId:int}/{dimensionId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<UnidadDto>>> RespuestasPsicologicasEstudiante(int estudianteId, int dimensionId, int unidadId)
+        public async Task<ActionResult<Response<UnidadDto>>> RespuestasPsicologicasEstudiante(int estudianteId, int unidadId, int aulaId, int dimensionId)
         {
             return Ok(await Mediator.Send(new ResultadosPsicologicosEstudiantesQuery()
             {
                 EstudianteId = estudianteId,
-                DimensionId = dimensionId,
                 UnidadId = unidadId,
+                AulaId = aulaId,
+                DimensionId = dimensionId,
             }));
         }
         [HttpPost]
@@ -52,5 +53,21 @@ namespace webapi.Controllers
             return Created("", await Mediator.Send(request));
         }
 
+
+
+        /// <summary>
+        /// Actualizar el Estado de una Evalucion Psicologia Estudiante, para actualizarlo a "En Proceso (P)" o "Finalizado (F)"
+        /// </summary>
+        /// 
+        [HttpGet("ActualizarEstadoEvaPsiEst/{evaPsiEstId:int}/{estado}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<Response<UnidadDto>>> ActualizarEstadoEvaPsiEst(int evaPsiEstId, string estado)
+        {
+            return Ok(await Mediator.Send(new ActualizarEstadoEvaPsiEstRequest()
+            {
+                EvaPsiEstId = evaPsiEstId,
+                Estado = estado
+            }));
+        }
     }
 }

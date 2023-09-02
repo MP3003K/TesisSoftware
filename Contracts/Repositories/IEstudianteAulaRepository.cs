@@ -14,6 +14,5 @@ namespace Contracts.Repositories
         Task<Aula?> AulaActualEstudiante (int estudianteId);
         Task<int?> AulaIdPorEstudianteIdYAnio(int estudianteId, int anio);
         Task<Aula?> AulaPorEstudianteIdYAnio(int estudianteId, int anio);
-
     }
 }

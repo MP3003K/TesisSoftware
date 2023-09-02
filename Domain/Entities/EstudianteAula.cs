@@ -12,14 +12,14 @@ namespace Domain.Entities
         public int EstudianteId { get; private set; }
         public int AulaId { get; private set; }
         public string Estado { get; private set; }
-        public int? Anio { get; private set; }
+        public int Anio { get; private set; }
 
         // Relaciones con otras tablas
         public virtual Estudiante? Estudiante { get; private set; }
         public virtual Aula? Aula { get; private set; }
 
         // Funciones
-        public EstudianteAula(int estudianteId, int aulaId, string estado, int? anio)
+        public EstudianteAula(int estudianteId, int aulaId, string estado, int anio)
         {
             EstudianteId = estudianteId;
             AulaId = aulaId;
@@ -38,11 +38,11 @@ namespace Domain.Entities
         {
             Estado = estado;
         }
-        public void UpdateAnio(int? anio)
+        public void UpdateAnio(int anio)
         {
             Anio = anio;
         }
-        public void Update(int estudianteId, int aulaId, string estado, int? anio)
+        public void Update(int estudianteId, int aulaId, string estado, int anio)
         {
             UpdateEstudianteId(estudianteId);
             UpdateAulaId(aulaId);

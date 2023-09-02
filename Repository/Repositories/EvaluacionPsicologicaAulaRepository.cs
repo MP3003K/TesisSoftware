@@ -21,6 +21,8 @@ namespace Repository.Repositories
         public async Task<EvaluacionPsicologicaAula?> EvaPsiAulaPorAulaIdYUnidadId(int aulaId, int unidadId)
         {
             var evaPsiAula = await Table
+                .Include(epa => epa.EvaluacionPsicologica)
+                .ThenInclude(x => x.DimensionesPsicologicas)
                 .Where(epa => epa.AulaId == aulaId && epa.UnidadId == unidadId)
                 .FirstOrDefaultAsync();
 
@@ -38,5 +40,17 @@ namespace Repository.Repositories
             return evaluacionesAulaIds;
 
         }
+
+        public async Task<EvaluacionPsicologicaAula?> EvaPsiAulaIncluyendoListaEstudiante(int aulaId, int unidadId)
+        {
+            var listaEstudiantes = await Table
+                .Where(epa => epa.AulaId == aulaId && epa.UnidadId == unidadId
+                && epa.EvaluacionesPsicologicasEstudiante != null)
+                .Include(x => x.EvaluacionesPsicologicasEstudiante).ThenInclude(x => x.Estudiante).ThenInclude(x => x.Persona)
+                .FirstAsync();
+
+            return listaEstudiantes;
+        }
+
     }
 }

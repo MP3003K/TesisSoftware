@@ -1,4 +1,5 @@
-﻿using Application.Wrappers;
+﻿using Application.Exceptions;
+using Application.Wrappers;
 using AutoMapper;
 using Contracts.Repositories;
 using Domain.Entities;
@@ -19,43 +20,41 @@ namespace Application.Features.Estudiante.Queries
     }
     public class InformacionEstudianteHandler : IRequestHandler<InformacionEstudianteQuery, Response<EstudianteDto>>
     {
-        private readonly IEstudianteRepository _estudianteRepository;
-        private readonly IEstudianteAulaRepository _estudianteAulaRepository;
         private readonly IUnidadRepository _unidadRepository;
         private readonly IPersonaRepository _personaRepository;
         private readonly IEvaluacionPsicologicaAulaRepository _evaluacionPsicologicaAulaRepository;
         private readonly IEvaluacionPsicologicaEstudianteRepository _evaluacionPsicologicaEstudianteRepository;
         private readonly IMapper _mapper;
         public InformacionEstudianteHandler(
-            IEstudianteRepository estudianteRepository,
-            IEstudianteAulaRepository estudianteAulaRepository,
             IEvaluacionPsicologicaAulaRepository evaluacionPsicologicaAulaRepository,
             IEvaluacionPsicologicaEstudianteRepository evaluacionPsicologicaEstudianteRepository,
             IPersonaRepository personaRepository,
             IUnidadRepository unidadRepository,
             IMapper mapper)
         {
-            _estudianteRepository = estudianteRepository;
             _evaluacionPsicologicaAulaRepository = evaluacionPsicologicaAulaRepository;
             _evaluacionPsicologicaEstudianteRepository = evaluacionPsicologicaEstudianteRepository;
             _personaRepository = personaRepository;
-            _estudianteAulaRepository = estudianteAulaRepository;
             _unidadRepository = unidadRepository;
             _mapper = mapper;
         }
         public async Task<Response<EstudianteDto>> Handle(InformacionEstudianteQuery request, CancellationToken cancellationToken)
         {
-            var personaId = request.PersonaId;
-            var estudiante = await _personaRepository.ObtenerEstudiantePorPersonaId(personaId);
-            var aula = await _estudianteAulaRepository.AulaActualEstudiante(estudiante.Id);
-            var unidadActual = await _unidadRepository.UnidadActual();
-            // Encontrar evaluacion psicologica del Aula
-            var evaPsiAulaId = await _evaluacionPsicologicaAulaRepository.EvaPsiAulaIdPorAulaIdYUnidadId(aula.Id, unidadActual.Id);
-            // Encontrar evalucion psicologica del Estudiante
-            var evaPsiEstId = await _evaluacionPsicologicaEstudianteRepository.EvaPsiEstudianteIdPorEstudianteId((int)evaPsiAulaId, estudiante.Id);
+            var estudiante = await _personaRepository.ObtenerEstudiantePorPersonaId(request.PersonaId) ?? throw new EntidadNoEncontradaException(nameof(Estudiante));
+            var aula = estudiante?.EstudiantesAulas?[0].Aula ?? throw new EntidadNoEncontradaException(nameof(Aula));
+
+            var unidadActual = await _unidadRepository.UnidadActual() ?? throw new EntidadNoEncontradaException(nameof(Unidad));
 
             var estudianteDto = _mapper.Map<EstudianteDto>(estudiante);
-            estudianteDto.EvaPsiEstId = evaPsiEstId;
+
+            var evaPsiAula = await _evaluacionPsicologicaAulaRepository.EvaPsiAulaPorAulaIdYUnidadId(aula.Id, unidadActual.Id);
+            if(evaPsiAula != null && evaPsiAula.Id > 0)
+            {
+                estudianteDto.CantPregAResponder = evaPsiAula?.EvaluacionPsicologica?.CantPreguntas;
+                var evaPsiEstId = await _evaluacionPsicologicaEstudianteRepository.EvaPsiEstudianteIdPorEstudianteId(evaPsiAula!.Id, estudiante.Id);
+                if (evaPsiEstId > 0) estudianteDto.EvaPsiEstId = evaPsiEstId;
+            }
+
             estudianteDto.AulaDto = _mapper.Map<AulaDto>(aula);
             estudianteDto.UnidadDto = _mapper.Map<UnidadDto>(unidadActual);
 

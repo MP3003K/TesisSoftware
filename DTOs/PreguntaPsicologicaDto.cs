@@ -12,6 +12,6 @@ namespace DTOs
         public string Pregunta { get; set; } = string.Empty;
         public int IndicadorPsicologicoId { get; set; }
         public int NPregunta { get; set; }
-        public string? Respuesta { get; set; } = string.Empty;
+        public IList<RespuestaPsicologicaDto>? RespuestasPsicologicas { get; set; } 
     }
 }

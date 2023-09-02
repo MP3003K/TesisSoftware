@@ -20,8 +20,8 @@ namespace Application.Features.Unidad.Queries
         private readonly IMapper _mapper;
 
         public ListaUnidadesHandler(
-                                  IUnidadRepository unidadRepository,
-                                                                   IMapper mapper)
+            IUnidadRepository unidadRepository,
+            IMapper mapper)
         {
             _unidadRepository = unidadRepository;
             _mapper = mapper;

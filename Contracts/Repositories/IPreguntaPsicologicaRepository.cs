@@ -10,6 +10,6 @@ namespace Contracts.Repositories
 {
     public interface IPreguntaPsicologicaRepository: IRepository<PreguntaPsicologica>
     {
-        Task<IList<PreguntaPsicologica>> PreguntaPsicologicasPaginadas(int idEvaPsi, int pageSize, int pageNumber); 
+        Task<IList<PreguntaPsicologica>?> PreguntaPsicologicasPaginadas(int evaPsiId, int evaPsiEstId, int pageSize, int pageNumber); 
     }
 }
