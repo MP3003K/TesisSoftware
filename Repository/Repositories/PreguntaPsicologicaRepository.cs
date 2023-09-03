@@ -19,15 +19,12 @@ namespace Repository.Repositories
 
             var preguntaPsicologica = await Table
                 .Where(pp => pp.IndicadorPsicologico!.EscalaPsicologica!.DimensionPsicologica!.EvaluacionPsicologica!.Id == evaPsiId)
-                .Where(pp => pp.RespuestasPsicologicas!.Any())
                 .Include(pp => pp.RespuestasPsicologicas!.Where(r => r.EvaPsiEstId == evaPsiEstId))
                 .ThenInclude(r => r.EvaluacionPsicologicaEstudiante)
                 .OrderBy(pp => pp.NPregunta)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-
-
 
             return preguntaPsicologica;
         }
