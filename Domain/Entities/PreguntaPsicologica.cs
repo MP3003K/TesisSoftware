@@ -11,7 +11,7 @@ namespace Domain.Entities
     {
         public string Pregunta { get; private set; }
         public int IndicadorPsicologicoId { get; private set; }
-        public  int? NPregunta { get; private set; }
+        public  int NPregunta { get; private set; }
 
         // Relaciones con otras tablas
         public virtual IndicadorPsicologico? IndicadorPsicologico { get; private set; }
@@ -19,7 +19,7 @@ namespace Domain.Entities
 
 
         // Funciones
-        public PreguntaPsicologica(string pregunta, int indicadorPsicologicoId, int? nPregunta)
+        public PreguntaPsicologica(string pregunta, int indicadorPsicologicoId, int nPregunta)
         {
             Pregunta = pregunta;
             IndicadorPsicologicoId = indicadorPsicologicoId;
@@ -33,7 +33,7 @@ namespace Domain.Entities
         {
             IndicadorPsicologicoId = indicadorPsicologicoId;
         }
-        public void UpdateNPregunta(int? nPregunta)
+        public void UpdateNPregunta(int nPregunta)
         {
             NPregunta = nPregunta;
         }

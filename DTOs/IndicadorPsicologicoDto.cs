@@ -12,5 +12,6 @@ namespace DTOs
         public string NombreIndicador { get; set; } = string.Empty;
         public int EscalaPsicologicaId { get; set; }
         public double? PromedioIndicador { get; set; }
+        public IList<PreguntaPsicologicaDto>? PreguntasPsicologicas { get; set; }
     }
 }

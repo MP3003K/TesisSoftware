@@ -4,6 +4,7 @@ using AutoMapper;
 using Contracts.Repositories;
 using DTOs;
 using MediatR;
+using System.Text.RegularExpressions;
 
 namespace Application.Features.RespuestaPsicologica.Commands
 {
@@ -31,7 +32,14 @@ namespace Application.Features.RespuestaPsicologica.Commands
             AgregarRespuestaPsicologicaRequest request,
             CancellationToken cancellationToken)
         {
-            var respuesta = request.Respuesta;
+
+            // Validar Null
+            if (string.IsNullOrEmpty(request.Respuesta) || !Regex.IsMatch(request.Respuesta, @"^[0-9]+$"))
+                throw new AtributoNoPuedeSerNullException(nameof(request.Respuesta));
+            if (request.EvaPsiEstId is null or <= 0)
+                throw new AtributoNoPuedeSerNullException(nameof(request.EvaPsiEstId));
+            if (request.PreguntaPsicologicaId is null or <= 0)
+                throw new AtributoNoPuedeSerNullException(nameof(request.PreguntaPsicologicaId));
             
             // Verificar si la pregunta ya teniene respuesta
             var respuestaPsicologica = await _respuestaPsicologicaRepository
@@ -40,7 +48,7 @@ namespace Application.Features.RespuestaPsicologica.Commands
             if(respuestaPsicologica != null)
             {
                 // Actualizar Respuesta Psicologica
-                respuestaPsicologica.UpdateRespuesta(respuesta);
+                respuestaPsicologica.UpdateRespuesta(request.Respuesta);
                 await _respuestaPsicologicaRepository.UpdateAsync(respuestaPsicologica);
             }
             else

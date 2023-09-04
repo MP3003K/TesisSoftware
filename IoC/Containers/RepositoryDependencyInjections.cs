@@ -16,6 +16,7 @@ public static class RepositoryDependencyInjections
             .AddScoped<IEscuelaRepository, EscuelaRepository>()
             .AddScoped<IEstudianteRepository, EstudianteRepository>()
             .AddScoped<IEstudianteAulaRepository, EstudianteAulaRepository>()
+            .AddScoped<IEvaluacionPsicologicaRepository, EvaluacionPsicologicaRepository>()
             .AddScoped<IEvaluacionPsicologicaAulaRepository, EvaluacionPsicologicaAulaRepository>()
             .AddScoped<IEvaluacionPsicologicaEstudianteRepository, EvaluacionPsicologicaEstudianteRepository>()
             .AddScoped<IGradoRepository, GradoRepository>()
@@ -30,6 +31,7 @@ public static class RepositoryDependencyInjections
             .AddScoped<IRolUsuarioRepository, RolUsuarioRepository>()
             .AddScoped<IUnidadRepository, UnidadRepository>()
             .AddScoped<IUsuarioRepository, UsuarioRepository>();
+
         return services;
     }
 }
