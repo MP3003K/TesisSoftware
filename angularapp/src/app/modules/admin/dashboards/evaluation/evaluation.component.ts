@@ -38,7 +38,6 @@ export class EvaluationComponent {
         if (studentId) {
             this.evaluationService.getStudent(studentId).subscribe({
                 next: ({ data }) => {
-                    console.log(data);
                     const { evaPsiEstId } = data;
                     if (evaPsiEstId) {
                         this.evaPsiEstId = evaPsiEstId;
@@ -46,11 +45,11 @@ export class EvaluationComponent {
                             .getQuestionsApi(evaPsiEstId)
                             .subscribe({
                                 next: (res) => {
+                                    console.log(res);
                                     this.questions = res;
                                     this.updatePaginator();
                                 },
                                 error: (err) => {
-                                    console.log('hola', err);
                                     if (err.status == 400) {
                                         this.endedTest = true;
                                         this._snackbar.open(

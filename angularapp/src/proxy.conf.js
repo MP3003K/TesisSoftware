@@ -8,7 +8,8 @@ const PROXY_CONFIG = [
       "/weatherforecast",
       "/bank",
       "/usuario",
-      "/respuestasPsicologicas"
+      "/respuestasPsicologicas",
+      "/estudiante"
     ],
     target: "https://localhost:7040",
     secure: false
