@@ -39,14 +39,14 @@ export const appRoutes: Route[] = [
                 path: 'sign-in',
                 loadChildren: () =>
                     import('app/modules/auth/sign-in/sign-in.module').then(
-                        (m) => m.AuthSignInModule,
+                        (m) => m.AuthSignInModule
                     ),
             },
             {
                 path: 'sign-up',
                 loadChildren: () =>
                     import('app/modules/auth/sign-up/sign-up.module').then(
-                        (m) => m.AuthSignUpModule,
+                        (m) => m.AuthSignUpModule
                     ),
             },
         ],
@@ -63,7 +63,7 @@ export const appRoutes: Route[] = [
                 path: 'sign-out',
                 loadChildren: () =>
                     import('app/modules/auth/sign-out/sign-out.module').then(
-                        (m) => m.AuthSignOutModule,
+                        (m) => m.AuthSignOutModule
                     ),
             },
             {
@@ -124,14 +124,6 @@ export const appRoutes: Route[] = [
                                     ).then((m) => m.Error500Module),
                             },
                         ],
-                    },
-
-                    {
-                        path: 'settings',
-                        loadChildren: () =>
-                            import(
-                                'app/modules/admin/pages/settings/settings.module'
-                            ).then((m) => m.SettingsModule),
                     },
                 ],
             },
