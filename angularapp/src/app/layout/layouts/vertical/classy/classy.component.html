@@ -18,7 +18,6 @@
             </div>
             <!-- Components -->
             <div class="flex items-center ml-auto">
-                <notifications></notifications>
                 <user [showAvatar]="false"></user>
             </div>
         </div>
@@ -31,12 +30,16 @@
                     [src]="user.avatar"
                     alt="User avatar"
                 />
-                <img class="icon-size-24" *ngIf="!user.avatar" src="assets/images/avatars/icono-perfil.png">
-<!--                <mat-icon-->
-<!--                    class="icon-size-24"-->
-<!--                    *ngIf="!user.avatar"-->
-<!--                    [svgIcon]="'heroicons_solid:user-circle'"-->
-<!--                ></mat-icon>-->
+                <img
+                    class="icon-size-24"
+                    *ngIf="!user.avatar"
+                    src="assets/images/avatars/icono-perfil.png"
+                />
+                <!--                <mat-icon-->
+                <!--                    class="icon-size-24"-->
+                <!--                    *ngIf="!user.avatar"-->
+                <!--                    [svgIcon]="'heroicons_solid:user-circle'"-->
+                <!--                ></mat-icon>-->
             </div>
             <div class="flex flex-col items-center justify-center w-full mt-6">
                 <div

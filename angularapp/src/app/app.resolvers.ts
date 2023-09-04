@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
 import { NavigationService } from 'app/core/navigation/navigation.service';
-import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
 
 
 @Injectable({
@@ -14,8 +13,6 @@ export class InitialDataResolver {
      */
     constructor(
         private _navigationService: NavigationService,
-        private _notificationsService: NotificationsService,
-
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -35,8 +32,6 @@ export class InitialDataResolver {
         // Fork join multiple API endpoint calls to wait all of them to finish
         return forkJoin([
             this._navigationService.get(),
-            // this._notificationsService.getAll(),
-
         ]);
     }
 }

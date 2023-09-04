@@ -9,10 +9,9 @@ import { StudentService } from '../student.service';
 export class StudentReportComponent implements OnInit {
     scales!: any;
     student!: any;
-    dimension = 1;
-    unity = 1;
-    classroom = 1;
-    selectedDimension = 1;
+    studentId: number;
+    unityId = 1;
+    classroomId = 1;
     students!: any;
     constructor(
         private route: ActivatedRoute,
@@ -21,38 +20,46 @@ export class StudentReportComponent implements OnInit {
         private studentService: StudentService
     ) {}
     ngOnInit(): void {
-        const studentId = this.getStudentId();
-        if (studentId && typeof studentId === 'number') {
-            this.getStudent(studentId);
-            this.getStudentReport(studentId);
+        const { id, classroomId, unityId } = this.getStudentInfo();
+        this.studentId = parseInt(id);
+        this.unityId = unityId;
+        this.classroomId = classroomId;
+
+        if (this.studentId && typeof this.studentId === 'number') {
+            this.getStudent(this.studentId);
+            this.toggleChange(1);
         }
     }
 
     returnRoute() {
         this.router.navigate(['/dashboards/reports']);
     }
-    getStudentId() {
-        console.log(this.route.snapshot.queryParams);
-        console.log(this.route.snapshot.params);
-        return 1
+    getStudentInfo() {
+        const studentInfo = {
+            ...this.route.snapshot.queryParams,
+            ...this.route.snapshot.params,
+        };
+        return studentInfo;
     }
 
     getStudent(studentId: number) {
         this.evaluationService.getStudent(studentId).subscribe(({ data }) => {
             console.log(data);
+            this.student = this.studentService.students.find(
+                (e) => (e.id = this.studentId)
+            );
         });
     }
 
-    getStudentReport(index: number) {
+    toggleChange(dimensionId: number) {
         this.evaluationService
             .getStudentAnswers(
-                index,
-                this.unity,
-                this.classroom,
-                this.dimension
+                this.studentId,
+                dimensionId,
+                this.unityId,
+                this.classroomId
             )
             .subscribe(({ data }: { data: any }) => {
-                console.log(data);
                 this.scales = data.escalasPsicologicas.map(
                     ({
                         indicadoresPsicologicos,
@@ -75,9 +82,6 @@ export class StudentReportComponent implements OnInit {
                             })
                         ),
                     })
-                );
-                this.student = this.studentService.students.find(
-                    (e) => (e.id = index)
                 );
             });
     }

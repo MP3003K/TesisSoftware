@@ -11,6 +11,7 @@ import { StudentService } from '../student.service';
     styleUrls: ['./reports.component.scss'],
 })
 export class ClassroomReportComponent {
+    public dataInfo: string = 'Seleccione un formulario';
     public years: number[] = [];
     public selectedUnity!: number;
     public selectedDimension!: number;
@@ -29,7 +30,7 @@ export class ClassroomReportComponent {
         public dialog: MatDialog,
         private _snackbar: MatSnackBar,
         private router: Router,
-        private studentService: StudentService,
+        private studentService: StudentService
     ) {}
 
     ngOnInit(): void {
@@ -48,11 +49,13 @@ export class ClassroomReportComponent {
             this.selectedUnity
         ) {
             this.getStudents();
+            this.selectedScales = [];
+            this.dataInfo = 'Buscando Elementos';
             this.evaluationService
                 .getClasroomAnswers(
                     this.selectedClass,
                     this.selectedDimension,
-                    this.selectedUnity,
+                    this.selectedUnity
                 )
                 .subscribe({
                     next: (data: any[]) => {
@@ -75,12 +78,13 @@ export class ClassroomReportComponent {
                                     }) => ({
                                         name,
                                         mean,
-                                    }),
+                                    })
                                 ),
-                            }),
+                            })
                         );
                     },
                     error: ({ status }) => {
+                        this.dataInfo = 'Sin Elementos';
                         if (status === 400) {
                             this._snackbar.open('Sin elementos', '', {
                                 duration: 2000,
@@ -129,7 +133,7 @@ export class ClassroomReportComponent {
         console.log(index);
         this.router.navigate([`/dashboards/reports/${index}`], {
             queryParams: {
-                clasroomId: this.selectedClass,
+                classroomId: this.selectedClass,
                 unityId: this.selectedUnity,
             },
         });

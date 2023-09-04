@@ -3,7 +3,8 @@
         <mat-button-toggle-group
             name="fontStyle"
             aria-label="Font Style"
-            [(ngModel)]="selectedDimension"
+            (change)="toggleChange($event.value)"
+            [value]="1"
         >
             <mat-button-toggle [value]="1">HSE</mat-button-toggle>
             <mat-button-toggle [value]="2">FR</mat-button-toggle>
@@ -11,9 +12,7 @@
         <button mat-button (click)="returnRoute()">Regresar</button>
     </div>
     <mat-card-content>
-        <h1 mat-dialog-title>
-            {{ student?.name }} - {{ student?.dni }} | {{ student?.mean }}
-        </h1>
+        <h1>{{ student?.name }} - {{ student?.dni }} | {{ student?.mean }}</h1>
         <div>
             <details *ngFor="let scale of scales" class="px-4 bg-white shadow">
                 <summary
