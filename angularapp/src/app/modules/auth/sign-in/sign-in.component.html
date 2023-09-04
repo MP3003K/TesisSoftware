@@ -6,7 +6,7 @@
     >
         <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
             <!-- Logo -->
-            <div class="w-12">
+            <div class="w-72 mx-auto">
                 <img src="assets/images/logo/logo.png" />
             </div>
 
@@ -80,24 +80,6 @@
                     <mat-error> La Contraseña es requerida </mat-error>
                 </mat-form-field>
 
-                <!-- Actions -->
-                <div
-                    class="inline-flex items-center justify-between w-full mt-1.5"
-                >
-                    <mat-checkbox
-                        class="-ml-2"
-                        [color]="'primary'"
-                        [formControlName]="'rememberMe'"
-                    >
-                        Remember me
-                    </mat-checkbox>
-                    <a
-                        class="text-md font-medium text-primary-500 hover:underline"
-                        [routerLink]="['/forgot-password']"
-                        >Forgot password?
-                    </a>
-                </div>
-
                 <!-- Submit button -->
                 <button
                     class="fuse-mat-button-large w-full mt-6"
@@ -106,7 +88,7 @@
                     [disabled]="signInForm.disabled"
                     (click)="signIn()"
                 >
-                    <span *ngIf="!signInForm.disabled"> Sign in </span>
+                    <span *ngIf="!signInForm.disabled"> Iniciar sesión </span>
                     <mat-progress-spinner
                         *ngIf="signInForm.disabled"
                         [diameter]="24"
