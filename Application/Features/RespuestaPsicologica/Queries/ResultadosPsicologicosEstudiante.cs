@@ -47,7 +47,7 @@ namespace Application.Features.RespuestaPsicologica.Queries
          
             ValidarValoresDeAtributos(evaPsiEst, request);
 
-            var respuestasEscalasPsicologicas = await _evaluacionPsicologicaRepository.ResultadosPsicologicosEstudiante(evaPsiEst.Id, evaPsiEst!.EvaluacionAula!.EvaluacionPsicologica!.Id, request.DimensionId) ?? throw new EntidadNoPuedeSerEliminadaPorSusDependenciasException(nameof(EvaluacionPsicologicaEstudiante));
+            var respuestasEscalasPsicologicas = await _evaluacionPsicologicaRepository.ResultadosPsicologicosEstudiante(evaPsiEst.Id, evaPsiEst!.EvaluacionAula!.EvaluacionPsicologica!.Id, request.DimensionId) ?? throw new EntidadNoEncontradaException(nameof(EvaluacionPsicologicaEstudiante));
 
             var escalasPsicologicasDto = _mapper.Map<IList<EscalaPsicologicaDto>>(respuestasEscalasPsicologicas);
             var respuestasEstudianteDto = new RespuestasEstudianteDto{EscalasPsicologicas = escalasPsicologicasDto};

@@ -42,7 +42,9 @@ namespace Application.Features.RespuestaPsicologica.Queries
 
             ValidarValoresDeAtributos(evaPsiAula, request);
 
-            var respuestasEscalasPsicologicas = await _evaluacionPsicologicaRepository.ResultadosPsicologicosAula(evaPsiAula.Id, evaPsiAula.EvaluacionPsicologicaId, request.DimensionId);
+            var respuestasEscalasPsicologicas = await _evaluacionPsicologicaRepository.ResultadosPsicologicosAula(evaPsiAula.Id, evaPsiAula.EvaluacionPsicologicaId, request.DimensionId) ?? throw new EntidadNoEncontradaException(nameof(Domain.Entities.RespuestaPsicologica));
+            if (respuestasEscalasPsicologicas.Any() is false) throw new EntidadNoEncontradaException(nameof(Domain.Entities.RespuestaPsicologica));
+
             var escalasPsicologicasDto = _mapper.Map<IList<EscalaPsicologicaDto>>(respuestasEscalasPsicologicas);
 
             CalcularResultadosEvaluacionPsicologica(escalasPsicologicasDto);
