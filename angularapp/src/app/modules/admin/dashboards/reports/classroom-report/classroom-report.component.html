@@ -139,8 +139,14 @@
                         >
                             <span>{{ scale.name }}</span>
                             <span
-                                class="text-xs bg-green-500 text-white px-4 py-2 rounded"
-                                >{{ scale.mean }}</span
+                                [ngClass]="{
+                                'bg-[#b6d7a8]':scale.mean >= 1 && scale.mean <= 2, 
+                                'bg-[#70ad47]':scale.mean >= 2.1 && scale.mean <= 3.9, 
+                                'bg-[#548135]':scale.mean >= 4 && scale.mean <= 5, 
+
+                            }"
+                                class="text-xs text-white px-4 py-2 rounded"
+                                >{{ scale.mean | number : ".2-2" }}</span
                             >
                         </summary>
                         <div class="py-2">
@@ -151,9 +157,15 @@
                                 >
                                     <span> {{ indicator.name }}</span>
                                     <div
-                                        class="bg-green-600 px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center"
+                                        [ngClass]="{
+                                        'bg-[#b6d7a8]':indicator.mean >= 1 && indicator.mean <= 2, 
+                                        'bg-[#70ad47]':indicator.mean >= 2.1 && indicator.mean <= 3.9, 
+                                        'bg-[#548135]':indicator.mean >= 4 && indicator.mean <= 5, 
+
+                                    }"
+                                        class="px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center"
                                     >
-                                        {{ indicator.mean }}
+                                        {{ indicator.mean | number : ".2-2" }}
                                     </div>
                                 </li>
                             </ul>
@@ -182,9 +194,15 @@
                                 <td>{{ student.dni }}</td>
                                 <td>
                                     <div
-                                        class="w-6 h-6 bg-green-500 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center"
+                                        [ngClass]="{
+                                        'bg-[#b6d7a8]':student.mean >= 1 && student.mean <= 2, 
+                                        'bg-[#70ad47]':student.mean >= 2.1 && student.mean <= 3.9, 
+                                        'bg-[#548135]':student.mean >= 4 && student.mean <= 5, 
+
+                                    }"
+                                        class="w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center"
                                     >
-                                        {{ student.mean }}
+                                        {{ student.mean | number : ".2-2" }}
                                     </div>
                                 </td>
                                 <td class="text-center">

@@ -66,23 +66,20 @@ export class EvaluationService {
             .get<any>(`${baseURL}/preguntasPsicologicas/${studentId}/1/66`)
             .pipe(
                 map(({ data }: { data: any[] }) => {
-                    return data.map(
-                        (
-                            {
-                                pregunta: name,
-                                respuestasPsicologicas: {
-                                    0: { respuesta: answer },
-                                },
-                                id,
-                            },
-                            index
-                        ) => ({
+                    const parsedData = data.map((item, index) => {
+                        const {
+                            pregunta: name,
+                            respuestasPsicologicas: { 0: answer },
+                            id,
+                        } = item;
+                        return {
                             id,
                             index: index + 1,
                             name,
-                            answer,
-                        })
-                    );
+                            answer: answer?.respuesta ?? '',
+                        };
+                    });
+                    return parsedData;
                 })
             );
     }

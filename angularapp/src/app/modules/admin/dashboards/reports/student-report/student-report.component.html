@@ -22,7 +22,7 @@
                     <span>{{ scale.name }}</span>
                     <span
                         class="text-xs bg-green-500 text-white px-4 py-2 rounded"
-                        >{{ scale.mean }}</span
+                        >{{ scale.mean | number : ".2-2" }}</span
                     >
                 </summary>
                 <div class="py-2">
@@ -35,7 +35,7 @@
                             <div
                                 class="bg-green-600 px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center"
                             >
-                                {{ indicator.mean }}
+                                {{ indicator.mean | number : ".2-2" }}
                             </div>
                         </li>
                     </ul>

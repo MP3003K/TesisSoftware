@@ -18,7 +18,7 @@ export class StudentReportComponent implements OnInit {
         private route: ActivatedRoute,
         private evaluationService: EvaluationService,
         private router: Router,
-        private studentService: StudentService,
+        private studentService: StudentService
     ) {}
     ngOnInit(): void {
         const studentId = this.getStudentId();
@@ -32,7 +32,9 @@ export class StudentReportComponent implements OnInit {
         this.router.navigate(['/dashboards/reports']);
     }
     getStudentId() {
-        return parseInt(this.route.snapshot.paramMap.get('id'));
+        console.log(this.route.snapshot.queryParams);
+        console.log(this.route.snapshot.params);
+        return 1
     }
 
     getStudent(studentId: number) {
@@ -47,7 +49,7 @@ export class StudentReportComponent implements OnInit {
                 index,
                 this.unity,
                 this.classroom,
-                this.dimension,
+                this.dimension
             )
             .subscribe(({ data }: { data: any }) => {
                 console.log(data);
@@ -70,12 +72,12 @@ export class StudentReportComponent implements OnInit {
                             }) => ({
                                 name,
                                 mean,
-                            }),
+                            })
                         ),
-                    }),
+                    })
                 );
                 this.student = this.studentService.students.find(
-                    (e) => (e.id = index),
+                    (e) => (e.id = index)
                 );
             });
     }
