@@ -38,8 +38,10 @@ namespace Repository.Repositories
                             .Select(resp => resp!.EvaluacionPsicologicaEstudiante!)
                             .Any(resp => resp.EvaluacionAulaId== evaPsiAulaId))
                         .ToList();
-
-            return escalasPsicologicas;
+            if(escalasPsicologicas?.FirstOrDefault()?.IndicadoresPsicologicos?.FirstOrDefault()?.PreguntasPsicologicas?.FirstOrDefault()?.RespuestasPsicologicas?.FirstOrDefault()?.EvaluacionPsicologicaEstudiante?.Estado?.Any() is false)
+                return null;
+            else
+                return escalasPsicologicas;;
         }
 
         public async Task<IList<EscalaPsicologica>?> ResultadosPsicologicosEstudiante(int evaPsiEstId, int evaPsiId, int dimensionId)
@@ -49,11 +51,13 @@ namespace Repository.Repositories
                 .ThenInclude(x => x!.EscalasPsicologicas!)
                 .ThenInclude(x => x!.IndicadoresPsicologicos!)
                 .ThenInclude(x => x!.PreguntasPsicologicas!)
-                .ThenInclude(x => x!.RespuestasPsicologicas!.Where(r => r.EvaPsiEstId == evaPsiEstId))
+                .ThenInclude(x => x!.RespuestasPsicologicas!.Where(r => r.EvaPsiEstId == evaPsiEstId && r.EvaluacionPsicologicaEstudiante != null && r.EvaluacionPsicologicaEstudiante.Estado == "F"))
                 .Where(e => e.Id == evaPsiId && e!.DimensionesPsicologicas!.Any(d => d.Id == dimensionId))
                 .ToListAsync();
-
-            return respuestasEscalasPsicologicas?.FirstOrDefault()?.DimensionesPsicologicas?.FirstOrDefault()?.EscalasPsicologicas;
+            if (respuestasEscalasPsicologicas?.FirstOrDefault()?.DimensionesPsicologicas?.FirstOrDefault()?.EscalasPsicologicas?.FirstOrDefault()?.IndicadoresPsicologicos?.FirstOrDefault()?.PreguntasPsicologicas?.FirstOrDefault()?.RespuestasPsicologicas?.Any() is false)
+                return null;
+            else
+                return respuestasEscalasPsicologicas?.FirstOrDefault()?.DimensionesPsicologicas?.FirstOrDefault()?.EscalasPsicologicas;
         }
     }
 }

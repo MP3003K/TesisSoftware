@@ -50,6 +50,8 @@ namespace Application.Features.PreguntaPsicologica.Queries
             
             var preguntasPsicologicas = await _preguntaPsicologicaRepository.PreguntaPsicologicasPaginadas(evaPsiAula.EvaluacionPsicologicaId, request.EvaPsiEstId, request.PageSize, request.PageNumber) ?? throw new EntidadNoEncontradaException(nameof(Domain.Entities.PreguntaPsicologica));
       
+            if(!preguntasPsicologicas.Any()) throw new EntidadNoEncontradaException(nameof(Domain.Entities.PreguntaPsicologica));
+
             var preguntasPsicologicasDto = _mapper.Map<IList<PreguntaPsicologicaDto>>(preguntasPsicologicas);         
            
             return new Response<IList<PreguntaPsicologicaDto>>(preguntasPsicologicasDto);
