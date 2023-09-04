@@ -23,9 +23,14 @@ builder.Services.AddConfigurations(builder.Configuration);
 
 //Start IoC Dependencies Injections
 builder.Services.AddInjections();
-
+builder.WebHost.ConfigureKestrel((context, options) =>
+{
+    if (context.HostingEnvironment.IsProduction())
+    {
+        options.ListenAnyIP(5000);
+    }
+});
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -6,12 +6,12 @@
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
-        "proxied":"ng serve --proxy-conf src/proxy.conf.js",
+        "proxied": "ng serve --proxy-conf src/proxy.conf.js",
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
         "test": "ng test",
         "pretty": "prettier --write \"./**/*.{js,jsx,ts,tsx,json}\"",
-        "start:prod":"ng serve --port 80 --host 0.0.0.0 --disable-host-check"
+        "start:prod": "ng serve --port 80 --host 0.0.0.0 --disable-host-check"
     },
     "dependencies": {
         "@angular-devkit/build-angular": "^16.2.0",
