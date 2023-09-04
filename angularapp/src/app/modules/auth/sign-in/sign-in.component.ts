@@ -62,8 +62,8 @@ export class AuthSignInComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         // Create the form
         this.signInForm = this._formBuilder.group({
-            email: ['41541541', [Validators.required]],
-            password: ['41541541', Validators.required],
+            email: ['', [Validators.required]],
+            password: ['', Validators.required],
             rememberMe: [''],
         });
     }
