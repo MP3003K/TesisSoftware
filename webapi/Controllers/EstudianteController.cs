@@ -28,14 +28,15 @@ namespace webapi.Controllers
         /// <summary>
         /// Lista de los estudiantes que participaron en una Evalucion Psicologica
         /// </summary>
-        [HttpGet("{aulaId:int}/{unidadId:int}")]
+        [HttpGet("{aulaId:int}/{unidadId:int}/{dimensionId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<IList<EstudianteDto>>>> ListaEstudiantesEvaPsiAula(int aulaId, int unidadId)
+        public async Task<ActionResult<Response<IList<EstudianteDto>>>> ListaEstudiantesEvaPsiAula(int aulaId, int unidadId, int dimensionId)
         {
             return Ok(await Mediator.Send(new ListaEstudiantesDeUnAulaQuery()
             {
                 AulaId = aulaId,
                 UnidadId = unidadId,
+                DimensionId = dimensionId
             }));
         }
     }

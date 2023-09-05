@@ -27,17 +27,14 @@ namespace Application.Features.RespuestaPsicologica.Queries
     {
         private readonly IEvaluacionPsicologicaRepository _evaluacionPsicologicaRepository;
         private readonly IEvaluacionPsicologicaEstudianteRepository _evaluacionPsicologicaEstudianteRepository;
-        private readonly IEvaluacionPsicologicaAulaRepository _evaluacionPsicologicaAulaRepository;
         private readonly IMapper _mapper;
         
         public ResultadosPsicologicosEstudiantesHandler(
             IEvaluacionPsicologicaRepository evaluacionPsicologicaRepository,
-            IEvaluacionPsicologicaAulaRepository evaluacionPsicologicaAulaRepository,
             IEvaluacionPsicologicaEstudianteRepository evaluacionPsicologicaEstudianteRepository,
             IMapper mapper)
         {
             _evaluacionPsicologicaRepository = evaluacionPsicologicaRepository;
-            _evaluacionPsicologicaAulaRepository = evaluacionPsicologicaAulaRepository;
             _evaluacionPsicologicaEstudianteRepository = evaluacionPsicologicaEstudianteRepository;
             _mapper = mapper;
         }
