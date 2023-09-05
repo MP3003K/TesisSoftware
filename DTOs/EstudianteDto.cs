@@ -16,6 +16,6 @@ namespace DTOs
         public AulaDto? AulaDto { get; set; }
         public UnidadDto? UnidadDto { get; set; }
         public PersonaDto? Persona { get; set; }
-        public int? PromedioPsicologicoEstudiante { get; set; }
+        public double? PromedioPsicologicoEstudiante { get; set; }
     }
 }

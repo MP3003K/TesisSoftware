@@ -47,6 +47,7 @@ namespace Repository.Repositories
                 .Where(epa => epa.AulaId == aulaId && epa.UnidadId == unidadId
                 && epa.EvaluacionesPsicologicasEstudiante != null)
                 .Include(x => x.EvaluacionesPsicologicasEstudiante).ThenInclude(x => x.Estudiante).ThenInclude(x => x.Persona)
+                .Include(x => x.EvaluacionPsicologica)
                 .FirstAsync();
 
             return listaEstudiantes;
