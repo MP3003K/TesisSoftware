@@ -1,18 +1,80 @@
-<mat-card class="w-full flex flex-col gap-4">
-    <div class="p-2 flex items-center justify-between">
-        <mat-button-toggle-group
-            name="fontStyle"
-            aria-label="Font Style"
-            (change)="toggleChange($event.value)"
-            [value]="1"
-        >
-            <mat-button-toggle [value]="1">HSE</mat-button-toggle>
-            <mat-button-toggle [value]="2">FR</mat-button-toggle>
-        </mat-button-toggle-group>
-        <button mat-button (click)="returnRoute()">Regresar</button>
+<div
+    class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
+    cdkScrollable
+>
+    <!-- Header -->
+    <div
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
+    >
+        <div class="flex-1 min-w-0">
+            <!-- Breadcrumbs -->
+            <div>
+                <div class="hidden sm:flex flex-wrap items-center font-medium">
+                    <div>
+                        <a class="whitespace-nowrap text-primary-500"
+                            >Projects</a
+                        >
+                    </div>
+                    <div class="flex items-center ml-1 whitespace-nowrap">
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-right'"
+                        ></mat-icon>
+                        <a class="ml-1 text-primary-500">Weekend Project</a>
+                    </div>
+                    <div class="flex items-center ml-1 whitespace-nowrap">
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-right'"
+                        ></mat-icon>
+                        <span class="ml-1 text-secondary">Overview</span>
+                    </div>
+                </div>
+                <div class="flex sm:hidden">
+                    <a
+                        class="inline-flex items-center -ml-1.5 text-secondary font-medium"
+                        [routerLink]="'./..'"
+                    >
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-left'"
+                        ></mat-icon>
+                        <span class="ml-1">Back</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Title -->
+            <div class="mt-2">
+                <h2
+                    class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
+                >
+                    {{ student?.name }}
+                </h2>
+            </div>
+        </div>
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+            <button mat-stroked-button>
+                <mat-icon
+                    class="icon-size-5 mr-2"
+                    [svgIcon]="'heroicons_solid:pencil-alt'"
+                ></mat-icon>
+                Edit
+            </button>
+            <button class="ml-3" mat-flat-button [color]="'accent'">
+                <mat-icon
+                    class="icon-size-5 mr-2"
+                    [svgIcon]="'heroicons_solid:link'"
+                ></mat-icon>
+                View
+            </button>
+        </div>
     </div>
-    <mat-card-content>
-        <h1>{{ student?.name }} - {{ student?.dni }} | {{ student?.mean }}</h1>
+
+    <!-- Main -->
+    <div class="flex-auto p-6 sm:p-10">
+        <h2>{{ student?.dni }}</h2>
+        <h3>{{ student?.mean }}</h3>
         <div>
             <details *ngFor="let scale of scales" class="px-4 bg-white shadow">
                 <summary
@@ -20,7 +82,13 @@
                 >
                     <span>{{ scale.name }}</span>
                     <span
-                        class="text-xs bg-green-500 text-white px-4 py-2 rounded"
+                        [ngClass]="{
+                        'bg-[#b6d7a8]':scale.mean >= 1 && scale.mean <= 2, 
+                        'bg-[#70ad47]':scale.mean >= 2.1 && scale.mean <= 3.9, 
+                        'bg-[#548135]':scale.mean >= 4 && scale.mean <= 5, 
+
+                    }"
+                        class="text-xs text-white px-4 py-2 rounded"
                         >{{ scale.mean | number : ".2-2" }}</span
                     >
                 </summary>
@@ -32,7 +100,13 @@
                         >
                             <span> {{ indicator.name }}</span>
                             <div
-                                class="bg-green-600 px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center"
+                                [ngClass]="{
+                                'bg-[#b6d7a8]':scale.mean >= 1 && scale.mean <= 2, 
+                                'bg-[#70ad47]':scale.mean >= 2.1 && scale.mean <= 3.9, 
+                                'bg-[#548135]':scale.mean >= 4 && scale.mean <= 5, 
+
+                            }"
+                                class="px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center"
                             >
                                 {{ indicator.mean | number : ".2-2" }}
                             </div>
@@ -41,5 +115,18 @@
                 </div>
             </details>
         </div>
-    </mat-card-content>
-</mat-card>
+    </div>
+</div>
+
+<!-- <div class="p-2 flex items-center justify-between">
+    <mat-button-toggle-group
+        name="fontStyle"
+        aria-label="Font Style"
+        (change)="toggleChange($event.value)"
+        [value]="1"
+    >
+        <mat-button-toggle [value]="1">HSE</mat-button-toggle>
+        <mat-button-toggle [value]="2">FR</mat-button-toggle>
+    </mat-button-toggle-group>
+    <button mat-button (click)="returnRoute()">Regresar</button>
+</div> -->

@@ -55,9 +55,9 @@ export class StudentReportComponent implements OnInit {
         this.evaluationService
             .getStudentAnswers(
                 this.studentId,
-                dimensionId,
                 this.unityId,
-                this.classroomId
+                this.classroomId,
+                dimensionId,
             )
             .subscribe(({ data }: { data: any }) => {
                 this.scales = data.escalasPsicologicas.map(
