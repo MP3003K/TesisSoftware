@@ -35,6 +35,7 @@ export class StudentService {
                             name: `${nombres} ${apellidoPaterno} ${apellidoMaterno}`,
                         };
                     });
+                    
                     this.students = students;
                     return students;
                 })
