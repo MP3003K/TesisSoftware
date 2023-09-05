@@ -12,7 +12,7 @@
                 <div class="hidden sm:flex flex-wrap items-center font-medium">
                     <div>
                         <a class="whitespace-nowrap text-primary-500"
-                            >Dashboard</a
+                        >Dashboard</a
                         >
                     </div>
 
@@ -22,7 +22,7 @@
                             [svgIcon]="'heroicons_solid:chevron-right'"
                         ></mat-icon>
                         <span class="ml-1 text-secondary"
-                            >Reporte Evaluación Psicológica</span
+                        >Reporte Evaluación Psicológica</span
                         >
                     </div>
                 </div>
@@ -104,10 +104,10 @@
                             [(ngModel)]="selectedClass"
                         >
                             <mat-option
-                                *ngFor="let class of filterClass()"
-                                [value]="class.id"
+                                *ngFor="let classroom of filterClass()"
+                                [value]="classroom.id"
                             >
-                                {{ class.secccion }}
+                                {{ classroom.secccion }}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -116,6 +116,7 @@
                     <mat-button-toggle-group
                         name="fontStyle"
                         aria-label="Font Style"
+                        (change)="onToggleChange()"
                         [(ngModel)]="selectedDimension"
                     >
                         <mat-button-toggle [value]="1">HSE</mat-button-toggle>
@@ -128,10 +129,10 @@
                 </div>
             </div>
 
-            <div *ngIf="selectedScales.length > 0" class="flex flex-col gap-4">
+            <div *ngIf="scales.length > 0" class="flex flex-col gap-4">
                 <div class="scale_container flex flex-col divide-y">
                     <details
-                        *ngFor="let scale of selectedScales"
+                        *ngFor="let scale of scales"
                         class="px-4 bg-white shadow"
                     >
                         <summary
@@ -139,14 +140,8 @@
                         >
                             <span>{{ scale.name }}</span>
                             <span
-                                [ngClass]="{
-                                'bg-[#b6d7a8]':scale.mean >= 1 && scale.mean <= 2, 
-                                'bg-[#70ad47]':scale.mean >= 2.1 && scale.mean <= 3.9, 
-                                'bg-[#548135]':scale.mean >= 4 && scale.mean <= 5, 
-
-                            }"
-                                class="text-xs text-white px-4 py-2 rounded"
-                                >{{ scale.mean | number : ".2-2" }}</span
+                                [className]="getMeanClasses(scale.mean) + ' text-xs text-white px-4 py-2 rounded'"
+                            >{{ scale.mean | number : ".2-2" }}</span
                             >
                         </summary>
                         <div class="py-2">
@@ -158,9 +153,9 @@
                                     <span> {{ indicator.name }}</span>
                                     <div
                                         [ngClass]="{
-                                        'bg-[#b6d7a8]':indicator.mean >= 1 && indicator.mean <= 2, 
-                                        'bg-[#70ad47]':indicator.mean >= 2.1 && indicator.mean <= 3.9, 
-                                        'bg-[#548135]':indicator.mean >= 4 && indicator.mean <= 5, 
+                                        'bg-[#b6d7a8]':indicator.mean >= 1 && indicator.mean <= 2,
+                                        'bg-[#70ad47]':indicator.mean >= 2.1 && indicator.mean <= 3.9,
+                                        'bg-[#548135]':indicator.mean >= 4 && indicator.mean <= 5,
 
                                     }"
                                         class="px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center"
@@ -175,51 +170,46 @@
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table>
                         <thead>
-                            <tr>
-                                <th scope="col">Nombre Completo</th>
-                                <th scope="col">Documento de identidad</th>
-                                <th scope="col">Indicador</th>
+                        <tr>
+                            <th scope="col">Nombre Completo</th>
+                            <th scope="col">Documento de identidad</th>
+                            <th scope="col">Indicador</th>
 
-                                <th scope="col" class="text-center">Opcion</th>
-                            </tr>
+                            <th scope="col" class="text-center">Opcion</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            <tr
-                                *ngFor="
+                        <tr
+                            *ngFor="
                                     let student of studentList();
                                     let i = index
                                 "
-                            >
-                                <th scope="row">{{ student.name }}</th>
-                                <td>{{ student.dni }}</td>
-                                <td>
-                                    <div
-                                        [ngClass]="{
-                                        'bg-[#b6d7a8]':student.mean >= 1 && student.mean <= 2, 
-                                        'bg-[#70ad47]':student.mean >= 2.1 && student.mean <= 3.9, 
-                                        'bg-[#548135]':student.mean >= 4 && student.mean <= 5, 
+                        >
+                            <th scope="row">{{ student.name }}</th>
+                            <td>{{ student.dni }}</td>
+                            <td>
+                                <div
+                                    [className]="getMeanClasses(student.mean)+' w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center'"
 
-                                    }"
-                                        class="w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center"
-                                    >
-                                        {{ student.mean | number : ".2-2" }}
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <button
-                                        mat-icon-button
-                                        (click)="redirectStudent(student.id)"
-                                    >
-                                        <mat-icon>visibility</mat-icon>
-                                    </button>
-                                </td>
-                            </tr>
+                                >
+                                    {{ student.mean | number : ".2-2" }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <button
+                                    mat-icon-button
+                                    (click)="redirectStudent(student.id)"
+                                >
+                                    <mat-icon>visibility</mat-icon>
+                                </button>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
             <div
-                *ngIf="selectedScales.length == 0"
+                *ngIf="scales.length == 0"
                 class="text-center py-4 font-light text-gray-300"
             >
                 {{dataInfo}}

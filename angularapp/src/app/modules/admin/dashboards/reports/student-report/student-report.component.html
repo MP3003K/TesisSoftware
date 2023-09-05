@@ -12,7 +12,7 @@
                 <div class="hidden sm:flex flex-wrap items-center font-medium">
                     <div>
                         <a class="whitespace-nowrap text-primary-500"
-                            >Projects</a
+                        >Projects</a
                         >
                     </div>
                     <div class="flex items-center ml-1 whitespace-nowrap">
@@ -82,14 +82,8 @@
                 >
                     <span>{{ scale.name }}</span>
                     <span
-                        [ngClass]="{
-                        'bg-[#b6d7a8]':scale.mean >= 1 && scale.mean <= 2, 
-                        'bg-[#70ad47]':scale.mean >= 2.1 && scale.mean <= 3.9, 
-                        'bg-[#548135]':scale.mean >= 4 && scale.mean <= 5, 
-
-                    }"
-                        class="text-xs text-white px-4 py-2 rounded"
-                        >{{ scale.mean | number : ".2-2" }}</span
+                        [className]="getMeanClasses(scale.mean) + ' text-xs text-white px-4 py-2 rounded'"
+                    >{{ scale.mean | number : ".2-2" }}</span
                     >
                 </summary>
                 <div class="py-2">
@@ -101,9 +95,9 @@
                             <span> {{ indicator.name }}</span>
                             <div
                                 [ngClass]="{
-                                'bg-[#b6d7a8]':scale.mean >= 1 && scale.mean <= 2, 
-                                'bg-[#70ad47]':scale.mean >= 2.1 && scale.mean <= 3.9, 
-                                'bg-[#548135]':scale.mean >= 4 && scale.mean <= 5, 
+                                'bg-[#b6d7a8]':scale.mean >= 1 && scale.mean <= 2,
+                                'bg-[#70ad47]':scale.mean >= 2.1 && scale.mean <= 3.9,
+                                'bg-[#548135]':scale.mean >= 4 && scale.mean <= 5,
 
                             }"
                                 class="px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center"
