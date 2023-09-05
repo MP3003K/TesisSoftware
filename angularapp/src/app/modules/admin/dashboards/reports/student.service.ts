@@ -8,9 +8,12 @@ import { baseURL } from 'environment';
 export class StudentService {
     students: any[] = [];
     constructor(private http: HttpClient) {}
-    getStudents(classroomId: number, unityId: number) {
+    getStudents(classroomId: number, unityId: number, dimensionId: number) {
+        this.students = [];
         return this.http
-            .get<any>(`${baseURL}/estudiante/${classroomId}/${unityId}`)
+            .get<any>(
+                `${baseURL}/estudiante/${classroomId}/${unityId}/${dimensionId}`
+            )
             .pipe(
                 map(({ data }) => {
                     const students = data.map((student: any) => {

@@ -119,7 +119,11 @@ export class ClassroomReportComponent {
 
     getStudents() {
         this.studentService
-            .getStudents(this.selectedClass, this.selectedUnity)
+            .getStudents(
+                this.selectedClass,
+                this.selectedUnity,
+                this.selectedDimension
+            )
             .subscribe({
                 complete: () => {
                     console.log('students completed');

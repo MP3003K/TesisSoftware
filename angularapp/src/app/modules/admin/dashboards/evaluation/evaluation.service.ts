@@ -88,11 +88,6 @@ export class EvaluationService {
         const { id } = this.authService.localUser;
         return this.http.get<any>(`${baseURL}/estudiante/${studentId}`);
     }
-    getStudents(classroomId: number, unityId: number) {
-        return this.http.get<any>(
-            `${baseURL}/estudiante/${classroomId}/${unityId}`
-        );
-    }
 
     updateQuestion(answer: string, answerId: number, evaluationId: number) {
         return this.http.post<any>(`${baseURL}/respuestasPsicologicas`, {
