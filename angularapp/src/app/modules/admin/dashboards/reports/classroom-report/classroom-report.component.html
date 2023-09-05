@@ -12,7 +12,7 @@
                 <div class="hidden sm:flex flex-wrap items-center font-medium">
                     <div>
                         <a class="whitespace-nowrap text-primary-500"
-                        >Dashboard</a
+                            >Dashboard</a
                         >
                     </div>
 
@@ -22,7 +22,7 @@
                             [svgIcon]="'heroicons_solid:chevron-right'"
                         ></mat-icon>
                         <span class="ml-1 text-secondary"
-                        >Reporte Evaluación Psicológica</span
+                            >Reporte Evaluación Psicológica</span
                         >
                     </div>
                 </div>
@@ -140,8 +140,11 @@
                         >
                             <span>{{ scale.name }}</span>
                             <span
-                                [className]="getMeanClasses(scale.mean) + ' text-xs text-white px-4 py-2 rounded'"
-                            >{{ scale.mean | number : ".2-2" }}</span
+                                [className]="
+                                    getMeanClasses(scale.mean) +
+                                    ' text-xs text-white px-4 py-2 rounded'
+                                "
+                                >{{ scale.mean | number : ".2-2" }}</span
                             >
                         </summary>
                         <div class="py-2">
@@ -152,13 +155,11 @@
                                 >
                                     <span> {{ indicator.name }}</span>
                                     <div
-                                        [ngClass]="{
-                                        'bg-[#b6d7a8]':indicator.mean >= 1 && indicator.mean <= 2,
-                                        'bg-[#70ad47]':indicator.mean >= 2.1 && indicator.mean <= 3.9,
-                                        'bg-[#548135]':indicator.mean >= 4 && indicator.mean <= 5,
-
-                                    }"
-                                        class="px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center"
+                                        [className]="
+                                            getMeanClasses(indicator.mean) +
+                                            ' px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center'
+                                        "
+                                        class=""
                                     >
                                         {{ indicator.mean | number : ".2-2" }}
                                     </div>
@@ -168,42 +169,49 @@
                     </details>
                 </div>
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <table>
+                    <table *ngIf="studentList().length > 0">
                         <thead>
-                        <tr>
-                            <th scope="col">Nombre Completo</th>
-                            <th scope="col">Documento de identidad</th>
-                            <th scope="col">Indicador</th>
+                            <tr>
+                                <th scope="col">Nombre Completo</th>
+                                <th scope="col">Documento de identidad</th>
+                                <th scope="col">Indicador</th>
 
-                            <th scope="col" class="text-center">Opcion</th>
-                        </tr>
+                                <th scope="col" class="text-center">Opcion</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr
-                            *ngFor="
+                            <tr
+                                *ngFor="
                                     let student of studentList();
                                     let i = index
                                 "
-                        >
-                            <th scope="row">{{ student.name }}</th>
-                            <td>{{ student.dni }}</td>
-                            <td>
-                                <div
-                                    [className]="getMeanClasses(student.mean)+' w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center'"
-
-                                >
-                                    {{ student.mean | number : ".2-2" }}
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <button
-                                    mat-icon-button
-                                    (click)="redirectStudent(student.id)"
-                                >
-                                    <mat-icon>visibility</mat-icon>
-                                </button>
-                            </td>
-                        </tr>
+                            >
+                                <th scope="row">{{ student.name }}</th>
+                                <td>{{ student.dni }}</td>
+                                <td>
+                                    <div *ngIf="student.mean == 0">
+                                        No realizado
+                                    </div>
+                                    <div
+                                        *ngIf="student.mean > 0"
+                                        [className]="
+                                            getMeanClasses(student.mean) +
+                                            ' w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center'
+                                        "
+                                    >
+                                        {{ student.mean | number : ".2-2" }}
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <button
+                                        [disabled]="student.mean == 0"
+                                        mat-icon-button
+                                        (click)="redirectStudent(student.id)"
+                                    >
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -212,7 +220,7 @@
                 *ngIf="scales.length == 0"
                 class="text-center py-4 font-light text-gray-300"
             >
-                {{dataInfo}}
+                {{ dataInfo }}
             </div>
         </div>
     </div>
