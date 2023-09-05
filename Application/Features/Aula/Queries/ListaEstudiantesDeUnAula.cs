@@ -70,7 +70,10 @@ namespace Application.Features.Aula.Queries
         {
             var evaPsiEst = await _evaluacionPsicologicaEstudianteRepository.EvaPsiEstudiante(estudianteId, unidadId, aulaId) ?? throw new EntidadNoEncontradaException(nameof(EvaluacionPsicologicaEstudiante));
 
-            var respuestasEscalasPsicologicas = await _evaluacionPsicologicaRepository.ResultadosPsicologicosEstudiante(evaPsiEst.Id, evaPsiEst!.EvaluacionAula!.EvaluacionPsicologica!.Id, dimensionId) ?? throw new EntidadNoEncontradaException(nameof(RespuestasEstudianteDto));
+            var respuestasEscalasPsicologicas = await _evaluacionPsicologicaRepository.ResultadosPsicologicosEstudiante(evaPsiEst.Id, evaPsiEst!.EvaluacionAula!.EvaluacionPsicologica!.Id, dimensionId);
+
+            if(respuestasEscalasPsicologicas is null || respuestasEscalasPsicologicas.Any() is false)
+                return 0.0;
 
             var escalasPsicologicasDto = _mapper.Map<IList<EscalaPsicologicaDto>>(respuestasEscalasPsicologicas);
             var respuestasEstudianteDto = new RespuestasEstudianteDto { EscalasPsicologicas = escalasPsicologicasDto };
