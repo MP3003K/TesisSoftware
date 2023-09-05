@@ -35,7 +35,7 @@ namespace Repository.Repositories
                         .Where(esc => esc!.IndicadoresPsicologicos!
                             .SelectMany(ind => ind!.PreguntasPsicologicas!)
                             .SelectMany(preg => preg!.RespuestasPsicologicas!)
-                            .Select(resp => resp!.EvaluacionPsicologicaEstudiante!)
+                            .Select(resp => resp!.EvaluacionPsicologicaEstudiante!).Where(eva => eva.Estado == "F")
                             .Any(resp => resp.EvaluacionAulaId== evaPsiAulaId))
                         .ToList();
             if(escalasPsicologicas?.FirstOrDefault()?.IndicadoresPsicologicos?.FirstOrDefault()?.PreguntasPsicologicas?.FirstOrDefault()?.RespuestasPsicologicas?.FirstOrDefault()?.EvaluacionPsicologicaEstudiante?.Estado?.Any() is false)
