@@ -11,11 +11,10 @@ public static class DatabaseConfiguration
     public static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(
-            opt => opt.UseNpgsql(configuration.GetConnectionString("PostgreSQL")) // Utiliza UseNpgsql para PostgreSQL
+            opt => opt.UseSqlServer(configuration.GetConnectionString("SQL"))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .EnableSensitiveDataLogging()
                 .LogTo(Console.WriteLine, LogLevel.Information));
-
 
         return services;
     }

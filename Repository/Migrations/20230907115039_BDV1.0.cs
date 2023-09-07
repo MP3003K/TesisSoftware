@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -16,10 +15,10 @@ namespace Repository.Migrations
                 name: "Accesos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,10 +29,10 @@ namespace Repository.Migrations
                 name: "Escuelas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CodigoModular = table.Column<string>(type: "text", nullable: false),
-                    Nombre = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CodigoModular = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,12 +43,13 @@ namespace Repository.Migrations
                 name: "EvaluacionesPsicologicas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Descripcion = table.Column<string>(type: "text", nullable: false),
-                    Tipo = table.Column<string>(type: "text", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CantPreguntas = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -60,10 +60,10 @@ namespace Repository.Migrations
                 name: "Niveles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    NNivel = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NNivel = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,12 +74,12 @@ namespace Repository.Migrations
                 name: "Personas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombres = table.Column<string>(type: "text", nullable: false),
-                    ApellidoPaterno = table.Column<string>(type: "text", nullable: false),
-                    ApellidoMaterno = table.Column<string>(type: "text", nullable: false),
-                    DNI = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombres = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApellidoPaterno = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApellidoMaterno = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DNI = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,10 +90,10 @@ namespace Repository.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,15 +104,15 @@ namespace Repository.Migrations
                 name: "Unidades",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    NUnidad = table.Column<int>(type: "integer", nullable: false),
-                    FechaInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FechaFin = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Año = table.Column<int>(type: "integer", nullable: false),
-                    EscuelaId = table.Column<int>(type: "integer", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NUnidad = table.Column<int>(type: "int", nullable: false),
+                    FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaFin = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Año = table.Column<int>(type: "int", nullable: false),
+                    EscuelaId = table.Column<int>(type: "int", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,17 +128,17 @@ namespace Repository.Migrations
                 name: "DimensionesPsicologicas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Codigo = table.Column<string>(type: "text", nullable: false),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    EvaluacionPsicologicaId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Codigo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EvaluacionPsicologicaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DimensionesPsicologicas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DimensionesPsicologicas_EvaluacionesPsicologicas_Evaluacion~",
+                        name: "FK_DimensionesPsicologicas_EvaluacionesPsicologicas_EvaluacionPsicologicaId",
                         column: x => x.EvaluacionPsicologicaId,
                         principalTable: "EvaluacionesPsicologicas",
                         principalColumn: "Id");
@@ -148,11 +148,11 @@ namespace Repository.Migrations
                 name: "Grados",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    NGrado = table.Column<int>(type: "integer", nullable: false),
-                    NivelId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NGrado = table.Column<int>(type: "int", nullable: false),
+                    NivelId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -168,9 +168,9 @@ namespace Repository.Migrations
                 name: "Docentes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PersonaId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -186,10 +186,10 @@ namespace Repository.Migrations
                 name: "Estudiantes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CodigoEstudiante = table.Column<string>(type: "text", nullable: false),
-                    PersonaId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CodigoEstudiante = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PersonaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -205,11 +205,11 @@ namespace Repository.Migrations
                 name: "Usuarios",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Username = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    PersonaId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PersonaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -225,10 +225,10 @@ namespace Repository.Migrations
                 name: "RolesAccesos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RolId = table.Column<int>(type: "integer", nullable: false),
-                    AccesoId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RolId = table.Column<int>(type: "int", nullable: false),
+                    AccesoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -249,10 +249,10 @@ namespace Repository.Migrations
                 name: "EscalasPsicologicas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    DimensionId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DimensionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -268,10 +268,10 @@ namespace Repository.Migrations
                 name: "GradosEvaPsicologicas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    GradoId = table.Column<int>(type: "integer", nullable: false),
-                    EvaPsiId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GradoId = table.Column<int>(type: "int", nullable: false),
+                    EvaPsiId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -292,12 +292,12 @@ namespace Repository.Migrations
                 name: "Aulas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Secccion = table.Column<string>(type: "text", nullable: false),
-                    GradoId = table.Column<int>(type: "integer", nullable: false),
-                    EscuelaId = table.Column<int>(type: "integer", nullable: false),
-                    DocenteId = table.Column<int>(type: "integer", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Secccion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GradoId = table.Column<int>(type: "int", nullable: false),
+                    EscuelaId = table.Column<int>(type: "int", nullable: false),
+                    DocenteId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -324,10 +324,10 @@ namespace Repository.Migrations
                 name: "RolesUsuarios",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UsuarioId = table.Column<int>(type: "integer", nullable: false),
-                    RolId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UsuarioId = table.Column<int>(type: "int", nullable: false),
+                    RolId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -348,16 +348,16 @@ namespace Repository.Migrations
                 name: "IndicadoresPsicologicos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    NombreIndicador = table.Column<string>(type: "text", nullable: false),
-                    EscalaPsicologicaId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NombreIndicador = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EscalaPsicologicaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_IndicadoresPsicologicos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_IndicadoresPsicologicos_EscalasPsicologicas_EscalaPsicologi~",
+                        name: "FK_IndicadoresPsicologicos_EscalasPsicologicas_EscalaPsicologicaId",
                         column: x => x.EscalaPsicologicaId,
                         principalTable: "EscalasPsicologicas",
                         principalColumn: "Id");
@@ -367,11 +367,12 @@ namespace Repository.Migrations
                 name: "EstudiantesAulas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    EstudianteId = table.Column<int>(type: "integer", nullable: false),
-                    AulaId = table.Column<int>(type: "integer", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EstudianteId = table.Column<int>(type: "int", nullable: false),
+                    AulaId = table.Column<int>(type: "int", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Anio = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -392,14 +393,14 @@ namespace Repository.Migrations
                 name: "EvaluacionesPsicologicasAula",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FechaInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    FechaFin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Estado = table.Column<string>(type: "text", nullable: false, comment: "(No inicio= N, En proceso = P, Finalizo= F)"),
-                    UnidadId = table.Column<int>(type: "integer", nullable: false),
-                    AulaId = table.Column<int>(type: "integer", nullable: false),
-                    EvaluacionPsicologicaId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FechaFin = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false, comment: "(No inicio= N, En proceso = P, Finalizo= F)"),
+                    UnidadId = table.Column<int>(type: "int", nullable: false),
+                    AulaId = table.Column<int>(type: "int", nullable: false),
+                    EvaluacionPsicologicaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -410,7 +411,7 @@ namespace Repository.Migrations
                         principalTable: "Aulas",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_EvaluacionesPsicologicasAula_EvaluacionesPsicologicas_Evalu~",
+                        name: "FK_EvaluacionesPsicologicasAula_EvaluacionesPsicologicas_EvaluacionPsicologicaId",
                         column: x => x.EvaluacionPsicologicaId,
                         principalTable: "EvaluacionesPsicologicas",
                         principalColumn: "Id");
@@ -425,17 +426,17 @@ namespace Repository.Migrations
                 name: "PreguntasPsicologicas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Pregunta = table.Column<string>(type: "text", nullable: false),
-                    IndicadorPsicologicoId = table.Column<int>(type: "integer", nullable: false),
-                    NPregunta = table.Column<int>(type: "integer", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Pregunta = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IndicadorPsicologicoId = table.Column<int>(type: "int", nullable: false),
+                    NPregunta = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PreguntasPsicologicas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PreguntasPsicologicas_IndicadoresPsicologicos_IndicadorPsic~",
+                        name: "FK_PreguntasPsicologicas_IndicadoresPsicologicos_IndicadorPsicologicoId",
                         column: x => x.IndicadorPsicologicoId,
                         principalTable: "IndicadoresPsicologicos",
                         principalColumn: "Id");
@@ -445,13 +446,13 @@ namespace Repository.Migrations
                 name: "EvaluacionesPsicologicasEstudiante",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FechaInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    FechaFin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Estado = table.Column<string>(type: "text", nullable: false, comment: "(No inicio= N, En proceso = P, Finalizo= F)"),
-                    EvaluacionAulaId = table.Column<int>(type: "integer", nullable: false),
-                    EstudianteId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FechaFin = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false, comment: "(No inicio= N, En proceso = P, Finalizo= F)"),
+                    EvaluacionAulaId = table.Column<int>(type: "int", nullable: false),
+                    EstudianteId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -462,7 +463,7 @@ namespace Repository.Migrations
                         principalTable: "Estudiantes",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_EvaluacionesPsicologicasEstudiante_EvaluacionesPsicologicas~",
+                        name: "FK_EvaluacionesPsicologicasEstudiante_EvaluacionesPsicologicasAula_EvaluacionAulaId",
                         column: x => x.EvaluacionAulaId,
                         principalTable: "EvaluacionesPsicologicasAula",
                         principalColumn: "Id");
@@ -472,22 +473,22 @@ namespace Repository.Migrations
                 name: "RespuestasPsicologicas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Respuesta = table.Column<string>(type: "text", nullable: false),
-                    PreguntaPsicologicaId = table.Column<int>(type: "integer", nullable: false),
-                    EvaPsiEstId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Respuesta = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PreguntaPsicologicaId = table.Column<int>(type: "int", nullable: false),
+                    EvaPsiEstId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RespuestasPsicologicas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RespuestasPsicologicas_EvaluacionesPsicologicasEstudiante_E~",
+                        name: "FK_RespuestasPsicologicas_EvaluacionesPsicologicasEstudiante_EvaPsiEstId",
                         column: x => x.EvaPsiEstId,
                         principalTable: "EvaluacionesPsicologicasEstudiante",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_RespuestasPsicologicas_PreguntasPsicologicas_PreguntaPsicol~",
+                        name: "FK_RespuestasPsicologicas_PreguntasPsicologicas_PreguntaPsicologicaId",
                         column: x => x.PreguntaPsicologicaId,
                         principalTable: "PreguntasPsicologicas",
                         principalColumn: "Id");
