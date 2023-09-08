@@ -8,7 +8,7 @@ namespace DTOs
 {
     public class RespuestasPsicologicasAulaDto
     {
-        public IList<EstudianteDto>? Estudiantes { get; set; }
-        public IList<EscalaPsicologicaDto>? EscalasPsicologicos { get; set; }
+        public IList<RespuestasPsicologicasEstudianteDto>? RespuestasEstudiantesDto { get; set; }
+        public IList<EscalaPsicologicaDto>? RespuestaAulaDto { get; set; }
     }
 }

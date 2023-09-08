@@ -76,13 +76,13 @@ namespace Application.Features.Aula.Queries
                 return 0.0;
 
             var escalasPsicologicasDto = _mapper.Map<IList<EscalaPsicologicaDto>>(respuestasEscalasPsicologicas);
-            var respuestasEstudianteDto = new RespuestasEstudianteDto { EscalasPsicologicas = escalasPsicologicasDto };
+            var respuestasEstudianteDto = new RespuestasPsicologicasEstudianteDto { EscalasPsicologicas = escalasPsicologicasDto };
 
             CalcularResultadosEvaluacionPsicologica(respuestasEstudianteDto);
             return respuestasEstudianteDto.PromedioEvaluacionPsicologica;
         }
 
-        private static void CalcularResultadosEvaluacionPsicologica(RespuestasEstudianteDto respuestasEstudianteDto)
+        private static void CalcularResultadosEvaluacionPsicologica(RespuestasPsicologicasEstudianteDto respuestasEstudianteDto)
         {
             foreach (var escalaDto in respuestasEstudianteDto.EscalasPsicologicas)
             {

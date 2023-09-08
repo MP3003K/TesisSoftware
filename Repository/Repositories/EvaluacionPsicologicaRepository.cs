@@ -17,6 +17,13 @@ namespace Repository.Repositories
         {
         }
 
+        public async Task<IList<EscalaPsicologica>?> EscalasPsicologicasDeEvaPsi(int evaPsiId, int dimensionId)
+        {
+            var escalasPsicologicas = await Table
+                .Include(x =>)
+            throw new NotImplementedException();
+        }
+
         public async Task<IList<EscalaPsicologica>?> ResultadosPsicologicosAula(int evaPsiAulaId, int evaPsiId, int dimensionId)
         {
             var EvalucionPsicologica = await Table
@@ -25,18 +32,20 @@ namespace Repository.Repositories
                    .ThenInclude(esc => esc!.IndicadoresPsicologicos!)
                    .ThenInclude(ind => ind!.PreguntasPsicologicas!)
                    .ThenInclude(preg => preg!.RespuestasPsicologicas!)
-                   .ThenInclude(resp => resp!.EvaluacionPsicologicaEstudiante!)
-                   .FirstOrDefaultAsync(eva => eva.Id == evaPsiId);
+                   .ThenInclude(resp => resp!.EvaluacionPsicologicaEstudiante!).ThenInclude(x => x.EvaluacionAula)
+                   .Where(eva => eva.Id == evaPsiId)
+                   .FirstOrDefaultAsync();
 
                 var escalasPsicologicas = EvalucionPsicologica?.DimensionesPsicologicas?.FirstOrDefault()?.EscalasPsicologicas;
 
-                if (escalasPsicologicas != null)
-                    return  escalasPsicologicas
-                        .Where(esc => esc!.IndicadoresPsicologicos!
-                            .SelectMany(ind => ind!.PreguntasPsicologicas!)
-                            .SelectMany(preg => preg!.RespuestasPsicologicas!)
-                            .Select(resp => resp!.EvaluacionPsicologicaEstudiante!).Where(eva => eva.Estado == "F")
-                            .Any(resp => resp.EvaluacionAulaId== evaPsiAulaId))
+            if (escalasPsicologicas != null)
+                return escalasPsicologicas
+                    .Where(esc => esc!.IndicadoresPsicologicos!
+                        .SelectMany(ind => ind!.PreguntasPsicologicas!)
+                        .SelectMany(preg => preg!.RespuestasPsicologicas!)
+                        .Select(resp => resp!.EvaluacionPsicologicaEstudiante!).Where(eva => eva.Estado == "F")
+                        .Select(resp => resp.EvaluacionAulaId == evaPsiAulaId)
+                        .Any())
                         .ToList();
             if(escalasPsicologicas?.FirstOrDefault()?.IndicadoresPsicologicos?.FirstOrDefault()?.PreguntasPsicologicas?.FirstOrDefault()?.RespuestasPsicologicas?.FirstOrDefault()?.EvaluacionPsicologicaEstudiante?.Estado?.Any() is false)
                 return null;
@@ -54,10 +63,10 @@ namespace Repository.Repositories
                 .ThenInclude(x => x!.RespuestasPsicologicas!.Where(r => r.EvaPsiEstId == evaPsiEstId && r.EvaluacionPsicologicaEstudiante != null && r.EvaluacionPsicologicaEstudiante.Estado == "F"))
                 .Where(e => e.Id == evaPsiId && e!.DimensionesPsicologicas!.Any(d => d.Id == dimensionId))
                 .ToListAsync();
-            if (respuestasEscalasPsicologicas?.FirstOrDefault()?.DimensionesPsicologicas?.FirstOrDefault()?.EscalasPsicologicas?.FirstOrDefault()?.IndicadoresPsicologicos?.FirstOrDefault()?.PreguntasPsicologicas?.FirstOrDefault()?.RespuestasPsicologicas?.Any() is false)
-                return null;
-            else
+
                 return respuestasEscalasPsicologicas?.FirstOrDefault()?.DimensionesPsicologicas?.FirstOrDefault()?.EscalasPsicologicas;
         }
+
+        
     }
 }
