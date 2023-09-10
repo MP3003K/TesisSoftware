@@ -12,6 +12,5 @@ namespace Contracts.Repositories
     {
         Task<IList<EscalaPsicologica>?> ResultadosPsicologicosEstudiante(int evaPsiEstId, int evaPsiId, int dimensionId);
         Task<IList<EscalaPsicologica>?> ResultadosPsicologicosAula(int evaPsiAulaId, int evaPsiId, int dimensionId);
-        Task<IList<EscalaPsicologica>?> EscalasPsicologicasDeEvaPsi(int evaPsiId, int dimensionId);
     }
 }

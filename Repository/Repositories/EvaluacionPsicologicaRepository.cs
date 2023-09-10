@@ -17,13 +17,6 @@ namespace Repository.Repositories
         {
         }
 
-        public async Task<IList<EscalaPsicologica>?> EscalasPsicologicasDeEvaPsi(int evaPsiId, int dimensionId)
-        {
-            var escalasPsicologicas = await Table
-                .Include(x =>)
-            throw new NotImplementedException();
-        }
-
         public async Task<IList<EscalaPsicologica>?> ResultadosPsicologicosAula(int evaPsiAulaId, int evaPsiId, int dimensionId)
         {
             var EvalucionPsicologica = await Table
