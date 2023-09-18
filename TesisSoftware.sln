@@ -17,17 +17,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{6C173C4C-66F1-4A0A-A7DC-D0AA6FF52C83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{64CCCDB3-08DD-484B-8ADE-1775DF7A1666}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{64CCCDB3-08DD-484B-8ADE-1775DF7A1666}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTOs", "DTOs\DTOs.csproj", "{7E7E5F63-9DBC-499F-A951-1852B1F5B59F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTOs", "DTOs\DTOs.csproj", "{7E7E5F63-9DBC-499F-A951-1852B1F5B59F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoC", "IoC\IoC.csproj", "{A0E91B02-C859-4147-99D7-0907A9CD3DFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IoC", "IoC\IoC.csproj", "{A0E91B02-C859-4147-99D7-0907A9CD3DFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{D296CEE2-49AA-4282-B46C-ADBF4779257B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{D296CEE2-49AA-4282-B46C-ADBF4779257B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{83CE8448-3BB6-433A-8D1C-57FD3B0BCCD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{83CE8448-3BB6-433A-8D1C-57FD3B0BCCD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{FE4BD829-34AA-4919-A481-568FF0570C70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{FE4BD829-34AA-4919-A481-568FF0570C70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,8 +36,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CC0635B6-2552-42B3-AA86-E313953FBE06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC0635B6-2552-42B3-AA86-E313953FBE06}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC0635B6-2552-42B3-AA86-E313953FBE06}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{CC0635B6-2552-42B3-AA86-E313953FBE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC0635B6-2552-42B3-AA86-E313953FBE06}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CC0635B6-2552-42B3-AA86-E313953FBE06}.Release|Any CPU.Deploy.0 = Release|Any CPU
