@@ -12,13 +12,15 @@ export class StudentReportComponent implements OnInit {
     studentId: number;
     unityId = 1;
     classroomId = 1;
+    dimensionId = 1;
+
     students!: any;
     constructor(
         private route: ActivatedRoute,
         private evaluationService: EvaluationService,
         private router: Router,
         private studentService: StudentService
-    ) {}
+    ) { }
     ngOnInit(): void {
         const { id, classroomId, unityId } = this.getStudentInfo();
         this.studentId = parseInt(id);
@@ -50,7 +52,17 @@ export class StudentReportComponent implements OnInit {
             );
         });
     }
-
+    getMeanClasses(mean: number) {
+        if (mean >= 1 && mean <= 2) {
+            return this.dimensionId == 1 ? 'bg-[#b6d7a8]' : 'bg-[#00b050]'
+        } else if (mean >= 2.1 && mean <= 3.9) {
+            return this.dimensionId == 1 ? 'bg-[#70ad47]' : 'bg-[#ffff00]'
+        } else if (mean >= 4 && mean <= 5) {
+            return this.dimensionId == 1 ? 'bg-[#548135]' : 'bg-[#ff0000]'
+        } else {
+            return 'bg-black'
+        }
+    }
     toggleChange(dimensionId: number) {
         this.evaluationService
             .getStudentAnswers(

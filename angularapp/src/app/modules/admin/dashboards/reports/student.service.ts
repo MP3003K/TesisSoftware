@@ -7,7 +7,7 @@ import { baseURL } from 'environment';
 })
 export class StudentService {
     students: any[] = [];
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
     getStudents(classroomId: number, unityId: number, dimensionId: number) {
         this.students = [];
         return this.http
@@ -20,6 +20,7 @@ export class StudentService {
                         const {
                             id,
                             codigoEstudiante: code,
+                            promedioPsicologicoEstudiante: mean,
                             persona: {
                                 nombres,
                                 apellidoPaterno,
@@ -31,11 +32,11 @@ export class StudentService {
                             id,
                             code,
                             dni,
-                            mean: (Math.random() * (4 - 1) + 1).toFixed(1),
+                            mean,
                             name: `${nombres} ${apellidoPaterno} ${apellidoMaterno}`,
                         };
                     });
-                    
+
                     this.students = students;
                     return students;
                 })
