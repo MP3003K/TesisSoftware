@@ -20,10 +20,11 @@ namespace Domain.Entities
         public virtual IList<RolUsuario>? RolesUsuarios { get; private set; }
 
         // Funciones
-        public Usuario(string username, string password)
+        public Usuario(string username, string password, int personaId)
         {
             Username = username;
             Password = password;
+            PersonaId = personaId;
         }
         public void UpdateUsername(string username)
         {

@@ -19,12 +19,12 @@ namespace Domain.Entities
         public virtual Aula? Aula { get; private set; }
 
         // Funciones
-        public EstudianteAula(int estudianteId, int aulaId, string estado, int anio)
+        public EstudianteAula(int estudianteId, int aulaId)
         {
             EstudianteId = estudianteId;
             AulaId = aulaId;
-            Estado = estado;
-            Anio = anio;
+            Estado = "1";
+            Anio = DateTime.Now.Year;
         }
         public void UpdateEstudianteId(int estudianteId)
         {
