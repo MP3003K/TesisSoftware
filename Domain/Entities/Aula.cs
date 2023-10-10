@@ -21,6 +21,8 @@ namespace Domain.Entities
         public virtual IList<EstudianteAula>? EstudiantesAulas { get; private set; }
         public virtual IList<EvaluacionPsicologicaAula>? EvaluacionesPsicologicasAula { get; private set; }
 
+        public virtual IList<EvaluacionCompetenciaEstudiante>? EvaluacionesCompetenciasEstudiante { get; private set; }
+
 
         // Funciones
         public Aula(string secccion, int gradoId, int escuelaId)

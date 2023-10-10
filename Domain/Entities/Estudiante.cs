@@ -17,7 +17,8 @@ namespace Domain.Entities
         public virtual IList<EstudianteAula>? EstudiantesAulas{ get; private set; }
         public virtual Persona? Persona { get; private set; }
         public virtual IList<EvaluacionPsicologicaEstudiante>? EvaluacionesEstudiante { get; private set; }
-
+         
+        public virtual IList<EvaluacionCompetenciaEstudiante>? EvaluacionesCompetenciasEstudiante { get; private set; }
 
         // Funciones
         public Estudiante(string codigoEstudiante, int personaId)

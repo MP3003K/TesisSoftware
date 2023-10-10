@@ -20,6 +20,7 @@ namespace Domain.Entities
         // Relaciones con otras tablas
         public virtual Escuela? Escuela { get; private set; }
         public virtual IList<EvaluacionPsicologicaAula>? EvaluacionesPsicologicasAula { get; private set; }
+        public virtual IList<EvaluacionCompetenciaEstudiante>? EvaluacionesCompetenciasEstudiante { get; private set; }
 
         //Funciones
         public Unidad (string nombre, int nUnidad, DateTime fechaInicio, DateTime fechaFin, int año, int escuelaId, string estado)
