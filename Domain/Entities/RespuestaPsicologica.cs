@@ -12,6 +12,7 @@ namespace Domain.Entities
         public string Respuesta { get; private set; }
         public int PreguntaPsicologicaId { get; private set; }
         public int EvaPsiEstId { get; private set; }
+        public int Puntaje { get; private set; } = 0;
 
         // Relaciones con otras tablas
         public virtual PreguntaPsicologica? PreguntaPsicologica { get; private set; }
