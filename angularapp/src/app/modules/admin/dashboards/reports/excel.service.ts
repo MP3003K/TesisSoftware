@@ -15,6 +15,4 @@ export class ExcelService {
         const blob = new Blob([data])
         fs.saveAs(blob, "report.xlsx")
     }
-
-
 }
