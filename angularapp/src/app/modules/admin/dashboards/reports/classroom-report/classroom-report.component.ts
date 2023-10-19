@@ -5,6 +5,7 @@ import {EvaluationService} from '../../evaluation/evaluation.service';
 import {StudentReportComponent} from '../student-report/student-report.component';
 import {Router} from '@angular/router';
 import {StudentService} from '../student.service';
+import { StudentRegistrationComponent } from '../student-registration/student-registration.component';
 
 @Component({
     templateUrl: './classroom-report.component.html',
@@ -30,7 +31,7 @@ export class ClassroomReportComponent {
         public dialog: MatDialog,
         private _snackbar: MatSnackBar,
         private router: Router,
-        private studentService: StudentService
+        private studentService: StudentService,
     ) {
     }
 
@@ -160,5 +161,13 @@ export class ClassroomReportComponent {
     }
     onToggleChange(){
         this.scales = []
+    }
+    openStudentRegistrationModal() {
+        const dialogRef = this.dialog.open(StudentRegistrationComponent);
+
+        dialogRef.afterClosed().subscribe(result => {
+            // Puede manejar acciones después de cerrar el modal si es necesario
+            console.log('El modal se cerró', result);
+        });
     }
 }
