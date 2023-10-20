@@ -30,6 +30,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<PreguntaPsicologica> PreguntaPsicologicas { get; private init; }
     public DbSet<GradoEvaPsicologica> GradosEvaPsicologicas { get; private init; }
     public DbSet<ReporteAula> ReporteAulas { get; private init; }
+    public DbSet<ReporteEstudiante> ReporteEstudiantes { get; private init; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

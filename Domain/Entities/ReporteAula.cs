@@ -1,6 +1,7 @@
 ﻿using Domain.Entities.Base;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Domain.Entities
 {
     public class ReporteAula: Entity
     {
+        [Key]
         public int IdEstudiante { get; private set; }
         public string Nombres { get; private set; }
         public  int Promedio { get; private set; }
