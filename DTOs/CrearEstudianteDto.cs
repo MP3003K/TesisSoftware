@@ -12,7 +12,7 @@ namespace DTOs
         public string Nombres { get; set; }
         public string ApellidoPaterno { get; set; }
         public string ApellidoMaterno { get; set; }
-        public string DNI { get; set; }
+        public int DNI { get; set; }
         public int AulaId { get; set; }
 
     }
