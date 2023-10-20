@@ -47,8 +47,6 @@
                     Reporte Aula
                 </h2>
             </div>
-            <button mat-raised-button (click)="openStudentRegistrationModal()">Registrar Estudiante</button>
-
         </div>
     </div>
 
@@ -132,6 +130,13 @@
             </div>
 
             <div *ngIf="scales.length > 0" class="flex flex-col gap-4">
+                <button
+                    (click)="openStudentRegistrationModal(selectedClass)"
+                    type="button"
+                    class=" mx-2 border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline"
+                >
+                    Registrar Estudiante
+                </button>
                 <div class="scale_container flex flex-col divide-y">
                     <details
                         *ngFor="let scale of scales"

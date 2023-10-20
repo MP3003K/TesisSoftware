@@ -162,12 +162,13 @@ export class ClassroomReportComponent {
     onToggleChange(){
         this.scales = []
     }
-    openStudentRegistrationModal() {
-        const dialogRef = this.dialog.open(StudentRegistrationComponent);
+    openStudentRegistrationModal(classroomId: number): void {
+        const dialogRef = this.dialog.open(StudentRegistrationComponent, {
+            data: { classroomId } // Pasa el classroomId como dato al modal
+        });
 
         dialogRef.afterClosed().subscribe(result => {
-            // Puede manejar acciones después de cerrar el modal si es necesario
-            console.log('El modal se cerró', result);
+            // Procesa el resultado después de cerrar el modal, si es necesario
         });
     }
 }

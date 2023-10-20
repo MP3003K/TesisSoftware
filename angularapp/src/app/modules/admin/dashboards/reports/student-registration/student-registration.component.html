@@ -1,25 +1,32 @@
 <!-- student-registration.component.html -->
-<h2 mat-dialog-title>Registrar Estudiante</h2>
+<h2 mat-dialog-title class="text-2xl font-bold">Registrar Estudiante</h2>
 <div mat-dialog-content>
-    <form [formGroup]="studentForm" (ngSubmit)="registerStudent()">
-        <mat-form-field>
-            <input matInput placeholder="Nombre *" formControlName="nombreEstudiante">
+    <form [formGroup]="studentForm" (ngSubmit)="registerStudent()"
+          class="flex flex-col w-[300px]">
+
+        <mat-label class="mt-5">Nombre *</mat-label> <!-- Título para el campo de Nombre -->
+        <mat-form-field class="mt-1">
+            <input matInput placeholder="Ingresar Nombre *" formControlName="nombreEstudiante">
             <mat-error *ngIf="studentForm.get('nombreEstudiante').hasError('required')">Nombre es obligatorio</mat-error>
         </mat-form-field>
 
-        <mat-form-field>
-            <input matInput placeholder="Apellido Paterno *" formControlName="apePat">
+        <mat-label class="mt-5">Apellido Paterno *</mat-label> <!-- Título para el campo de Nombre -->
+        <mat-form-field class="mt-1">
+            <input matInput placeholder="Ingresar Apellido Paterno" formControlName="apePat">
             <mat-error *ngIf="studentForm.get('apePat').hasError('required')">Apellido Paterno es obligatorio</mat-error>
         </mat-form-field>
 
-        <mat-form-field>
-            <input matInput placeholder="Apellido Materno *" formControlName="apeMat">
+        <mat-label class="mt-5">Apellido Materno *</mat-label> <!-- Título para el campo de Nombre -->
+        <mat-form-field class="mt-1">
+            <input matInput placeholder="Ingresar Apellido Materno" formControlName="apeMat">
             <mat-error *ngIf="studentForm.get('apeMat').hasError('required')">Apellido Materno es obligatorio</mat-error>
         </mat-form-field>
 
-        <mat-form-field>
-            <input matInput placeholder="DNI *" formControlName="dni">
+        <mat-label class="mt-5">DNI *</mat-label> <!-- Título para el campo de Nombre -->
+        <mat-form-field class="mt-1">
+            <input matInput placeholder="Ingresar DNI" formControlName="dni">
             <mat-error *ngIf="studentForm.get('dni').hasError('required')">DNI es obligatorio</mat-error>
+            <mat-error *ngIf="studentForm.get('dni').hasError('pattern')">DNI debe contener solo números</mat-error>
         </mat-form-field>
     </form>
 </div>

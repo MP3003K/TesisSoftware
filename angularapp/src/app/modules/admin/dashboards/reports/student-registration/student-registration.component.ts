@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import {Component, Inject} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'; // Importa FormGroup y FormBuilder
 
@@ -13,14 +13,15 @@ export class StudentRegistrationComponent {
 
     constructor(
         private dialogRef: MatDialogRef<StudentRegistrationComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: { classroomId: number },
         private http: HttpClient,
         private fb: FormBuilder // Inyecta FormBuilder
-    ) {
+) {
         this.studentForm = this.fb.group({
             nombreEstudiante: ['', Validators.required],
             apePat: ['', Validators.required],
             apeMat: ['', Validators.required],
-            dni: ['', Validators.required]
+            dni: ['', [Validators.required, Validators.pattern('^[0-9]*$')]] // Solo permite números
         });
     }
 
@@ -36,5 +37,4 @@ export class StudentRegistrationComponent {
         this.dialogRef.close();
     }
 
-    // Resto del código...
 }
