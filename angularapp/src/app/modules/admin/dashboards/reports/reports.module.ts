@@ -14,12 +14,14 @@ import { MatCardModule } from '@angular/material/card';
 import { StudentReportComponent } from './student-report/student-report.component';
 import { ClassroomReportComponent } from './classroom-report/classroom-report.component';
 import { ReportsComponent } from './reports.component';
+import { StudentRegistrationComponent } from './student-registration/student-registration.component';
 
 @NgModule({
     declarations: [
         ClassroomReportComponent,
         StudentReportComponent,
         ReportsComponent,
+        StudentRegistrationComponent,
     ],
     imports: [
         SharedModule,

@@ -3,9 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluationService } from '../../evaluation/evaluation.service';
 import { StudentReportComponent } from '../student-report/student-report.component';
-import { Router } from '@angular/router';
 import { StudentService } from '../student.service';
 import { ExcelService } from '../excel.service';
+import { Router } from '@angular/router';
+import { StudentRegistrationComponent } from '../student-registration/student-registration.component';
 
 @Component({
     templateUrl: './classroom-report.component.html',
@@ -171,5 +172,13 @@ export class ClassroomReportComponent {
 
     generateExcel() {
         //this.excelService.downloadReport();
+    }
+    openStudentRegistrationModal() {
+        const dialogRef = this.dialog.open(StudentRegistrationComponent);
+
+        dialogRef.afterClosed().subscribe((result) => {
+            // Puede manejar acciones después de cerrar el modal si es necesario
+            console.log('El modal se cerró', result);
+        });
     }
 }
