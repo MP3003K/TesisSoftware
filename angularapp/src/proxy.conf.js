@@ -5,8 +5,6 @@ const PROXY_CONFIG = [
       "/unidad",
       "/preguntasPsicologicas",
       "/aula",
-      "/weatherforecast",
-      "/bank",
       "/usuario",
       "/respuestasPsicologicas",
       "/estudiante"

@@ -2,12 +2,10 @@
     class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
     cdkScrollable
 >
-    <!-- Header -->
     <div
         class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
     >
         <div class="flex-1 min-w-0">
-            <!-- Breadcrumbs -->
             <div>
                 <div class="hidden sm:flex flex-wrap items-center font-medium">
                     <div>
@@ -39,7 +37,6 @@
                     </a>
                 </div>
             </div>
-            <!-- Title -->
             <div class="mt-2">
                 <h2
                     class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
@@ -125,6 +122,12 @@
                     <button mat-fab extended (click)="filterAll()">
                         <mat-icon svgIcon="filter_alt"></mat-icon>
                         Filtrar
+                    </button>
+                    <button mat-fab extended (click)="generateExcel()">
+                        <mat-icon
+                            svgIcon="heroicons_outline:document"
+                        ></mat-icon>
+                        Excel
                     </button>
                 </div>
             </div>

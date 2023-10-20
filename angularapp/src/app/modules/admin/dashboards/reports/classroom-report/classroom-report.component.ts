@@ -1,10 +1,11 @@
-import {Component} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {EvaluationService} from '../../evaluation/evaluation.service';
-import {StudentReportComponent} from '../student-report/student-report.component';
-import {Router} from '@angular/router';
-import {StudentService} from '../student.service';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { EvaluationService } from '../../evaluation/evaluation.service';
+import { StudentReportComponent } from '../student-report/student-report.component';
+import { Router } from '@angular/router';
+import { StudentService } from '../student.service';
+import { ExcelService } from '../excel.service';
 
 @Component({
     templateUrl: './classroom-report.component.html',
@@ -30,9 +31,9 @@ export class ClassroomReportComponent {
         public dialog: MatDialog,
         private _snackbar: MatSnackBar,
         private router: Router,
-        private studentService: StudentService
-    ) {
-    }
+        private studentService: StudentService,
+        private excelService: ExcelService
+    ) {}
 
     ngOnInit(): void {
         this.getTechs();
@@ -62,10 +63,10 @@ export class ClassroomReportComponent {
                     next: (data: any[]) => {
                         this.scales = data.map(
                             ({
-                                 indicadoresPsicologicos,
-                                 nombre: name,
-                                 promedioEscala: mean,
-                             }: {
+                                indicadoresPsicologicos,
+                                nombre: name,
+                                promedioEscala: mean,
+                            }: {
                                 indicadoresPsicologicos: any[];
                                 nombre: string;
                                 promedioEscala: number;
@@ -74,9 +75,9 @@ export class ClassroomReportComponent {
                                 mean,
                                 indicators: indicadoresPsicologicos.map(
                                     ({
-                                         nombreIndicador: name,
-                                         promedioIndicador: mean,
-                                     }) => ({
+                                        nombreIndicador: name,
+                                        promedioIndicador: mean,
+                                    }) => ({
                                         name,
                                         mean,
                                     })
@@ -84,7 +85,7 @@ export class ClassroomReportComponent {
                             })
                         );
                     },
-                    error: ({status}) => {
+                    error: ({ status }) => {
                         this.dataInfo = 'Sin Elementos';
                         if (status === 400) {
                             this._snackbar.open('Sin elementos', '', {
@@ -94,7 +95,7 @@ export class ClassroomReportComponent {
                     },
                 });
         } else {
-            this._snackbar.open('Datos faltantes', '', {duration: 2000});
+            this._snackbar.open('Datos faltantes', '', { duration: 2000 });
         }
     }
 
@@ -105,7 +106,7 @@ export class ClassroomReportComponent {
     }
 
     getTechs() {
-        this.evaluationService.getTechs().subscribe(({data}) => {
+        this.evaluationService.getTechs().subscribe(({ data }) => {
             this.years = (
                 [...new Set(data.map((e: any) => e['año']))] as number[]
             ).sort((a, b) => b - a);
@@ -114,7 +115,7 @@ export class ClassroomReportComponent {
     }
 
     getClasses() {
-        this.evaluationService.getClassrooms().subscribe(({data}) => {
+        this.evaluationService.getClassrooms().subscribe(({ data }) => {
             this.classrooms = data;
         });
     }
@@ -149,16 +150,26 @@ export class ClassroomReportComponent {
 
     getMeanClasses(mean: number) {
         if (mean >= 1 && mean <= 2) {
-            return this.selectedDimension == 1 ? 'bg-[#b6d7a8]' : 'bg-[#00b050]'
+            return this.selectedDimension == 1
+                ? 'bg-[#b6d7a8]'
+                : 'bg-[#00b050]';
         } else if (mean >= 2.1 && mean <= 3.9) {
-            return this.selectedDimension == 1 ? 'bg-[#70ad47]' : 'bg-[#ffff00]'
+            return this.selectedDimension == 1
+                ? 'bg-[#70ad47]'
+                : 'bg-[#ffff00]';
         } else if (mean >= 4 && mean <= 5) {
-            return this.selectedDimension == 1 ? 'bg-[#548135]' : 'bg-[#ff0000]'
+            return this.selectedDimension == 1
+                ? 'bg-[#548135]'
+                : 'bg-[#ff0000]';
         } else {
-            return 'bg-black'
+            return 'bg-black';
         }
     }
-    onToggleChange(){
-        this.scales = []
+    onToggleChange() {
+        this.scales = [];
+    }
+
+    generateExcel() {
+        //this.excelService.downloadReport();
     }
 }
