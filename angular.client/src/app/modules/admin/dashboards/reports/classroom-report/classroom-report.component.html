@@ -1,0 +1,227 @@
+<div
+    class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
+    cdkScrollable
+>
+    <!-- Header -->
+    <div
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
+    >
+        <div class="flex-1 min-w-0">
+            <!-- Breadcrumbs -->
+            <div>
+                <div class="hidden sm:flex flex-wrap items-center font-medium">
+                    <div>
+                        <a class="whitespace-nowrap text-primary-500"
+                            >Dashboard</a
+                        >
+                    </div>
+
+                    <div class="flex items-center ml-1 whitespace-nowrap">
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-right'"
+                        ></mat-icon>
+                        <span class="ml-1 text-secondary"
+                            >Reporte Evaluación Psicológica</span
+                        >
+                    </div>
+                </div>
+                <div class="flex sm:hidden">
+                    <a
+                        class="inline-flex items-center -ml-1.5 text-secondary font-medium"
+                        [routerLink]="'./..'"
+                    >
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-left'"
+                        ></mat-icon>
+                        <span class="ml-1">Back</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Title -->
+            <div class="mt-2">
+                <h2
+                    class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
+                >
+                    Reporte Aula
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex-auto p-6 sm:p-10">
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col items-start">
+                <div class="grid grid-cols-4 gap-4 w-full">
+                    <mat-form-field>
+                        <mat-label>Año</mat-label>
+                        <mat-select [(ngModel)]="selectedYear">
+                            <mat-option
+                                [value]="year"
+                                *ngFor="let year of years"
+                            >
+                                {{ year }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Unidad</mat-label>
+                        <mat-select
+                            [(ngModel)]="selectedUnity"
+                            [disabled]="!selectedYear"
+                        >
+                            <mat-option
+                                [value]="unity.id"
+                                *ngFor="
+                                    let unity of filterUnities();
+                                    let i = index
+                                "
+                            >
+                                {{ unity.nombre }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Grado</mat-label>
+                        <mat-select
+                            [disabled]="!selectedUnity"
+                            [(ngModel)]="selectedGrade"
+                        >
+                            <mat-option
+                                *ngFor="let grade of [1, 2, 3, 4, 5]"
+                                [value]="grade"
+                            >
+                                {{ grade }}° Grado
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Salón</mat-label>
+                        <mat-select
+                            [disabled]="!selectedGrade"
+                            [(ngModel)]="selectedClass"
+                        >
+                            <mat-option
+                                *ngFor="let classroom of filterClass()"
+                                [value]="classroom.id"
+                            >
+                                {{ classroom.secccion }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <mat-button-toggle-group
+                        name="fontStyle"
+                        aria-label="Font Style"
+                        (change)="onToggleChange()"
+                        [(ngModel)]="selectedDimension"
+                    >
+                        <mat-button-toggle [value]="1">HSE</mat-button-toggle>
+                        <mat-button-toggle [value]="2">FR</mat-button-toggle>
+                    </mat-button-toggle-group>
+                    <button mat-fab extended (click)="filterAll()">
+                        <mat-icon svgIcon="filter_alt"></mat-icon>
+                        Filtrar
+                    </button>
+                </div>
+            </div>
+
+            <div *ngIf="scales.length > 0" class="flex flex-col gap-4">
+                <div class="scale_container flex flex-col divide-y">
+                    <details
+                        *ngFor="let scale of scales"
+                        class="px-4 bg-white shadow"
+                    >
+                        <summary
+                            class="py-2 cursor-pointer flex items-center justify-between"
+                        >
+                            <span>{{ scale.name }}</span>
+                            <span
+                                [className]="
+                                    getMeanClasses(scale.mean) +
+                                    ' text-xs text-white px-4 py-2 rounded'
+                                "
+                                >{{ scale.mean | number : ".2-2" }}</span
+                            >
+                        </summary>
+                        <div class="py-2">
+                            <ul class="flex flex-col p-4 gap-4">
+                                <li
+                                    *ngFor="let indicator of scale.indicators"
+                                    class="p-2 flex gap-2 items-center"
+                                >
+                                    <span> {{ indicator.name }}</span>
+                                    <div
+                                        [className]="
+                                            getMeanClasses(indicator.mean) +
+                                            ' px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center'
+                                        "
+                                        class=""
+                                    >
+                                        {{ indicator.mean | number : ".2-2" }}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table *ngIf="studentList().length > 0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nombre Completo</th>
+                                <th scope="col">Documento de identidad</th>
+                                <th scope="col">Indicador</th>
+
+                                <th scope="col" class="text-center">Opcion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                *ngFor="
+                                    let student of studentList();
+                                    let i = index
+                                "
+                            >
+                                <th scope="row">{{ student.name }}</th>
+                                <td>{{ student.dni }}</td>
+                                <td>
+                                    <div *ngIf="student.mean == 0">
+                                        No realizado
+                                    </div>
+                                    <div
+                                        *ngIf="student.mean > 0"
+                                        [className]="
+                                            getMeanClasses(student.mean) +
+                                            ' w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center'
+                                        "
+                                    >
+                                        {{ student.mean | number : ".2-2" }}
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <button
+                                        [disabled]="student.mean == 0"
+                                        mat-icon-button
+                                        (click)="redirectStudent(student.id)"
+                                    >
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div
+                *ngIf="scales.length == 0"
+                class="text-center py-4 font-light text-gray-300"
+            >
+                {{ dataInfo }}
+            </div>
+        </div>
+    </div>
+</div>

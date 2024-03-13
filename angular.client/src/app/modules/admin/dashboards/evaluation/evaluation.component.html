@@ -1,0 +1,166 @@
+<div
+    class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
+    cdkScrollable
+    #parentSection
+>
+    <!-- Header -->
+    <div
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
+    >
+        <div class="flex-1 min-w-0">
+            <!-- Breadcrumbs -->
+            <div>
+                <div class="hidden sm:flex flex-wrap items-center font-medium">
+                    <div>
+                        <a class="whitespace-nowrap text-primary-500"
+                            >Dashboard</a
+                        >
+                    </div>
+
+                    <div class="flex items-center ml-1 whitespace-nowrap">
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-right'"
+                        ></mat-icon>
+                        <span class="ml-1 text-secondary"
+                            >Evaluación Psicológica</span
+                        >
+                    </div>
+                </div>
+                <div class="flex sm:hidden">
+                    <a
+                        class="inline-flex items-center -ml-1.5 text-secondary font-medium"
+                        [routerLink]="'./..'"
+                    >
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-left'"
+                        ></mat-icon>
+                        <span class="ml-1">Regresar</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Title -->
+            <div class="mt-2">
+                <h2
+                    class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
+                >
+                    Evaluación
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-auto p-6 sm:p-10">
+        <mat-card *ngIf="endedTest">
+            <mat-card-content class="flex items-center justify-center">
+                <mat-icon svgIcon="check"></mat-icon>
+                <span>El Formulario se ha realizado exitosamente</span>
+            </mat-card-content>
+        </mat-card>
+        <div *ngIf="!endedTest">
+            <div class="sticky top-0 py-2 px-4 flex justify-between z-10">
+                <div class="flex flex-col gap-2">
+                    <div
+                        class="h-4 w-52 rounded-full overflow-hidden bg-gray-300/30 shadow"
+                    >
+                        <div
+                            class="h-full bg-green-400/90 text-end text-xs text-white"
+                            [ngStyle]="{
+                                width: getPValue()
+                            }"
+                        ></div>
+                    </div>
+                    <span class="text-[8px]"
+                        >{{ countCompletedAnswers() }} de
+                        {{ paginator.length }}</span
+                    >
+                </div>
+                <span class="text-[8px]">
+                    Página {{ paginator.pageNumber }} de {{ paginator.pages }}
+                </span>
+            </div>
+            <div class="p-4 flex flex-col gap-4" *ngIf="questions.length == 0">
+                <mat-card *ngFor="let item of [1, 2, 3]">
+                    <mat-card-content class="grid gap-4">
+                        <div class="flex flex-col gap-1">
+                            <div
+                                class="bg-gray-200 h-4 w-full animate-pulse"
+                            ></div>
+                            <div
+                                class="bg-gray-200 h-4 w-24 animate-pulse"
+                            ></div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <div
+                                class="flex items-center gap-4"
+                                *ngFor="let ii of [1, 2, 3, 4, 5]"
+                            >
+                                <div
+                                    class="rounded-full w-6 h-6 bg-gray-200 animate-pulse"
+                                ></div>
+                                <div
+                                    class="h-4 w-36 bg-gray-200 animate-pulse"
+                                ></div>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div class="p-4 flex flex-col gap-4" *ngIf="questions.length > 0">
+                <mat-card *ngFor="let question of filterQuestions()">
+                    <mat-card-content class="grid gap-4">
+                        <div class="font-medium">
+                            {{ question.index }}. {{ question.name }}
+                        </div>
+                        <div>
+                            <mat-radio-group
+                                (change)="
+                                    radioChange($event.value, question.id)
+                                "
+                                aria-label="Select an option"
+                                class="flex flex-col"
+                                [(ngModel)]="
+                                    questions[question.index - 1]['answer']
+                                "
+                            >
+                                <mat-radio-button
+                                    *ngFor="let option of itemOptions"
+                                    [value]="option.value"
+                                    >{{ option.name }}</mat-radio-button
+                                >
+                            </mat-radio-group>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <div class="flex justify-between items-end w-full">
+                <div class="flex gap-4">
+                    <button
+                        (click)="getPreviousItem()"
+                        [disabled]="paginator.pageNumber == 1"
+                        mat-button
+                    >
+                        Anterior
+                    </button>
+                    <button
+                        mat-flat-button
+                        color="primary"
+                        (click)="
+                            paginator.pageNumber == paginator.pages
+                                ? submitForm()
+                                : getNextItem()
+                        "
+                    >
+                        {{
+                            paginator.pageNumber == paginator.pages
+                                ? "Enviar"
+                                : "Siguiente"
+                        }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
