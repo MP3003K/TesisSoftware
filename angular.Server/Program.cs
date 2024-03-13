@@ -1,7 +1,6 @@
 using API.Filters;
 using IoC.Configurations;
 using IoC.Containers;
- using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.

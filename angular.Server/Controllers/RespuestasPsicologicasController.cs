@@ -8,6 +8,7 @@ using Domain.Entities;
 using DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Context;
 
 namespace webapi.Controllers
@@ -82,6 +83,28 @@ namespace webapi.Controllers
                 EvaPsiEstId = evaPsiEstId,
                 Estado = estado
             }));
+        }
+
+        [HttpGet("ReporteEstudiante/{evaluacionId:int}/{estudianteId:int}/{codigo}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ReporteEstudiante(int evaluacionId ,int estudianteId, string codigo)
+        {
+            try
+            {
+
+                var response = await _context.ReporteEstudiantes.FromSqlInterpolated($"EXEC GET_REPORTE_ESTUDIANTE @IdEvaluacion = {evaluacionId}, @IdEstudiante = {estudianteId}, @Codigo = {codigo}").ToListAsync();
+
+
+                if (response.IsNullOrEmpty())
+                {
+                    return NotFound();
+                }
+                return Ok(response);
+            }  catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
