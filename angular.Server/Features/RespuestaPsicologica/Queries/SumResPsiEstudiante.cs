@@ -1,13 +1,9 @@
 ﻿using Application.Wrappers;
 using AutoMapper;
-using Contracts.Repositories;
 using DTOs;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using webapi.Dao.Repositories;
+
 
 namespace Application.Features.RespuestaPsicologica.Queries
 {

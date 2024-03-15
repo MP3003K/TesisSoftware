@@ -1,14 +1,14 @@
 using Application.Wrappers;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace IoC.Configurations;
-
-public static class AutoMapperConfiguration
+namespace IoC.Configurations
 {
-    public static IServiceCollection AddAutoMapperConfiguration(this IServiceCollection services)
+    public static class AutoMapperConfiguration
     {
-        services.AddAutoMapper(typeof(Response<string>).Assembly);
+        public static IServiceCollection AddAutoMapperConfiguration(this IServiceCollection services)
+        {
+            services.AddAutoMapper(typeof(Response<string>).Assembly);
 
-        return services;
+            return services;
+        }
     }
 }
+

@@ -1,15 +1,16 @@
 using Application.Wrappers;
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace IoC.Configurations;
-
-public static class MediatRConfiguration
+namespace IoC.Configurations
 {
-    public static IServiceCollection AddMediatRConfiguration(this IServiceCollection services)
+    public static class MediatRConfiguration
     {
-        services.AddMediatR(typeof(Response<string>).Assembly);
+        public static IServiceCollection AddMediatRConfiguration(this IServiceCollection services)
+        {
+            services.AddMediatR(
+            cfg => cfg.RegisterServicesFromAssembly(typeof(Response<string>).Assembly)
+            );
 
-        return services;
+            return services;
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿
+using Domain.Exceptions.Base;
+
 namespace Application.Exceptions
 {
     public class AtributoNecesitaSerMayorACeroException: BaseException

@@ -1,7 +1,7 @@
-using Contracts.Repositories.Base;
 using Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using Repository.Context;
+using webapi.Dao.Repositories.Base;
 
 namespace Repository.Repositories.Base;
 

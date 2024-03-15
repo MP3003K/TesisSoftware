@@ -1,6 +1,5 @@
-using Contracts.Repositories;
-using Microsoft.Extensions.DependencyInjection;
 using Repository.Repositories;
+using webapi.Dao.Repositories;
 
 namespace IoC.Containers;
 

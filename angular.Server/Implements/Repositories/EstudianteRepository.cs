@@ -1,22 +1,16 @@
-﻿    using Contracts.Repositories;
-    using Domain.Entities;
-    using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
+﻿using Domain.Entities;
 using Repository.Context;
-    using Repository.Repositories.Base;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+using Repository.Repositories.Base;
+using webapi.Dao.Repositories;
 
-    namespace Repository.Repositories
+
+namespace Repository.Repositories
+{
+    public class EstudianteRepository : Repository<Estudiante>, IEstudianteRepository
     {
-        public class EstudianteRepository: Repository<Estudiante>, IEstudianteRepository
+        public EstudianteRepository(ApplicationDbContext dBContext) : base(dBContext)
         {
-            public EstudianteRepository(ApplicationDbContext dBContext) : base(dBContext)
-            {
-            }
-
         }
+
     }
+}

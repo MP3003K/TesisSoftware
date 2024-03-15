@@ -4,7 +4,7 @@ using AutoMapper;
 using Domain.Entities;
 using DTOs;
 using MediatR;
-;
+using webapi.Dao.Repositories;
 
 namespace Application.Features.Aula.Queries
 {

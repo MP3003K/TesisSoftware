@@ -1,15 +1,9 @@
 ﻿using Application.Exceptions;
 using Application.Wrappers;
 using AutoMapper;
-using Contracts.Repositories;
 using DTOs;
 using MediatR;
-using Repository.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using webapi.Dao.Repositories;
 
 namespace Application.Features.PreguntaPsicologica.Queries
 {

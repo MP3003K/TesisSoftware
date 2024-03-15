@@ -1,6 +1,6 @@
-using Application.Exceptions;
 using Application.Wrappers;
 using AutoMapper;
+using Domain.Exceptions.Base;
 using DTOs.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
