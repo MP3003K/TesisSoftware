@@ -1,11 +1,11 @@
-using Microsoft.Extensions.DependencyInjection;
-
-namespace IoC.Containers;
-
-public static class ServiceDependencyInjections
+namespace Containers
 {
-    public static IServiceCollection AddServiceInjections(this IServiceCollection services)
+    public static class ServiceDependencyInjections
     {
-        return services;
+        public static IServiceCollection AddServiceInjections(this IServiceCollection services)
+        {
+            return services;
+        }
     }
 }
+

@@ -2,8 +2,8 @@
 using Application.Wrappers;
 using AutoMapper;
 using DTOs;
+using Interfaces.Repositories;
 using MediatR;
-using webapi.Dao.Repositories;
 
 namespace Application.Features.Unidad.Queries
 {
@@ -25,7 +25,7 @@ namespace Application.Features.Unidad.Queries
         }
         public async Task<Response<IList<UnidadDto>>> Handle(ListaUnidadesEstudianteQuery request, CancellationToken cancellationToken)
         {            
-            var unidades = await _evaluacionPsicologicaEstudiante.ListaUnidadesDeEvaPsiEstPorIdEstudiante(request.EstudianteId) ?? throw new EntidadNoEncontradaException(nameof(Domain.Entities.Unidad));
+            var unidades = await _evaluacionPsicologicaEstudiante.ListaUnidadesDeEvaPsiEstPorIdEstudiante(request.EstudianteId) ?? throw new EntidadNoEncontradaException(nameof(Entities.Unidad));
    
             var unidadesDto = _mapper.Map<IList<UnidadDto>>(unidades);
             return new Response<IList<UnidadDto>>(unidadesDto);

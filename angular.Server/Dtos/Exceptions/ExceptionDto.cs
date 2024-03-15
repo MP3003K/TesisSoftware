@@ -1,19 +1,21 @@
 using Domain.Exceptions.Base;
 
-namespace DTOs.Exceptions;
-
-public class ExceptionDto
+namespace DTOs.Exceptions
 {
-    public string Key { get; set; }
-
-
-    public ExceptionDto(BaseException exception)
+    public class ExceptionDto
     {
-        Key = exception.Key;
-    }
+        public string Key { get; set; }
 
-    public ExceptionDto(string key)
-    {
-        Key = key;
+
+        public ExceptionDto(BaseException exception)
+        {
+            Key = exception.Key;
+        }
+
+        public ExceptionDto(string key)
+        {
+            Key = key;
+        }
     }
 }
+

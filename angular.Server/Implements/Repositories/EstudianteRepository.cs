@@ -1,10 +1,9 @@
-﻿using Domain.Entities;
-using Repository.Context;
-using Repository.Repositories.Base;
-using webapi.Dao.Repositories;
+﻿using Entities;
+using Implements.Repositories.Base;
+using Interfaces.Repositories;
+using Context;
 
-
-namespace Repository.Repositories
+namespace Implements.Repositories
 {
     public class EstudianteRepository : Repository<Estudiante>, IEstudianteRepository
     {

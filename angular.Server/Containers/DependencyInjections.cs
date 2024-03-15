@@ -1,16 +1,20 @@
+
+
+using Interfaces.Transactions;
 using Repository.Transaction;
-using webapi.Dao.Transactions;
 
-namespace IoC.Containers;
-
-public static class DependencyInjections
+namespace Containers
 {
-    public static IServiceCollection AddInjections(this IServiceCollection services)
+    public static class DependencyInjections
     {
-        services.AddScoped<IDatabaseTransaction, DatabaseTransaction>()
-            .AddRepositoryInjections()
-            .AddServiceInjections();
+        public static IServiceCollection AddInjections(this IServiceCollection services)
+        {
+            services.AddScoped<IDatabaseTransaction, DatabaseTransaction>()
+                .AddRepositoryInjections()
+                .AddServiceInjections();
 
-        return services;
+            return services;
+        }
     }
 }
+

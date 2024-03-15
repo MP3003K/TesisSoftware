@@ -2,8 +2,8 @@
 using Application.Wrappers;
 using AutoMapper;
 using DTOs;
+using Interfaces.Repositories;
 using MediatR;
-using webapi.Dao.Repositories;
 
 namespace Application.Features.PreguntaPsicologica.Queries
 {
@@ -40,11 +40,11 @@ namespace Application.Features.PreguntaPsicologica.Queries
             
             if(await _evaluacionPsicologicaEstudianteRepository.VerificarTestPsicologicoCompleto(request.EvaPsiEstId) is true) throw new EvalucionPsicologicaRealizadaException();
             
-            var evaPsiAula = await _evaluacionPsicologicaEstudianteRepository.EvaPsiAulaPorEvaPsiEstudianteId(request.EvaPsiEstId) ?? throw new EntidadNoEncontradaException(nameof(Domain.Entities.EvaluacionPsicologicaAula));
+            var evaPsiAula = await _evaluacionPsicologicaEstudianteRepository.EvaPsiAulaPorEvaPsiEstudianteId(request.EvaPsiEstId) ?? throw new EntidadNoEncontradaException(nameof(Entities.EvaluacionPsicologicaAula));
             
-            var preguntasPsicologicas = await _preguntaPsicologicaRepository.PreguntaPsicologicasPaginadas(evaPsiAula.EvaluacionPsicologicaId, request.EvaPsiEstId, request.PageSize, request.PageNumber) ?? throw new EntidadNoEncontradaException(nameof(Domain.Entities.PreguntaPsicologica));
+            var preguntasPsicologicas = await _preguntaPsicologicaRepository.PreguntaPsicologicasPaginadas(evaPsiAula.EvaluacionPsicologicaId, request.EvaPsiEstId, request.PageSize, request.PageNumber) ?? throw new EntidadNoEncontradaException(nameof(Entities.PreguntaPsicologica));
       
-            if(!preguntasPsicologicas.Any()) throw new EntidadNoEncontradaException(nameof(Domain.Entities.PreguntaPsicologica));
+            if(!preguntasPsicologicas.Any()) throw new EntidadNoEncontradaException(nameof(Entities.PreguntaPsicologica));
 
             var preguntasPsicologicasDto = _mapper.Map<IList<PreguntaPsicologicaDto>>(preguntasPsicologicas);         
            

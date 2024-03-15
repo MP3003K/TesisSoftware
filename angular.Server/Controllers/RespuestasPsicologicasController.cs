@@ -1,17 +1,14 @@
-﻿using API.Controllers.Base;
-using Application.Features.PreguntaPsicologica.Queries;
-using Application.Features.RespuestaPsicologica.Commands;
+﻿using Application.Features.RespuestaPsicologica.Commands;
 using Application.Features.RespuestaPsicologica.Queries;
-using Application.Features.Unidad.Queries;
 using Application.Wrappers;
-using Domain.Entities;
+using Controllers.Base;
 using DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Repository.Context;
+using Context;
 
-namespace webapi.Controllers
+namespace Controllers
 {
     public class RespuestasPsicologicasController: BaseController
     {

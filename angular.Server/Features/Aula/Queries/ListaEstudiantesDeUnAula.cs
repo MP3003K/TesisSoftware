@@ -1,10 +1,10 @@
 ﻿using Application.Exceptions;
 using Application.Wrappers;
 using AutoMapper;
-using Domain.Entities;
+using Entities;
 using DTOs;
 using MediatR;
-using webapi.Dao.Repositories;
+using Interfaces.Repositories;
 
 namespace Application.Features.Aula.Queries
 {
@@ -34,7 +34,7 @@ namespace Application.Features.Aula.Queries
         }
         public async Task<Response<IList<EstudianteDto>>> Handle(ListaEstudiantesDeUnAulaQuery request, CancellationToken cancellationToken)
         {
-            var evaluacionPsicologicaAula= await _evaluacionPsicologicaAulaRepository.EvaPsiAulaIncluyendoListaEstudiante(request.AulaId, request.UnidadId) ?? throw new EntidadNoEncontradaException(nameof(Domain.Entities.EvaluacionPsicologicaAula));
+            var evaluacionPsicologicaAula= await _evaluacionPsicologicaAulaRepository.EvaPsiAulaIncluyendoListaEstudiante(request.AulaId, request.UnidadId) ?? throw new EntidadNoEncontradaException(nameof(Entities.EvaluacionPsicologicaAula));
 
             if (evaluacionPsicologicaAula?.EvaluacionPsicologica?.Id == 2 && request.DimensionId == 1)
                 request.DimensionId = 3;

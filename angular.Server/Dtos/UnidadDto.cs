@@ -11,7 +11,6 @@ namespace DTOs
         public int Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
         public int NUnidad { get; set; }
-
         public DateTime FechaInicio{ get; set; }
         public DateTime FechaFin { get; set; } 
         public int Año { get; set; }

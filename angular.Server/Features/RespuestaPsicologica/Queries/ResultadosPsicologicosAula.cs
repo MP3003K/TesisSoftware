@@ -1,10 +1,10 @@
 ﻿using Application.Exceptions;
 using Application.Wrappers;
 using AutoMapper;
-using Domain.Entities;
+using Entities;
 using DTOs;
 using MediatR;
-using webapi.Dao.Repositories;
+using Interfaces.Repositories;
 
 namespace Application.Features.RespuestaPsicologica.Queries
 {
@@ -61,7 +61,7 @@ namespace Application.Features.RespuestaPsicologica.Queries
         }
         public async Task<IList<RespuestasPsicologicasEstudianteDto>> ResultadosPsicologicosEstudiantes(int unidadId, int aulaId, int dimensionId)
         {
-            var evaluacionPsicologicaAula = await _evaluacionPsicologicaAulaRepository.EvaPsiAulaIncluyendoListaEstudiante(aulaId, unidadId) ?? throw new EntidadNoEncontradaException(nameof(Domain.Entities.EvaluacionPsicologicaAula));
+            var evaluacionPsicologicaAula = await _evaluacionPsicologicaAulaRepository.EvaPsiAulaIncluyendoListaEstudiante(aulaId, unidadId) ?? throw new EntidadNoEncontradaException(nameof(Entities.EvaluacionPsicologicaAula));
 
             if (evaluacionPsicologicaAula?.EvaluacionesPsicologicasEstudiante == null || evaluacionPsicologicaAula.EvaluacionesPsicologicasEstudiante.Count <= 0)
                 throw new EntidadNoEncontradaException(nameof(EvaluacionPsicologicaEstudiante));

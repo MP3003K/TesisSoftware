@@ -1,19 +1,18 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace IoC.Configurations;
-
-public static class Configurations
+namespace Configurations
 {
-    public static IServiceCollection AddConfigurations(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static class Configurations
     {
-        services.AddDatabaseConfiguration(configuration)
-            .AddMediatRConfiguration()
-            .AddAutoMapperConfiguration();
-        
-        return services;
+        public static IServiceCollection AddConfigurations(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services.AddDatabaseConfiguration(configuration)
+                .AddMediatRConfiguration()
+                .AddAutoMapperConfiguration();
+
+            return services;
+        }
     }
 }
+

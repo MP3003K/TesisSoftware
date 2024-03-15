@@ -1,11 +1,6 @@
-﻿using Domain.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entities.Base;
 
-namespace Domain.Entities
+namespace Entities
 {
     public class RespuestaPsicologica: Entity
     {
@@ -13,12 +8,9 @@ namespace Domain.Entities
         public int PreguntaPsicologicaId { get; private set; }
         public int EvaPsiEstId { get; private set; }
         public int Puntaje { get; private set; } = 0;
-
-        // Relaciones con otras tablas
         public virtual PreguntaPsicologica? PreguntaPsicologica { get; private set; }
         public virtual EvaluacionPsicologicaEstudiante? EvaluacionPsicologicaEstudiante { get; private set; }
 
-        // Funciones
         public RespuestaPsicologica(string respuesta, int preguntaPsicologicaId, int evaPsiEstId)
         {
             Respuesta = respuesta;

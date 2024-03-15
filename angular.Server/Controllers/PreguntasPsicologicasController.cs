@@ -1,7 +1,6 @@
-﻿using API.Controllers.Base;
-using Application.Features.PreguntaPsicologica.Queries;
+﻿using Application.Features.PreguntaPsicologica.Queries;
 using Application.Wrappers;
-using Domain.Entities;
+using Controllers.Base;
 using DTOs;
 using Microsoft.AspNetCore.Mvc;
 

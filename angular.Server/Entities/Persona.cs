@@ -1,11 +1,6 @@
-﻿using Domain.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entities.Base;
 
-namespace Domain.Entities
+namespace Entities
 {
     public class Persona : Entity
     {
@@ -13,14 +8,10 @@ namespace Domain.Entities
         public string ApellidoPaterno { get; private set; }
         public string ApellidoMaterno { get; private set; }
         public int DNI { get; private set; }
-
-        // Relaciones con otras tablas
         public virtual Docente? Docente { get; private set; }
         public virtual Usuario? Usuario { get; private set; }
         public virtual Estudiante? Estudiante { get; private set; }
         
-        
-        // Funciones
         public Persona(string nombres, string apellidoPaterno, string apellidoMaterno, int dNI)
         {
             Nombres = nombres;

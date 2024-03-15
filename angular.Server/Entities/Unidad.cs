@@ -1,11 +1,6 @@
-﻿using Domain.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entities.Base;
 
-namespace Domain.Entities
+namespace Entities
 {
     public class Unidad : Entity
     {
@@ -16,13 +11,10 @@ namespace Domain.Entities
         public int Año { get; private set; }
         public int EscuelaId { get; private set; }
         public string Estado { get; private set; }
-
-        // Relaciones con otras tablas
         public virtual Escuela? Escuela { get; private set; }
         public virtual IList<EvaluacionPsicologicaAula>? EvaluacionesPsicologicasAula { get; private set; }
         public virtual IList<EvaluacionCompetenciaEstudiante>? EvaluacionesCompetenciasEstudiante { get; private set; }
 
-        //Funciones
         public Unidad (string nombre, int nUnidad, DateTime fechaInicio, DateTime fechaFin, int año, int escuelaId, string estado)
         {
             Nombre = nombre;

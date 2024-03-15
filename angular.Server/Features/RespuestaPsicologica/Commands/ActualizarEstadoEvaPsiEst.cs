@@ -1,11 +1,10 @@
 ﻿using Application.Exceptions;
 using Application.Wrappers;
 using AutoMapper;
-using Domain.Entities;
+using Entities;
 using DTOs;
 using MediatR;
-using webapi.Dao.Repositories;
-
+using Interfaces.Repositories;
 
 namespace Application.Features.RespuestaPsicologica.Commands
 {

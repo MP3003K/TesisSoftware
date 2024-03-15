@@ -1,11 +1,6 @@
-﻿using Domain.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entities.Base;
 
-namespace Domain.Entities
+namespace Entities
 {
     public class EstudianteAula: Entity
     {
@@ -13,12 +8,9 @@ namespace Domain.Entities
         public int AulaId { get; private set; }
         public string Estado { get; private set; }
         public int Anio { get; private set; }
-
-        // Relaciones con otras tablas
         public virtual Estudiante? Estudiante { get; private set; }
         public virtual Aula? Aula { get; private set; }
 
-        // Funciones
         public EstudianteAula(int estudianteId, int aulaId)
         {
             EstudianteId = estudianteId;

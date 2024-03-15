@@ -1,12 +1,10 @@
-﻿using API.Controllers.Base;
-using Application.Features.RespuestaPsicologica.Queries;
-using Application.Features.Usuario.Queries;
+﻿using Application.Features.Usuario.Queries;
 using Application.Wrappers;
+using Controllers.Base;
 using DTOs;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace webapi.Controllers
+namespace Controllers
 {
     public class UsuarioController: BaseController
     {

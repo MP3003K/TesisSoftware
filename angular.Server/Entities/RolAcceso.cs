@@ -1,18 +1,11 @@
-﻿using Domain.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entities.Base;
 
-namespace Domain.Entities
+namespace Entities
 {
     public class RolAcceso: Entity
     {
         public int RolId { get; private set; }
         public int AccesoId { get; private set; }
-        
-        // Relaciones con otras tablas
         public virtual Rol? Rol { get; private set; }
         public virtual Acceso? Acceso { get; private set; }
 

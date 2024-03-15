@@ -1,24 +1,16 @@
-﻿using Domain.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entities.Base;
 
-namespace Domain.Entities
+namespace Entities
 {
     public class Grado : Entity
     {
         public string Nombre { get; private set; }
         public int NGrado { get; private set; }
         public int NivelId { get; private set; }
-
-        // Relaciones con otras tablas
         public virtual Nivel? Nivel { get; private set; }
         public virtual IList<Aula>? Aulas { get; private set; }
         public IList<GradoEvaPsicologica>? GradosEvaPsicologicas { get; private set; }
 
-        // Funciones
         public Grado(string nombre, int nGrado, int nivelId)
         {
             Nombre = nombre;

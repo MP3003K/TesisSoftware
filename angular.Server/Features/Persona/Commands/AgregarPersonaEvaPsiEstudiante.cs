@@ -4,8 +4,8 @@ using AutoMapper;
 using DTOs;
 using MediatR;
 using System.Text.RegularExpressions;
-using Domain.Entities;
-using webapi.Dao.Repositories;
+using Entities;
+using Interfaces.Repositories;
 
 namespace Application.Features.Persona.Commands
 {
@@ -72,18 +72,18 @@ namespace Application.Features.Persona.Commands
             request.ApellidoMaterno = request.ApellidoMaterno.Trim();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 
             // Creacion estudiante
-            var persona = new Domain.Entities.Persona(request.Nombres, request.ApellidoPaterno, request.ApellidoMaterno, request.DNI);
+            var persona = new Entities.Persona(request.Nombres, request.ApellidoPaterno, request.ApellidoMaterno, request.DNI);
             await _personaRepository.InsertAsync(persona);
-            var usuario = new Domain.Entities.Usuario(persona.DNI.ToString(), persona.DNI.ToString(), persona.Id);
+            var usuario = new Entities.Usuario(persona.DNI.ToString(), persona.DNI.ToString(), persona.Id);
             await _usuarioRepository.InsertAsync(usuario);
             var rolUsuario = new RolUsuario(usuario.Id, 2);
             await _rolUsuarioRepository.InsertAsync(rolUsuario);
-            var estudiante = new Domain.Entities.Estudiante(persona.DNI.ToString(), persona.Id);
+            var estudiante = new Entities.Estudiante(persona.DNI.ToString(), persona.Id);
             await _estudianteRepository.InsertAsync(estudiante);
 
             // Asignacion Aula
 
-            var unidadActual = await _unidadRepository.UnidadActual() ?? throw new AtributoNoPuedeSerNullException(nameof(Domain.Entities.Aula));
+            var unidadActual = await _unidadRepository.UnidadActual() ?? throw new AtributoNoPuedeSerNullException(nameof(Entities.Aula));
 
             var estudianteAula = new EstudianteAula(estudiante.Id, request.AulaId);
             await _estudianteAulaRepository.InsertAsync(estudianteAula);

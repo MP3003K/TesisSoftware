@@ -2,9 +2,9 @@
 using Application.Wrappers;
 using AutoMapper;
 using DTOs;
+using Interfaces.Repositories;
 using MediatR;
 using System.Text.RegularExpressions;
-using webapi.Dao.Repositories;
 
 namespace Application.Features.RespuestaPsicologica.Commands
 {
@@ -54,7 +54,7 @@ namespace Application.Features.RespuestaPsicologica.Commands
             else
             {
                 // Crear Respuesta Psicologica
-                respuestaPsicologica = new Domain.Entities.RespuestaPsicologica(request.Respuesta, (int)request.PreguntaPsicologicaId,  (int)request.EvaPsiEstId);
+                respuestaPsicologica = new Entities.RespuestaPsicologica(request.Respuesta, (int)request.PreguntaPsicologicaId,  (int)request.EvaPsiEstId);
                 await _respuestaPsicologicaRepository.InsertAsync(respuestaPsicologica);
             }
             var respuestaPsicologicaDto = _mapper.Map<RespuestaPsicologicaDto>(respuestaPsicologica);

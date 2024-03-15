@@ -1,22 +1,14 @@
-﻿using Domain.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entities.Base;
 
-namespace Domain.Entities
+namespace Entities
 {
     public class IndicadorPsicologico: Entity
     {
         public string NombreIndicador { get; private set; }
         public int EscalaPsicologicaId { get; private set; }
-
-        // Relaciones con otras tablas
         public virtual  IList<PreguntaPsicologica>? PreguntasPsicologicas { get; private set; }
         public virtual  EscalaPsicologica? EscalaPsicologica { get; private set; }
 
-        //Funciones
         public IndicadorPsicologico(string nombreIndicador, int escalaPsicologicaId)
         {
             NombreIndicador = nombreIndicador;

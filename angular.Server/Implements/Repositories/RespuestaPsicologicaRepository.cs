@@ -1,10 +1,10 @@
-﻿using Domain.Entities;
+﻿using Entities;
+using Implements.Repositories.Base;
+using Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Repository.Context;
-using Repository.Repositories.Base;
-using webapi.Dao.Repositories;
+using Context;
 
-namespace Repository.Repositories
+namespace Implements.Repositories
 {
     public class RespuestaPsicologicaRepository: Repository<RespuestaPsicologica>, IRespuestaPsicologicaRepository
     {

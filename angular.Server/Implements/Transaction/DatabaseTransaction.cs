@@ -1,5 +1,5 @@
-using Repository.Context;
-using webapi.Dao.Transactions;
+using Context;
+using Interfaces.Transactions;
 
 namespace Repository.Transaction;
 

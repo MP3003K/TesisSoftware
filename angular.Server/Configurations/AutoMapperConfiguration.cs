@@ -1,5 +1,5 @@
 using Application.Wrappers;
-namespace IoC.Configurations
+namespace Configurations
 {
     public static class AutoMapperConfiguration
     {

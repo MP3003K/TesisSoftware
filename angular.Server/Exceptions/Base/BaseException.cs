@@ -1,20 +1,22 @@
 using System.Globalization;
 
-namespace Domain.Exceptions.Base;
-
-public class BaseException : Exception
+namespace Domain.Exceptions.Base
 {
-    public string Key { get; set; }
-
-    public Dictionary<string, object> Values { get; private set; } = new();
-
-    public BaseException(string key) : base(key)
+    public class BaseException : Exception
     {
-        Key = key;
-    }
+        public string Key { get; set; }
 
-    protected void AddOrReplaceValue(string key, IConvertible value)
-    {
-        Values[key] = value.ToString(CultureInfo.InvariantCulture);
+        public Dictionary<string, object> Values { get; private set; } = new();
+
+        public BaseException(string key) : base(key)
+        {
+            Key = key;
+        }
+
+        protected void AddOrReplaceValue(string key, IConvertible value)
+        {
+            Values[key] = value.ToString(CultureInfo.InvariantCulture);
+        }
     }
 }
+

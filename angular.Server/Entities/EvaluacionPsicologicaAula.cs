@@ -1,11 +1,7 @@
-﻿using Domain.Entities.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entities.Base;
 
-namespace Domain.Entities
+
+namespace Entities
 {
     public class EvaluacionPsicologicaAula : Entity
     {
@@ -15,14 +11,11 @@ namespace Domain.Entities
         public int UnidadId { get; private set; }
         public int AulaId { get; private set; }
         public int EvaluacionPsicologicaId { get; private set; }
-
-        // Relaciones con otras tablas
         public virtual Unidad? Unidad { get; private set; }
         public virtual Aula? Aula { get; private set; }
         public virtual IList<EvaluacionPsicologicaEstudiante>? EvaluacionesPsicologicasEstudiante { get; private set; }
         public virtual EvaluacionPsicologica? EvaluacionPsicologica { get; private set; }
 
-        // Funciones
         public EvaluacionPsicologicaAula(int unidadId, int aulaId, int evaluacionPsicologicaId)
         {
             Estado = "N";

@@ -1,10 +1,10 @@
 ﻿using Application.Exceptions;
 using Application.Wrappers;
 using AutoMapper;
-using Domain.Entities;
+using Entities;
 using DTOs;
 using MediatR;
-using webapi.Dao.Repositories;
+using Interfaces.Repositories;
 
 namespace Application.Features.Usuario.Queries
 {
@@ -28,7 +28,7 @@ namespace Application.Features.Usuario.Queries
         }
         public async Task<Response<InformacionUsuarioDto>> Handle(ValidarUsuarioQuery request, CancellationToken cancellationToken)
         {
-            var usuario = await _usuarioRepository.ObtenerUsuario(request.UserName, request.Password) ?? throw new EntidadNoEncontradaException(nameof(Domain.Entities.Usuario));
+            var usuario = await _usuarioRepository.ObtenerUsuario(request.UserName, request.Password) ?? throw new EntidadNoEncontradaException(nameof(Entities.Usuario));
 
             if (usuario.Persona is null)
                 throw new EntidadNoEncontradaException(nameof(Persona));

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DTOs
+﻿namespace DTOs
 {
     public class RespuestasPsicologicasEstudianteDto
     {
@@ -13,7 +7,6 @@ namespace DTOs
         public int TotalEscalasEnInicio { get; set; } = 0;
         public int TotalEscalasEnProceso { get; set; } = 0;
         public int TotalEscalasSatisfactorio { get; set; } = 0;
-
         public int TotalIndicadoresEnInicio { get; set; } = 0;
         public int TotalIndicadoresEnProceso { get; set; } = 0;
         public int TotalIndicadoresSatisfactorio { get; set; } = 0;

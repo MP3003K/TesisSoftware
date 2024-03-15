@@ -1,15 +1,13 @@
-﻿using API.Controllers.Base;
-using Application.Features.Aula.Queries;
+﻿using Application.Features.Aula.Queries;
 using Application.Features.Estudiante.Queries;
-using Application.Features.PreguntaPsicologica.Queries;
 using Application.Wrappers;
-using Domain.Entities;
 using DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Repository.Context;
+using Controllers.Base;
+using Context;
 
-namespace webapi.Controllers
+namespace Controllers
 {
     public class EstudianteController: BaseController
     {

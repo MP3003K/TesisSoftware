@@ -2,8 +2,8 @@
 using Application.Wrappers;
 using AutoMapper;
 using DTOs;
+using Interfaces.Repositories;
 using MediatR;
-using webapi.Dao.Repositories;
 
 
 namespace Application.Features.Estudiante.Queries
