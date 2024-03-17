@@ -1,9 +1,9 @@
-import { Route } from '@angular/router';
+import { Routes } from '@angular/router';
 import { AuthConfirmationRequiredComponent } from 'app/modules/auth/confirmation-required/confirmation-required.component';
 
-export const authConfirmationRequiredRoutes: Route[] = [
+export default [
     {
         path: '',
         component: AuthConfirmationRequiredComponent,
     },
-];
+] as Routes;

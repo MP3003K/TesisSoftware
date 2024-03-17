@@ -1,20 +1,37 @@
+import { NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
-import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { FuseFullscreenComponent } from '@fuse/components/fullscreen';
+import { FuseLoadingBarComponent } from '@fuse/components/loading-bar';
 import {
     FuseNavigationService,
     FuseVerticalNavigationComponent,
 } from '@fuse/components/navigation';
-import { Navigation } from 'app/core/navigation/navigation.types';
+import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { NavigationService } from 'app/core/navigation/navigation.service';
-import { User } from 'app/core/user/user.types';
+import { Navigation } from 'app/core/navigation/navigation.types';
 import { UserService } from 'app/core/user/user.service';
+import { User } from 'app/core/user/user.types';
+import { UserComponent } from 'app/layout/common/user/user.component';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'classy-layout',
     templateUrl: './classy.component.html',
     encapsulation: ViewEncapsulation.None,
+    standalone: true,
+    imports: [
+        FuseLoadingBarComponent,
+        FuseVerticalNavigationComponent,
+        UserComponent,
+        NgIf,
+        MatIconModule,
+        MatButtonModule,
+        FuseFullscreenComponent,
+        RouterOutlet,
+    ],
 })
 export class ClassyLayoutComponent implements OnInit, OnDestroy {
     isScreenSmall: boolean;
@@ -31,7 +48,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
         private _navigationService: NavigationService,
         private _userService: UserService,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
-        private _fuseNavigationService: FuseNavigationService,
+        private _fuseNavigationService: FuseNavigationService
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -57,17 +74,6 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
         this._navigationService.navigation$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((navigation: Navigation) => {
-                const {
-                    default: {
-                        0: {
-                            children: {
-                                0: { link },
-                            },
-                        },
-                    },
-                } = navigation;
-                this._router.navigate([link]);
-
                 this.navigation = navigation;
             });
 
@@ -85,6 +91,15 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
                 // Check if the screen is small
                 this.isScreenSmall = !matchingAliases.includes('md');
             });
+    }
+    generateUiAvatarUrl(name: string): string {
+        const initials = name.match(/\b\w/g) || [];
+        const avatarInitials = (
+            (initials.shift() || '') + (initials.pop() || '')
+        ).toUpperCase();
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            avatarInitials
+        )}&background=random&color=fff`;
     }
 
     /**
@@ -109,7 +124,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
         // Get the navigation
         const navigation =
             this._fuseNavigationService.getComponent<FuseVerticalNavigationComponent>(
-                name,
+                name
             );
 
         if (navigation) {

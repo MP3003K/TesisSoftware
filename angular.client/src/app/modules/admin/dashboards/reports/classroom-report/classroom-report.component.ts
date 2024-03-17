@@ -2,15 +2,21 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluationService } from '../../evaluation/evaluation.service';
-import { StudentReportComponent } from '../student-report/student-report.component';
 import { StudentService } from '../student.service';
 import { ExcelService } from '../excel.service';
 import { Router } from '@angular/router';
 import { StudentRegistrationComponent } from '../student-registration/student-registration.component';
+import { MatIconModule } from '@angular/material/icon';
+import { SharedModule } from 'app/shared/shared.module';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
     templateUrl: './classroom-report.component.html',
     styleUrls: ['./reports.component.scss'],
+
+    standalone: true,
+    imports: [SharedModule, MatIconModule, MatSelectModule, MatButtonToggleModule]
 })
 export class ClassroomReportComponent {
     public dataInfo: string = 'Seleccione un formulario';
@@ -34,7 +40,7 @@ export class ClassroomReportComponent {
         private router: Router,
         private studentService: StudentService,
         private excelService: ExcelService
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.getTechs();

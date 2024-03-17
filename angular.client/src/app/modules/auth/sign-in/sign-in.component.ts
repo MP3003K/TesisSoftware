@@ -10,21 +10,44 @@ import {
     UntypedFormGroup,
     NgForm,
     Validators,
+    FormsModule,
+    ReactiveFormsModule,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseAlertType } from '@fuse/components/alert';
+import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { takeUntil, Subject, distinctUntilChanged, first, last } from 'rxjs';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { take } from 'lodash-es';
+import { NgIf } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'auth-sign-in',
     templateUrl: './sign-in.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
+    standalone: true,
+    imports: [
+        RouterLink,
+        FuseAlertComponent,
+        NgIf,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCheckboxModule,
+        MatProgressSpinnerModule,
+    ],
 })
 export class AuthSignInComponent implements OnInit, OnDestroy {
     @ViewChild('signInNgForm') signInNgForm: NgForm;
@@ -46,7 +69,7 @@ export class AuthSignInComponent implements OnInit, OnDestroy {
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
         private navigationService: NavigationService,
-    ) {}
+    ) { }
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();

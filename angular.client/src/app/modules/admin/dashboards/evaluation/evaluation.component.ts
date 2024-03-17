@@ -3,9 +3,15 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { EvaluationService } from './evaluation.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { SharedModule } from 'app/shared/shared.module';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
     templateUrl: './evaluation.component.html',
+    standalone: true,
+    imports: [SharedModule, MatIconModule, MatCardModule, MatRadioModule]
 })
 export class EvaluationComponent {
     endedTest = false;
@@ -24,7 +30,7 @@ export class EvaluationComponent {
         private _snackbar: MatSnackBar,
         public evaluationService: EvaluationService,
         private authService: AuthService
-    ) {}
+    ) { }
     updatePaginator() {
         this.paginator.pageNumber = 1;
         this.paginator.length = this.questions.length;
@@ -159,9 +165,8 @@ export class EvaluationComponent {
             });
     }
     public getPValue() {
-        return `${
-            (this.countCompletedAnswers() * 100) / this.paginator.length
-        }%`;
+        return `${(this.countCompletedAnswers() * 100) / this.paginator.length
+            }%`;
     }
     validatePage() {
         return this.filterQuestions().every((e: any) => e.answer);

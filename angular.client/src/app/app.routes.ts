@@ -1,8 +1,8 @@
 import { Route } from '@angular/router';
-import { AuthGuard } from 'app/core/auth/guards/auth.guard';
-import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
-import { InitialDataResolver } from 'app/app.resolvers';
+import { initialDataResolver } from './app.resolvers';
+import { NoAuthGuard } from './core/auth/guards/noAuth.guard';
+import { AuthGuard } from './core/auth/guards/auth.guard';
 
 export const appRoutes: Route[] = [
     { path: '', pathMatch: 'full', redirectTo: 'dashboards/project' },
@@ -18,36 +18,32 @@ export const appRoutes: Route[] = [
                 path: 'confirmation-required',
                 loadChildren: () =>
                     import(
-                        'app/modules/auth/confirmation-required/confirmation-required.module'
-                    ).then((m) => m.AuthConfirmationRequiredModule),
+                        'app/modules/auth/confirmation-required/confirmation-required.routes'
+                    ),
             },
             {
                 path: 'forgot-password',
                 loadChildren: () =>
                     import(
-                        'app/modules/auth/forgot-password/forgot-password.module'
-                    ).then((m) => m.AuthForgotPasswordModule),
+                        'app/modules/auth/forgot-password/forgot-password.routes'
+                    ),
             },
             {
                 path: 'reset-password',
                 loadChildren: () =>
                     import(
-                        'app/modules/auth/reset-password/reset-password.module'
-                    ).then((m) => m.AuthResetPasswordModule),
+                        'app/modules/auth/reset-password/reset-password.routes'
+                    ),
             },
             {
                 path: 'sign-in',
                 loadChildren: () =>
-                    import('app/modules/auth/sign-in/sign-in.module').then(
-                        (m) => m.AuthSignInModule
-                    ),
+                    import('app/modules/auth/sign-in/sign-in.routes'),
             },
             {
                 path: 'sign-up',
                 loadChildren: () =>
-                    import('app/modules/auth/sign-up/sign-up.module').then(
-                        (m) => m.AuthSignUpModule
-                    ),
+                    import('app/modules/auth/sign-up/sign-up.routes'),
             },
         ],
     },
@@ -62,16 +58,14 @@ export const appRoutes: Route[] = [
             {
                 path: 'sign-out',
                 loadChildren: () =>
-                    import('app/modules/auth/sign-out/sign-out.module').then(
-                        (m) => m.AuthSignOutModule
-                    ),
+                    import('app/modules/auth/sign-out/sign-out.routes'),
             },
             {
                 path: 'unlock-session',
                 loadChildren: () =>
                     import(
-                        'app/modules/auth/unlock-session/unlock-session.module'
-                    ).then((m) => m.AuthUnlockSessionModule),
+                        'app/modules/auth/unlock-session/unlock-session.routes'
+                    ),
             },
         ],
     },
@@ -81,7 +75,7 @@ export const appRoutes: Route[] = [
         canMatch: [AuthGuard],
         component: LayoutComponent,
         resolve: {
-            initialData: InitialDataResolver,
+            initialData: initialDataResolver,
         },
         children: [
             {
@@ -91,15 +85,15 @@ export const appRoutes: Route[] = [
                         path: 'evaluation',
                         loadChildren: () =>
                             import(
-                                'app/modules/admin/dashboards/evaluation/evaluation.module'
-                            ).then((m) => m.EvaluationModule),
+                                'app/modules/admin/dashboards/evaluation/evaluation.routes'
+                            ),
                     },
                     {
                         path: 'reports',
                         loadChildren: () =>
                             import(
-                                'app/modules/admin/dashboards/reports/reports.module'
-                            ).then((m) => m.ReportsModule),
+                                'app/modules/admin/dashboards/reports/reports.routes'
+                            ),
                     },
                 ],
             },

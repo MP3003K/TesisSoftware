@@ -4,18 +4,28 @@ import {
     UntypedFormGroup,
     NgForm,
     Validators,
+    FormsModule,
+    ReactiveFormsModule,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { AuthService } from 'app/core/auth/auth.service';
 import { UserService } from 'app/core/user/user.service';
-import { FuseAlertType } from '@fuse/components/alert';
+import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
+import { NgIf } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'auth-unlock-session',
     templateUrl: './unlock-session.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
+    standalone: true,
+    imports: [NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, RouterLink],
 })
 export class AuthUnlockSessionComponent implements OnInit {
     @ViewChild('unlockSessionNgForm') unlockSessionNgForm: NgForm;
@@ -38,7 +48,7 @@ export class AuthUnlockSessionComponent implements OnInit {
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
         private _userService: UserService,
-    ) {}
+    ) { }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks

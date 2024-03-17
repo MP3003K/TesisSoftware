@@ -1,10 +1,15 @@
 import { Component } from '@angular/core';
 import { OnInit, Input } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EvaluationService } from '../../evaluation/evaluation.service';
 import { StudentService } from '../student.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { SharedModule } from 'app/shared/shared.module';
 @Component({
     templateUrl: './student-report.component.html',
+    standalone: true,
+    imports: [SharedModule, MatIconModule,  MatButtonToggleModule, ]
 })
 export class StudentReportComponent implements OnInit {
     scales!: any;

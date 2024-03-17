@@ -1,12 +1,16 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize, Subject, takeUntil, takeWhile, tap, timer } from 'rxjs';
 import { AuthService } from 'app/core/auth/auth.service';
+import { I18nPluralPipe, NgIf } from '@angular/common';
 
 @Component({
     selector: 'auth-sign-out',
     templateUrl: './sign-out.component.html',
     encapsulation: ViewEncapsulation.None,
+    standalone: true,
+    imports: [NgIf, RouterLink, I18nPluralPipe],
+
 })
 export class AuthSignOutComponent implements OnInit, OnDestroy {
     countdown: number = 5;
@@ -22,7 +26,7 @@ export class AuthSignOutComponent implements OnInit, OnDestroy {
     constructor(
         private _authService: AuthService,
         private _router: Router,
-    ) {}
+    ) { }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks

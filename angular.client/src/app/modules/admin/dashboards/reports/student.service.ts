@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
-import { baseURL } from 'environment';
+import { baseURL } from 'environments/environment';
 @Injectable({
     providedIn: 'root',
 })

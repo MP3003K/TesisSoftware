@@ -426,13 +426,19 @@
         }
     }
 
-    /* Default style tweaks and enhancements */
+    .mat-mdc-text-field-wrapper{
+        --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) ;
+    }
+
+    /* Default style tweaks and enhancements, shadow-sm was removed from first apply en put it into above class without !important*/
     .mat-mdc-text-field-wrapper {
         padding: 0;
         border-radius: 6px;
         border-width: 1px;
         border-style: solid;
-        @apply shadow-sm bg-white border-gray-300 dark:bg-black dark:bg-opacity-5 dark:border-gray-500 #{'!important'};
+        @apply bg-white border-gray-300 dark:bg-black dark:bg-opacity-5 dark:border-gray-500 #{'!important'};
 
         /* Adjust the top spacing and overflow when mat-label present */
         &:not(.mdc-text-field--no-label) {
@@ -1193,6 +1199,21 @@
 
 
 /* -------------------------------------------------------------------------- */
+/*  @ Snack bar
+/* -------------------------------------------------------------------------- */
+.mat-mdc-snack-bar-container {
+
+    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
+        color: #FFFFFF !important;
+
+        .dark & {
+            color: #000000 !important;
+        }
+    }
+}
+
+
+/* -------------------------------------------------------------------------- */
 /*  @ Stepper
 /* -------------------------------------------------------------------------- */
 .mat-step-icon {
@@ -1339,5 +1360,19 @@ textarea.mat-mdc-input-element {
         .divider {
             @apply text-on-warn text-opacity-12 #{'!important'};
         }
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  @ Tooltip
+/* -------------------------------------------------------------------------- */
+
+.mat-mdc-tooltip .mdc-tooltip__surface {
+    background-color: var(--fuse-text-default) !important;
+    color: white;
+
+    .dark & {
+        background-color: var(--fuse-text-secondary) !important;
+        color: var(--fuse-bg-default) !important;
     }
 }

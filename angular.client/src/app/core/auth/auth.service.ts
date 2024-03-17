@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
-import { baseURL } from 'environment';
+import { baseURL } from 'environments/environment';
 @Injectable()
 export class AuthService {
     private _authenticated: boolean = false;
