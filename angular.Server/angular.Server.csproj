@@ -4,9 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<SpaRoot>..\angular.client</SpaRoot>
-		<SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
-		<SpaProxyServerUrl>https://localhost:4200</SpaProxyServerUrl>
+
 		<UserSecretsId>58f64942-b51e-48cc-9302-20d1afd74360</UserSecretsId>
 	</PropertyGroup>
 

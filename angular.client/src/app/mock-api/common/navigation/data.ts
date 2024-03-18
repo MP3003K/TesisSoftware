@@ -3,26 +3,37 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 
 export const defaultNavigation: FuseNavigationItem[] = [
     {
-        id: 'dashboards',
-        title: 'Panel',
-        subtitle: 'Evaluaciones',
-        type: 'group',
-        icon: 'heroicons_outline:home',
-        children: [
-            {
-                id: 'dashboards.evaluations',
-                title: 'Evaluaciones',
-                type: 'basic',
-                icon: 'heroicons_outline:clipboard-check',
-                link: '/dashboards/evaluation',
-            },
-            {
-                id: 'dashboards.reports',
-                title: 'Reportes',
-                type: 'basic',
-                icon: 'heroicons_outline:chart-pie',
-                link: '/dashboards/reports',
-            },
-        ],
-    },
+        id   : 'example',
+        title: 'Example',
+        type : 'basic',
+        icon : 'heroicons_outline:chart-pie',
+        link : '/example'
+    }
+];
+export const compactNavigation: FuseNavigationItem[] = [
+    {
+        id   : 'example',
+        title: 'Example',
+        type : 'basic',
+        icon : 'heroicons_outline:chart-pie',
+        link : '/example'
+    }
+];
+export const futuristicNavigation: FuseNavigationItem[] = [
+    {
+        id   : 'example',
+        title: 'Example',
+        type : 'basic',
+        icon : 'heroicons_outline:chart-pie',
+        link : '/example'
+    }
+];
+export const horizontalNavigation: FuseNavigationItem[] = [
+    {
+        id   : 'example',
+        title: 'Example',
+        type : 'basic',
+        icon : 'heroicons_outline:chart-pie',
+        link : '/example'
+    }
 ];

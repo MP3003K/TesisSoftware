@@ -426,19 +426,13 @@
         }
     }
 
-    .mat-mdc-text-field-wrapper{
-        --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) ;
-    }
-
-    /* Default style tweaks and enhancements, shadow-sm was removed from first apply en put it into above class without !important*/
+    /* Default style tweaks and enhancements */
     .mat-mdc-text-field-wrapper {
         padding: 0;
         border-radius: 6px;
         border-width: 1px;
         border-style: solid;
-        @apply bg-white border-gray-300 dark:bg-black dark:bg-opacity-5 dark:border-gray-500 #{'!important'};
+        @apply shadow-sm bg-white border-gray-300 dark:bg-black dark:bg-opacity-5 dark:border-gray-500 #{'!important'};
 
         /* Adjust the top spacing and overflow when mat-label present */
         &:not(.mdc-text-field--no-label) {

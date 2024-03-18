@@ -24,6 +24,15 @@ builder.Services.AddConfigurations(builder.Configuration);
 //Start IoC Dependencies Injections
 builder.Services.AddInjections();
 
+builder.Services.AddCors(
+    options => options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        }
+        )
+);
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
@@ -37,6 +46,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 

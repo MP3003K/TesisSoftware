@@ -1,20 +1,15 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
-import { baseURL } from 'environments/environment';
-@Injectable()
-export class AuthService {
-    private _authenticated: boolean = false;
+import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 
-    /**
-     * Constructor
-     */
-    constructor(
-        private _httpClient: HttpClient,
-        private _userService: UserService
-    ) {}
+@Injectable({providedIn: 'root'})
+export class AuthService
+{
+    private _authenticated: boolean = false;
+    private _httpClient = inject(HttpClient);
+    private _userService = inject(UserService);
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -23,18 +18,14 @@ export class AuthService {
     /**
      * Setter & getter for access token
      */
-    set accessToken(token: string) {
+    set accessToken(token: string)
+    {
         localStorage.setItem('accessToken', token);
     }
 
-    get accessToken(): string {
+    get accessToken(): string
+    {
         return localStorage.getItem('accessToken') ?? '';
-    }
-    set localUser(user: any) {
-        localStorage.setItem('user', JSON.stringify(user));
-    }
-    get localUser() {
-        return JSON.parse(localStorage.getItem('user') ?? '{}');
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -46,7 +37,8 @@ export class AuthService {
      *
      * @param email
      */
-    forgotPassword(email: string): Observable<any> {
+    forgotPassword(email: string): Observable<any>
+    {
         return this._httpClient.post('api/auth/forgot-password', email);
     }
 
@@ -55,7 +47,8 @@ export class AuthService {
      *
      * @param password
      */
-    resetPassword(password: string): Observable<any> {
+    resetPassword(password: string): Observable<any>
+    {
         return this._httpClient.post('api/auth/reset-password', password);
     }
 
@@ -64,74 +57,84 @@ export class AuthService {
      *
      * @param credentials
      */
-    signIn({
-        email,
-        password,
-    }: {
-        email: string;
-        password: string;
-    }): Observable<any> {
-        if (this._authenticated) {
-            return throwError(() => new Error('User is already logged in.'));
+    signIn(credentials: { email: string; password: string }): Observable<any>
+    {
+        // Throw error, if the user is already logged in
+        if ( this._authenticated )
+        {
+            return throwError('User is already logged in.');
         }
 
-        return this._httpClient
-            .get(`${baseURL}/usuario/${email}/${password}`)
-            .pipe(
-                switchMap((response: any) => {
-                    const {
-                        data: {
-                            persona,
-                            rol: { id },
-                        },
-                    } = response;
-                    const parsedUser = {
-                        id: persona.id,
-                        email,
-                        name: `${persona.nombres} ${persona.apellidoPaterno} ${persona.apellidoMaterno}`,
-                        role: id,
-                    };
-                    //this.accessToken = response.accessToken;
-                    this._authenticated = true;
-                    this._userService.user = parsedUser;
-                    this.localUser = parsedUser;
-                    return of(response);
-                })
-            );
+        return this._httpClient.post('api/auth/sign-in', credentials).pipe(
+            switchMap((response: any) =>
+            {
+                // Store the access token in the local storage
+                this.accessToken = response.accessToken;
+
+                // Set the authenticated flag to true
+                this._authenticated = true;
+
+                // Store the user on the user service
+                this._userService.user = response.user;
+
+                // Return a new observable with the response
+                return of(response);
+            }),
+        );
     }
 
     /**
      * Sign in using the access token
      */
-    signInUsingToken(): Observable<any> {
-        // return this._httpClient
-        //     .post('api/auth/sign-in-with-token', {
-        //         accessToken: this.accessToken,
-        //     })
-        //     .pipe(
-        //         catchError(() => of(false)),
-        //         switchMap((response: any) => {
-        //             if (response.accessToken) {
-        //                 this.accessToken = response.accessToken;
-        //             }
-        //             this._authenticated = true;
-        //             this._userService.user = response.user;
-        //             return of(true);
-        //         }),
-        //     );
-        if (Object.keys(this.localUser).length == 0) return of(false);
-        this._authenticated = true;
-        this._userService.user = this.localUser;
-        return of(true);
+    signInUsingToken(): Observable<any>
+    {
+        // Sign in using the token
+        return this._httpClient.post('api/auth/sign-in-with-token', {
+            accessToken: this.accessToken,
+        }).pipe(
+            catchError(() =>
+
+                // Return false
+                of(false),
+            ),
+            switchMap((response: any) =>
+            {
+                // Replace the access token with the new one if it's available on
+                // the response object.
+                //
+                // This is an added optional step for better security. Once you sign
+                // in using the token, you should generate a new one on the server
+                // side and attach it to the response object. Then the following
+                // piece of code can replace the token with the refreshed one.
+                if ( response.accessToken )
+                {
+                    this.accessToken = response.accessToken;
+                }
+
+                // Set the authenticated flag to true
+                this._authenticated = true;
+
+                // Store the user on the user service
+                this._userService.user = response.user;
+
+                // Return true
+                return of(true);
+            }),
+        );
     }
 
     /**
      * Sign out
      */
-    signOut(): Observable<any> {
-        // localStorage.removeItem('accessToken');
-        localStorage.removeItem('user');
+    signOut(): Observable<any>
+    {
+        // Remove the access token from the local storage
+        localStorage.removeItem('accessToken');
+
+        // Set the authenticated flag to false
         this._authenticated = false;
+
+        // Return the observable
         return of(true);
     }
 
@@ -140,12 +143,8 @@ export class AuthService {
      *
      * @param user
      */
-    signUp(user: {
-        name: string;
-        email: string;
-        password: string;
-        company: string;
-    }): Observable<any> {
+    signUp(user: { name: string; email: string; password: string; company: string }): Observable<any>
+    {
         return this._httpClient.post('api/auth/sign-up', user);
     }
 
@@ -154,26 +153,35 @@ export class AuthService {
      *
      * @param credentials
      */
-    unlockSession(credentials: {
-        email: string;
-        password: string;
-    }): Observable<any> {
+    unlockSession(credentials: { email: string; password: string }): Observable<any>
+    {
         return this._httpClient.post('api/auth/unlock-session', credentials);
     }
 
     /**
      * Check the authentication status
      */
-    check(): Observable<boolean> {
-        // if (this._authenticated) {
-        //     return of(true);
-        // }
-        // if (!this.accessToken) {
-        //     return of(false);
-        // }
-        // if (AuthUtils.isTokenExpired(this.accessToken)) {
-        //     return of(false);
-        // }
+    check(): Observable<boolean>
+    {
+        // Check if the user is logged in
+        if ( this._authenticated )
+        {
+            return of(true);
+        }
+
+        // Check the access token availability
+        if ( !this.accessToken )
+        {
+            return of(false);
+        }
+
+        // Check the access token expire date
+        if ( AuthUtils.isTokenExpired(this.accessToken) )
+        {
+            return of(false);
+        }
+
+        // If the access token exists, and it didn't expire, sign in using it
         return this.signInUsingToken();
     }
 }

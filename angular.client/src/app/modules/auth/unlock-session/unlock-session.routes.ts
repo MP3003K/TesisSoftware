@@ -1,9 +1,9 @@
-import { Route, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { AuthUnlockSessionComponent } from 'app/modules/auth/unlock-session/unlock-session.component';
 
 export default [
     {
-        path: '',
+        path     : '',
         component: AuthUnlockSessionComponent,
     },
-] as Routes; 
+] as Routes;
