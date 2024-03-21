@@ -144,17 +144,49 @@
                     </div>
                     } @case("assign"){
                     <div class="flex flex-col">
-                        <div class="grid grid-cols-2 gap-4">
-                            <mat-form-field>
-                                <input matInput placeholder="Buscar" />
-                            </mat-form-field>
-                            <mat-form-field>
-                                <mat-select>
-                                    <mat-option> -- Seleccionar -- </mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                        <mat-form-field class="flex flex-col">
+                            <mat-chip-grid
+                                #chipGrid
+                                aria-label="Fruit selection"
+                            >
+                                @for (fruit of fruits; track fruit) {
+                                <mat-chip-row (removed)="remove(fruit)">
+                                    {{ fruit }}
+                                    <button
+                                        matChipRemove
+                                        [attr.aria-label]="'remove ' + fruit"
+                                    >
+                                        <mat-icon>cancel</mat-icon>
+                                    </button>
+                                </mat-chip-row>
+                                }
+                            </mat-chip-grid>
+                            <input class="w-full"
+                                placeholder="New Fruit..."
+                                #fruitInput
+                                [formControl]="fruitCtrl"
+                                [matChipInputFor]="chipGrid"
+                                [matAutocomplete]="auto"
+                                [matChipInputSeparatorKeyCodes]="
+                                    separatorKeysCodes
+                                "
+                                (matChipInputTokenEnd)="add($event)"
+                            />
+                            <mat-autocomplete
+                                #auto="matAutocomplete"
+                                (optionSelected)="selected($event)"
+                            >
+                                @for (fruit of filteredFruits | async; track
+                                fruit) {
+                                <mat-option [value]="fruit">{{
+                                    fruit
+                                }}</mat-option>
+                                }
+                            </mat-autocomplete>
+                        </mat-form-field>
+                        <div>
+                            <button mat-button>Asignar</button>
                         </div>
-                        <button mat-button>Asignar</button>
                     </div>
                     } @case("register"){
                     <!-- Agregar componente de registro aqui-->
