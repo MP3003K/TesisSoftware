@@ -6,6 +6,8 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from "@angular/material/button";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { SharedModule } from "app/shared/shared.module";
 
 export interface PeriodicElement {
     name: string;
@@ -31,14 +33,14 @@ const ELEMENT_DATA: PeriodicElement[] = [
     selector: "app-classrooms",
     templateUrl: "classrooms.component.html",
     standalone: true,
-    imports: [MatInputModule, MatFormFieldModule, MatSelectModule, MatTableModule, MatCheckboxModule, MatButtonModule]
+    imports: [SharedModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatTableModule, MatCheckboxModule, MatButtonModule, MatButtonToggleModule]
 })
 export class ClassroomsComponent implements OnInit {
     isTestEnabled?: boolean = null
     displayedColumns: string[] = ['select', 'position', 'name', 'weight', 'symbol'];
     dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
     selection = new SelectionModel<PeriodicElement>(true, []);
-
+    items: string = "list"
     ngOnInit(): void {
         this.isTestEnabled = true
     }
