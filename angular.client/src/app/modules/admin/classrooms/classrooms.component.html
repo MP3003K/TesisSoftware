@@ -143,11 +143,21 @@
                         </table>
                     </div>
                     } @case("assign"){
-                        <div class="flex flex-col">
-
+                    <div class="flex flex-col">
+                        <div class="grid grid-cols-2 gap-4">
+                            <mat-form-field>
+                                <input matInput placeholder="Buscar" />
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-select>
+                                    <mat-option> -- Seleccionar -- </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
-                    }  @case("register"){
-                        <!-- Agregar componente de registro aqui-->
+                        <button mat-button>Asignar</button>
+                    </div>
+                    } @case("register"){
+                    <!-- Agregar componente de registro aqui-->
                     }}
                 </div>
             </div>
