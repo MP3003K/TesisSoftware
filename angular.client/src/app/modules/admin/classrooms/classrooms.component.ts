@@ -9,7 +9,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { SharedModule } from "app/shared/shared.module";
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
-import { FormControl } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Observable, map, startWith } from "rxjs";
 import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -58,7 +58,9 @@ export class ClassroomsComponent implements OnInit {
 
     announcer = inject(LiveAnnouncer);
 
-    constructor() {
+    formRegistrarEstudiante: FormGroup;
+
+    constructor(private fb: FormBuilder) {
         this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
             startWith(null),
             map((fruit: string | null) => (fruit ? this._filter(fruit) : this.allFruits.slice())),
@@ -66,6 +68,7 @@ export class ClassroomsComponent implements OnInit {
     }
     ngOnInit(): void {
         this.isTestEnabled = true
+        this.crearFormularioRegistrarEstudiante();
     }
 
 
@@ -131,4 +134,19 @@ export class ClassroomsComponent implements OnInit {
 
         return this.allFruits.filter(fruit => fruit.toLowerCase().includes(filterValue));
     }
+
+
+
+    private crearFormularioRegistrarEstudiante(): void {
+        this.formRegistrarEstudiante = this.fb.group({
+            nombre: ['', Validators.required],
+            apellidoPaterno: ['', Validators.required],
+            apellidoMaterno: ['', Validators.required],
+            dni: ['', [Validators.required, Validators.pattern('^[0-9]{8}$')]]
+        });
+    }
+
+
+
+
 }
