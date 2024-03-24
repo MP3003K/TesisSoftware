@@ -50,4 +50,7 @@ export class ClassroomsService {
   getAulas(): Observable<AulaApiResponse> {
     return this.http.get<AulaApiResponse>(`${environment.baseURL}/Aula/all`);
   }
+  getStudentsByClassroom(id: number) {
+    return this.http.get<any>(`${environment.baseURL}/Classrooms/getEstudiantesDeEvalucionAula/${id}`);
+  }
 }

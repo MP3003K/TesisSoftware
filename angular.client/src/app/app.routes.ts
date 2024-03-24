@@ -78,7 +78,15 @@ export const appRoutes: Route[] = [
             { path: 'evaluation', loadChildren: () => import('app/modules/admin/evaluation/evaluation.routes') },
             { path: 'reports', loadChildren: () => import('app/modules/admin/reports/reports.routes') },
             { path: 'classrooms', loadChildren: () => import('app/modules/admin/classrooms/classrooms.routes') },
-
+            {
+                path: '404-not-found',
+                pathMatch: 'full',
+                loadChildren: () =>
+                    import(
+                        'app/modules/admin/pages/error/error-404/error-404.routes'
+                    ),
+            },
+            { path: '**', redirectTo: '404-not-found' },
         ]
     }
 ];

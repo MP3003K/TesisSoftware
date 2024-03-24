@@ -15,28 +15,7 @@ import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from "@angular/material/icon";
-import { MatDialog } from '@angular/material/dialog';
 import { ClassroomUnit, ClassroomsService, Grado, Seccion } from "./classrooms.service";
-
-export interface PeriodicElement {
-    name: string;
-    position: number;
-    weight: number;
-    symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-    { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-    { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-    { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-    { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-    { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-    { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-    { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-    { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-    { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-    { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-];
 
 @Component({
     selector: "app-classrooms",
@@ -61,9 +40,9 @@ export class ClassroomsComponent implements OnInit {
     //termina elias
 
     isTestEnabled?: boolean = null
-    displayedColumns: string[] = ['select', 'position', 'name', 'weight', 'symbol'];
-    dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
-    selection = new SelectionModel<PeriodicElement>(true, []);
+    displayedColumns: string[] = ['select', 'Nombres', 'ApellidoPaterno', 'ApellidoMaterno', 'DNI'];
+    dataSource = new MatTableDataSource([]);
+    selection = new SelectionModel(true, []);
     items: string = "list"
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
@@ -82,17 +61,22 @@ export class ClassroomsComponent implements OnInit {
             startWith(null),
             map((fruit: string | null) => (fruit ? this._filter(fruit) : this.allFruits.slice())),
         );
-        
+
     }
     ngOnInit(): void {
         this.isTestEnabled = true
         this.crearFormularioRegistrarEstudiante();
         this.loadClassrooms();
         this.loadGradosYSecciones();
-       
+
     }
 
-
+    filterStudentsByClassroom() {
+        console.log(this.selectedSeccionId)
+        this.classroomsService.getStudentsByClassroom(this.selectedSeccionId).subscribe(res => {
+            this.dataSource.data = res
+        })
+    }
     isAllSelected() {
         const numSelected = this.selection.selected.length;
         const numRows = this.dataSource.data.length;
@@ -108,7 +92,7 @@ export class ClassroomsComponent implements OnInit {
         this.selection.select(...this.dataSource.data);
     }
 
-    checkboxLabel(row?: PeriodicElement): string {
+    checkboxLabel(row?: any): string {
         if (!row) {
             return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
         }
@@ -171,16 +155,16 @@ export class ClassroomsComponent implements OnInit {
 
     loadClassrooms() {
         this.classroomsService.getClassrooms().subscribe({
-          next: (data) => {
-            this.classrooms = data;
-          },
-          error: (err) => {
-            console.error(err);
-          }
+            next: (data) => {
+                this.classrooms = data;
+            },
+            error: (err) => {
+                console.error(err);
+            }
         });
-      }
+    }
 
-      loadGradosYSecciones(): void {
+    loadGradosYSecciones(): void {
         this.classroomsService.getAulas().subscribe({
             next: (response) => {
                 if (response.succeeded) {
@@ -213,23 +197,23 @@ export class ClassroomsComponent implements OnInit {
     onGradoSelected(gradoId: number): void {
         this.selectedGradoId = gradoId;
         this.selectedSeccionId = null; // Resetea la sección seleccionada
-        
+
         // Filtra las secciones basándose en el grado seleccionado y actualiza la propiedad 'secciones'
         this.secciones = this.aulasCompletas
-          .filter(aula => aula.gradoId === gradoId);
+            .filter(aula => aula.gradoId === gradoId);
         console.log(this.secciones)
-      }
-      openCreateUnitModal(): void {
+    }
+    openCreateUnitModal(): void {
         this.showCreateUnitModal = true;
-      }
-    
-      onCreateUnit(): void {
+    }
+
+    onCreateUnit(): void {
         this.showCreateUnitModal = false;
-      }
-    
-      onCancelCreateUnit(): void {
+    }
+
+    onCancelCreateUnit(): void {
         this.showCreateUnitModal = false;
-      }
-     //Fin codigo de elias
+    }
+    //Fin codigo de elias
 
 }

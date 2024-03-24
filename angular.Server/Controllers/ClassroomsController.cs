@@ -1,23 +1,23 @@
-﻿using Application.Features.Usuario.Queries;
-using Application.Wrappers;
+﻿using System.Data;
 using Context;
 using Controllers.Base;
-using DTOs;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Context;
 using Entities;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Controllers
 {
     public class ClassroomsController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly DapperContext _ctx;
 
-        public ClassroomsController(ApplicationDbContext context)
+
+        public ClassroomsController(ApplicationDbContext context, DapperContext ctx)
         {
             this._context = context;
+            this._ctx = ctx;
         }
 
         /// <summary>
@@ -58,8 +58,12 @@ namespace Controllers
         {
             try
             {
-                var grados = await _context.Grados.FromSqlInterpolated($"EXEC get_estudiantes_de_evalucion_aula @v_aulaId = {aulaId}").ToListAsync();
-                return Ok(grados);
+                using (var connection = _ctx.CreateConnection())
+                {
+                    
+                    var students = await connection.QueryAsync("get_estudiantes_de_evalucion_aula", new { v_aulaid=aulaId }, commandType: CommandType.StoredProcedure);
+                    return Ok(students.ToList());
+                }
             }
             catch (Exception ex)
             {

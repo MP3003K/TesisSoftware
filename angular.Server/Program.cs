@@ -1,9 +1,11 @@
 using API.Filters;
 using Configurations;
 using Containers;
+using Context;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
+builder.Services.AddSingleton<DapperContext>();
 
 builder.Services.AddControllers();
 
