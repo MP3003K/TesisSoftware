@@ -8,6 +8,7 @@
                     <mat-label>Unidades</mat-label>
                     <mat-select [(value)]="selectedUnit">
                         <mat-option *ngFor="let unit of classrooms" [value]="unit.id">{{ unit.nombre }}</mat-option>
+                        <mat-option (click)="openCreateUnitModal()">Crear Unidad</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field class="col-span-1">
@@ -28,6 +29,19 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Inicio del modal para crear unidad -->
+<div *ngIf="showCreateUnitModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-20">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h2 class="text-center text-lg font-bold">Desea crear una nueva unidad?</h2>
+      <div class="mt-5 text-center">
+        <button mat-button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="onCreateUnit()">Aceptar</button>
+        <button mat-button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4" (click)="onCancelCreateUnit()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <!-- Fin del modal -->
+
             <div class="flex flex-col gap-4">
                 <div>
                     <mat-button-toggle-group [(ngModel)]="items" aria-label="Font Style">

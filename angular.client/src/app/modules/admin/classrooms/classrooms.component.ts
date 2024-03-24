@@ -15,6 +15,7 @@ import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from "@angular/material/icon";
+import { MatDialog } from '@angular/material/dialog';
 import { ClassroomUnit, ClassroomsService, Grado, Seccion } from "./classrooms.service";
 
 export interface PeriodicElement {
@@ -45,6 +46,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
 })
 export class ClassroomsComponent implements OnInit {
     //empieza elias
+    showCreateUnitModal: boolean = false;
     selectedUnit: number;
     classrooms: ClassroomUnit[] = [];
     grados: Grado[] = [];
@@ -217,7 +219,17 @@ export class ClassroomsComponent implements OnInit {
           .filter(aula => aula.gradoId === gradoId);
         console.log(this.secciones)
       }
-
+      openCreateUnitModal(): void {
+        this.showCreateUnitModal = true;
+      }
+    
+      onCreateUnit(): void {
+        this.showCreateUnitModal = false;
+      }
+    
+      onCancelCreateUnit(): void {
+        this.showCreateUnitModal = false;
+      }
      //Fin codigo de elias
 
 }
