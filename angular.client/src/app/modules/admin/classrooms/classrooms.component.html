@@ -3,25 +3,30 @@
     <div class="flex-auto  px-6 py-4 sm:px-10 sm:py-7">
         <!-- CONTENT GOES HERE -->
         <div class="flex flex-col">
-            <div class="grid grid-cols-3 gap-4">
-                <mat-form-field>
-                    <mat-label>Año</mat-label>
-                    <mat-select>
-                        <mat-option>--Seleccionar</mat-option>
+            <div class="grid grid-cols-4 gap-2">
+                <mat-form-field class="col-span-1">
+                    <mat-label>Unidades</mat-label>
+                    <mat-select [(value)]="selectedUnit">
+                        <mat-option *ngFor="let unit of classrooms" [value]="unit.id">{{ unit.nombre }}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field>
+                <mat-form-field class="col-span-1">
                     <mat-label>Grado</mat-label>
-                    <mat-select>
-                        <mat-option>--Seleccionar</mat-option>
+                    <mat-select (selectionChange)="onGradoSelected($event.value)">
+                        <mat-option *ngFor="let grado of grados" [value]="grado.id">{{ grado.nombre }}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field>
+                <mat-form-field class="col-span-1">
                     <mat-label>Sección</mat-label>
-                    <mat-select>
-                        <mat-option>--Seleccionar</mat-option>
+                    <mat-select [(value)]="selectedSeccionId">
+                        <mat-option *ngFor="let seccion of secciones" [value]="seccion.id">{{ seccion.secccion }}</mat-option>
                     </mat-select>
                 </mat-form-field>
+                <div class="col-span-1 flex justify-center items-center">
+                    <button class="btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded">
+                        Filtrar
+                    </button>
+                </div>
             </div>
             <div class="flex flex-col gap-4">
                 <div>

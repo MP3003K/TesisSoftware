@@ -15,6 +15,7 @@ import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from "@angular/material/icon";
+import { ClassroomUnit, ClassroomsService, Grado, Seccion } from "./classrooms.service";
 
 export interface PeriodicElement {
     name: string;
@@ -43,6 +44,20 @@ const ELEMENT_DATA: PeriodicElement[] = [
     imports: [SharedModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatTableModule, MatCheckboxModule, MatButtonModule, MatButtonToggleModule, MatAutocompleteModule, MatChipsModule, MatIconModule]
 })
 export class ClassroomsComponent implements OnInit {
+    //empieza elias
+    selectedUnit: number;
+    classrooms: ClassroomUnit[] = [];
+    grados: Grado[] = [];
+    secciones: Seccion[] = [];
+    //selectedGrado: Grado | null = null;
+    //selectedSeccion: Seccion | null = null;
+    //selectedGradoId: number | null = null;
+    aulasCompletas: Seccion[] = [];
+    selectedSeccionId: number | null = null;
+    selectedGradoId: number | null = null;
+
+    //termina elias
+
     isTestEnabled?: boolean = null
     displayedColumns: string[] = ['select', 'position', 'name', 'weight', 'symbol'];
     dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
@@ -60,15 +75,19 @@ export class ClassroomsComponent implements OnInit {
 
     formRegistrarEstudiante: FormGroup;
 
-    constructor(private fb: FormBuilder) {
+    constructor(private fb: FormBuilder, private classroomsService: ClassroomsService) {
         this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
             startWith(null),
             map((fruit: string | null) => (fruit ? this._filter(fruit) : this.allFruits.slice())),
         );
+        
     }
     ngOnInit(): void {
         this.isTestEnabled = true
         this.crearFormularioRegistrarEstudiante();
+        this.loadClassrooms();
+        this.loadGradosYSecciones();
+       
     }
 
 
@@ -146,7 +165,59 @@ export class ClassroomsComponent implements OnInit {
         });
     }
 
+    //Inicio codigo de elias
 
+    loadClassrooms() {
+        this.classroomsService.getClassrooms().subscribe({
+          next: (data) => {
+            this.classrooms = data;
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
+      }
 
+      loadGradosYSecciones(): void {
+        this.classroomsService.getAulas().subscribe({
+            next: (response) => {
+                if (response.succeeded) {
+                    console.log('Aulas cargadas:', response.data);
+                    this.aulasCompletas = response.data;
+                    this.extractGradosAndSecciones(response.data);
+                } else {
+                    console.error('Failed to load grados y secciones:', response.message);
+                }
+            },
+            error: (err) => {
+                console.error('Error loading grados y secciones:', err);
+            }
+        });
+    }
+
+    private extractGradosAndSecciones(aulas: Seccion[]): void {
+        // Extract unique grados
+        const uniqueGrados = new Map<number, Grado>();
+        aulas.forEach(aula => {
+            if (!uniqueGrados.has(aula.grado.id)) {
+                uniqueGrados.set(aula.grado.id, aula.grado);
+            }
+        });
+        this.grados = Array.from(uniqueGrados.values());
+        // Init secciones to empty as they will be loaded based on selected grado
+        this.secciones = [];
+    }
+
+    onGradoSelected(gradoId: number): void {
+        this.selectedGradoId = gradoId;
+        this.selectedSeccionId = null; // Resetea la sección seleccionada
+        
+        // Filtra las secciones basándose en el grado seleccionado y actualiza la propiedad 'secciones'
+        this.secciones = this.aulasCompletas
+          .filter(aula => aula.gradoId === gradoId);
+        console.log(this.secciones)
+      }
+
+     //Fin codigo de elias
 
 }
