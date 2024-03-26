@@ -69,6 +69,7 @@ export class AuthService
         return this._httpClient.post(`${environment.baseURL}/auth/login`, credentials).pipe(
             switchMap((response: any) =>
             {
+                console.log(response)
                 // Store the access token in the local storage
                 this.accessToken = response.accessToken;
 
@@ -90,7 +91,7 @@ export class AuthService
     signInUsingToken(): Observable<any>
     {
         // Sign in using the token
-        return this._httpClient.post('api/auth/sign-in-with-token', {
+        return this._httpClient.post(`${environment.baseURL}/auth/profile`, {
             accessToken: this.accessToken,
         }).pipe(
             catchError(() =>

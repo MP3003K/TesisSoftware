@@ -5,20 +5,24 @@ using System.Text;
 
 namespace angular.Server.Configuration
 {
-    public class JwtBearerOptionsSetup(IOptions<JwtOptions> options) : IConfigureOptions<JwtBearerOptions>
+    public class JwtBearerOptionsSetup : IConfigureOptions<JwtBearerOptions>
     {
-        private readonly JwtOptions _options = options.Value;
-
-        public void Configure(JwtBearerOptions options)
+        private readonly JwtOptions _options;
+        public JwtBearerOptionsSetup(IOptions<JwtOptions> options)
         {
+            this._options = options.Value;
+        }
+        public void Configure(JwtBearerOptions options)
+
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
             options.TokenValidationParameters = new()
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = _options.Issuer,
-                ValidAudience = _options.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_options.SecretKey))
             };

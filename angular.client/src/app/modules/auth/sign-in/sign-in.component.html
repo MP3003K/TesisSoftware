@@ -31,6 +31,7 @@
             <form
                 class="mt-8"
                 [formGroup]="signInForm"
+                (ngSubmit)="signIn()"
                 #signInNgForm="ngForm">
 
                 <!-- Email field -->
@@ -95,8 +96,9 @@
                     class="fuse-mat-button-large w-full mt-6"
                     mat-flat-button
                     [color]="'primary'"
+                    type="submit"
                     [disabled]="signInForm.disabled"
-                    (click)="signIn()">
+                    >
                     <span *ngIf="!signInForm.disabled">
                         Sign in
                     </span>
