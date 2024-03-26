@@ -1,8 +1,8 @@
-﻿using Controllers.Base;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Context;
 using System.Data;
 using Dapper;
+using Application.Wrappers;
 
 namespace Controllers
 {
@@ -14,10 +14,11 @@ namespace Controllers
         public int DNI { get; set; } = 0;
         public int AulaId { get; set; } = 0;
     }
-    public class PersonaController(DapperContext context) : BaseController
+    [ApiController]
+    [Route("[controller]")]
+    public class PersonaController(DapperContext context) : ControllerBase
     {
-        [HttpPost]
-        [Route("AgregarEvaPisEstudiante")]
+        [HttpPost("AgregarEvaPisEstudiante")]
         public async Task<ActionResult> AddPersonaConEvaPsiEstudiante([FromBody] CreatePerson person)
         {
             try
@@ -26,7 +27,8 @@ namespace Controllers
                 {
 
                     var classrooms = await connection.QueryAsync("CREAR_ESTUDIANTE", new { firstName = person.Nombres, firstLastName = person.ApellidoPaterno, secondLastName = person.ApellidoMaterno, documentNumber = person.DNI, classroomId = person.AulaId },  commandType: CommandType.StoredProcedure);
-                    return Ok(classrooms.ToList());
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = classrooms.ToList() });
+
                 }
             }
             catch (Exception ex)

@@ -1,12 +1,14 @@
-﻿using Context;
-using Controllers.Base;
+﻿using Application.Wrappers;
+using Context;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
 namespace Controllers
 {
-    public class AulaController(DapperContext ctx) : BaseController
+    [ApiController]
+    [Route("[controller]")]
+    public class AulaController(DapperContext ctx):ControllerBase
     {
         [HttpGet("all")]
         public async Task<ActionResult> ListaDeAulas()
@@ -17,7 +19,8 @@ namespace Controllers
                 {
 
                     var classrooms = await connection.QueryAsync("LISTAR_AULAS", commandType: CommandType.StoredProcedure);
-                    return Ok(classrooms.ToList());
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = classrooms.ToList() });
+
                 }
             }
             catch (Exception ex)
@@ -39,7 +42,7 @@ namespace Controllers
                 {
 
                     var classrooms = await connection.QueryAsync("LISTAR_AULAS_POR_ESTUDIANTE", new { studentId }, commandType: CommandType.StoredProcedure);
-                    return Ok(classrooms.ToList());
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = classrooms.ToList() });
                 }
             }
             catch (Exception ex)

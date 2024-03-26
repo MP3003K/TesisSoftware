@@ -1,12 +1,14 @@
-﻿using Context;
-using Controllers.Base;
+﻿using Application.Wrappers;
+using Context;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
 namespace webapi.Controllers
 {
-    public class PreguntasPsicologicasController(DapperContext context): BaseController
+    [ApiController]
+    [Route("[controller]")]
+    public class PreguntasPsicologicasController(DapperContext context): ControllerBase
     {
 
         /// <summary>
@@ -21,7 +23,8 @@ namespace webapi.Controllers
                 {
 
                     var questions = await connection.QueryAsync("LISTAR_PREGUNTAS", new { evaluationId, limit, start }, commandType: CommandType.StoredProcedure);
-                    return Ok(questions.ToList());
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = questions.ToList() });
+
                 }
             }
             catch (Exception ex)

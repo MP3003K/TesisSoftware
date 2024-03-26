@@ -1,13 +1,14 @@
-﻿using Context;
+﻿using Application.Wrappers;
+using Context;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
 namespace angular.Server.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class EvaluacionPsicologicaController(DapperContext context) : ControllerBase
+    [Route("[controller]")]
+    public class EvaluacionPsicologicaController(DapperContext context) :ControllerBase
     {
         /// <summary>
         /// Lista de los estudiantes que participaron en una Evalucion Psicologica
@@ -24,7 +25,8 @@ namespace angular.Server.Controllers
                     {
                         evaluationId
                     }, commandType: CommandType.StoredProcedure);
-                    return Ok(students.ToList());
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = students.ToList() });
+
                 }
 
             }

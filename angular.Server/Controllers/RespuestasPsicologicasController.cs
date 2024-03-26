@@ -1,5 +1,4 @@
 ﻿using Application.Wrappers;
-using Controllers.Base;
 using DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Context;
@@ -15,11 +14,9 @@ namespace Controllers
         public int? QuestionId { get; set; }
     }
 
-    /// <param name="context">
-    /// Resultados psicologicos obtenido por un Aula en una Unidad
-    /// </param>
-    /// 
-    public class RespuestasPsicologicasController(DapperContext context) : BaseController
+    [ApiController]
+    [Route("[controller]")]
+    public class RespuestasPsicologicasController(DapperContext context) : ControllerBase
     {
         [HttpGet("RespuestasAula/all")]
         public async Task<ActionResult> RespuestasPsicologicas()
@@ -30,7 +27,7 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
                     await connection.QueryAsync("LISTAR_RESPUESTAS_AULA", new { evaluationId = 1 }, commandType: CommandType.StoredProcedure);
-                    return Ok();
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = null });
                 }
             }
             catch (Exception ex)
@@ -47,7 +44,7 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
                     await connection.QueryAsync("LISTAR_RESPUESTAS_AULA", new { evaluationId  }, commandType: CommandType.StoredProcedure);
-                    return Ok();
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = null });
                 }
             }
             catch (Exception ex)
@@ -70,7 +67,7 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
                     await connection.QueryAsync("LISTAR_RESPUESTAS_ESTUDIANTE", new { evaluationId }, commandType: CommandType.StoredProcedure);
-                    return Ok();
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = null });
                 }
             }
             catch (Exception ex)
@@ -87,7 +84,7 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
                     await connection.QueryAsync("CREATE_ANSWER", answer, commandType: CommandType.StoredProcedure);
-                    return Ok();
+                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = null });
                 }
             }
             catch (Exception ex)

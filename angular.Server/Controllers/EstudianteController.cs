@@ -1,13 +1,15 @@
 ﻿using DTOs;
 using Microsoft.AspNetCore.Mvc;
-using Controllers.Base;
 using Context;
 using System.Data;
 using Dapper;
+using Application.Wrappers;
 
 namespace Controllers
 {
-    public class EstudianteController(DapperContext context) : BaseController
+    [ApiController]
+    [Route("[controller]")]
+    public class EstudianteController(DapperContext context):ControllerBase
     {
         /// <summary>
         /// Informacion Basica de un Estudiante
@@ -24,7 +26,8 @@ namespace Controllers
                     {
                         studentId
                     }, commandType: CommandType.StoredProcedure);
-                    return Ok();
+                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = null });
+
                 }
 
             }

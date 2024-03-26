@@ -1,12 +1,14 @@
-﻿using Context;
-using Controllers.Base;
+﻿using Application.Wrappers;
+using Context;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
 namespace Controllers
 {
-    public class UnidadController(DapperContext context): BaseController
+    [ApiController]
+    [Route("[controller]")]
+    public class UnidadController(DapperContext context): ControllerBase
     {
         /// <summary>
         /// Lista de Unidades escolares
@@ -21,7 +23,7 @@ namespace Controllers
                 {
 
                     var questions = await connection.QueryAsync("LISTAR_UNIDADES", commandType: CommandType.StoredProcedure);
-                    return Ok(questions.ToList());
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = questions.ToList() });
                 }
             }
             catch (Exception ex)
@@ -42,7 +44,8 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
                     var unities = await connection.QueryAsync("OBTENER_UNIDAD_ACTUAL", commandType: CommandType.StoredProcedure);
-                    return Ok(unities.FirstOrDefault());
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = unities.FirstOrDefault() });
+
                 }
             }
             catch (Exception ex)
@@ -63,7 +66,8 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
                     var unities = await connection.QueryAsync("LISTAR_UNIDADES_POR_ESTUDIANTE", new { studentId }, commandType: CommandType.StoredProcedure);
-                    return Ok(unities.FirstOrDefault());
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = unities.FirstOrDefault() });
+
                 }
             }
             catch (Exception ex)

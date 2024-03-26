@@ -4,8 +4,8 @@
 
 namespace angular.Server.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class ReporteController : ControllerBase
     {
         // GET: api/<ValuesController>

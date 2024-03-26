@@ -44,13 +44,13 @@ export class ClassroomsService {
   constructor(private http: HttpClient) { }
 
   getClassrooms(): Observable<ClassroomUnit[]> {
-    return this.http.get<ClassroomUnit[]>(`${environment.baseURL}/Classrooms/unidades/all`);
+    return this.http.get<ClassroomUnit[]>(`${environment.baseURL}/classroom/unidades/all`);
   }
 
   getAulas(): Observable<AulaApiResponse> {
     return this.http.get<AulaApiResponse>(`${environment.baseURL}/Aula/all`);
   }
   getStudentsByClassroom(id: number) {
-    return this.http.get<any>(`${environment.baseURL}/Classrooms/getEstudiantesDeEvalucionAula/${id}`);
+    return this.http.get<any>(`${environment.baseURL}/classroom/getEstudiantesDeEvalucionAula/${id}`);
   }
 }

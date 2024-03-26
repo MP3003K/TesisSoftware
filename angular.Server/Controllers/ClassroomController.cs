@@ -1,13 +1,17 @@
 ﻿using System.Data;
 using Context;
-using Controllers.Base;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using DTOs.Exceptions;
+using Application.Wrappers;
 
 
 namespace Controllers
 {
-    public class ClassroomController(DapperContext context) : BaseController
+
+    [ApiController]
+    [Route("[controller]")]
+    public class ClassroomController(DapperContext context) : ControllerBase
     {
 
         /// <summary>
@@ -23,7 +27,8 @@ namespace Controllers
                 {
 
                     var classrooms = await connection.QueryAsync("SELECT * from UNIDADES order by Año, NUnidad;");
-                    return Ok(classrooms.ToList());
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = classrooms.ToList() });
+
                 }
             }
             catch (Exception ex)
@@ -45,9 +50,9 @@ namespace Controllers
                 {
 
                     await connection.QueryAsync("proc_crear_evalucion_psicologica_aula", new { v_aulaId = aulaId }, commandType: CommandType.StoredProcedure);
-                    return Ok();
+                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = null });
                 }
-   
+
             }
             catch (Exception ex)
             {
@@ -67,9 +72,10 @@ namespace Controllers
             {
                 using (var connection = context.CreateConnection())
                 {
-                    
-                    var students = await connection.QueryAsync("get_estudiantes_de_evalucion_aula", new { v_aulaid=aulaId }, commandType: CommandType.StoredProcedure);
-                    return Ok(students.ToList());
+
+                    var students = await connection.QueryAsync("get_estudiantes_de_evalucion_aula", new { v_aulaid = aulaId }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = students.ToList() });
+
                 }
             }
             catch (Exception ex)
