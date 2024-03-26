@@ -17,7 +17,7 @@ namespace Controllers
     {
 
         [HttpPost("Login")]
-        public async Task<ActionResult<Response<UsuarioDto>>> InformacionUsuario([FromBody] LoginDto Credentials)
+        public async Task<ActionResult> InformacionUsuario([FromBody] LoginDto Credentials)
         {
             try
             {
@@ -28,9 +28,9 @@ namespace Controllers
                     return Ok();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return BadRequest(ex.Message);
+                return Unauthorized();
             }
         }
     }
