@@ -1,26 +1,38 @@
-﻿using Application.Features.Persona.Commands;
-using Application.Wrappers;
-using Controllers.Base;
-using Entities;
+﻿using Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 using Context;
+using System.Data;
+using Dapper;
 
 namespace Controllers
 {
-    public class PersonaController : BaseController
+    public class CreatePerson
     {
-        private readonly ApplicationDbContext _context;
-        public PersonaController(ApplicationDbContext context)
-        {
-            this._context = context;
-        }
+        public string? Nombres { get; set; }
+        public string? ApellidoPaterno { get; set; }
+        public string? ApellidoMaterno { get; set; }
+        public int DNI { get; set; } = 0;
+        public int AulaId { get; set; } = 0;
+    }
+    public class PersonaController(DapperContext context) : BaseController
+    {
         [HttpPost]
         [Route("AgregarEvaPisEstudiante")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Response<EvaluacionPsicologicaEstudiante>>> AddPersonaConEvaPsiEstudiante([FromBody] AgregarPersonaEvaPsiEstudianteRequest request)
+        public async Task<ActionResult> AddPersonaConEvaPsiEstudiante([FromBody] CreatePerson person)
         {
-            return Created("", await Mediator.Send(request));
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    var classrooms = await connection.QueryAsync("CREAR_ESTUDIANTE", new { firstName = person.Nombres, firstLastName = person.ApellidoPaterno, secondLastName = person.ApellidoMaterno, documentNumber = person.DNI, classroomId = person.AulaId },  commandType: CommandType.StoredProcedure);
+                    return Ok(classrooms.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

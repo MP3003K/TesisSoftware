@@ -1,6 +1,4 @@
 using API.Filters;
-using Configurations;
-using Containers;
 using Context;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,11 +18,7 @@ builder.Services.AddMvcCore(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Start IoC project Configurations
-builder.Services.AddConfigurations(builder.Configuration);
-
 //Start IoC Dependencies Injections
-builder.Services.AddInjections();
 
 builder.Services.AddCors(
     options => options.AddDefaultPolicy(

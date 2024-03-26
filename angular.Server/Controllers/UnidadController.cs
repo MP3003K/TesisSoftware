@@ -1,22 +1,33 @@
-﻿using Application.Features.Unidad.Queries;
-using Application.Wrappers;
+﻿using Context;
 using Controllers.Base;
-using DTOs;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Controllers
 {
-    public class UnidadController: BaseController
+    public class UnidadController(DapperContext context): BaseController
     {
         /// <summary>
         /// Lista de Unidades escolares
         /// </summary>
 
         [HttpGet("all")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<IList<UnidadDto>>>> ListaDeUnidadesEscolares()
+        public async Task<ActionResult> ListaDeUnidadesEscolares()
         {
-            return Ok(await Mediator.Send(new ListaUnidadesQuery()));
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    var questions = await connection.QueryAsync("LISTAR_UNIDADES", commandType: CommandType.StoredProcedure);
+                    return Ok(questions.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -24,24 +35,42 @@ namespace Controllers
         /// </summary>
         /// 
         [HttpGet("unidadActual")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<UnidadDto>>> UnidadActual()
+        public async Task<ActionResult> UnidadActual()
         {
-            return Ok(await Mediator.Send(new UnidadActualQuery()));
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+                    var unities = await connection.QueryAsync("OBTENER_UNIDAD_ACTUAL", commandType: CommandType.StoredProcedure);
+                    return Ok(unities.FirstOrDefault());
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
         /// Unidad escolar actual
         /// </summary>
         /// 
-        [HttpGet("unidadesEstudiantes/{estudianteId:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<UnidadDto>>> UnidadActual(int estudianteId)
+        [HttpGet("unidadesEstudiantes/{studentId:int}")]
+        public async Task<ActionResult> UnidadEstudiante(int studentId)
         {
-            return Ok(await Mediator.Send(new ListaUnidadesEstudianteQuery()
+            try
             {
-                EstudianteId = estudianteId
-            }));
+                using (var connection = context.CreateConnection())
+                {
+                    var unities = await connection.QueryAsync("LISTAR_UNIDADES_POR_ESTUDIANTE", new { studentId }, commandType: CommandType.StoredProcedure);
+                    return Ok(unities.FirstOrDefault());
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+          
         }
     }
 }

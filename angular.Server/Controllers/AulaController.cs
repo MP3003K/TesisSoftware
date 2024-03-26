@@ -1,23 +1,29 @@
-﻿using Application.Features.Aula.Queries;
-using Application.Features.Unidad.Queries;
-using Application.Wrappers;
+﻿using Context;
 using Controllers.Base;
-using DTOs;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Controllers
 {
-    public class AulaController: BaseController
+    public class AulaController(DapperContext ctx) : BaseController
     {
-        /// <summary>
-        /// Lista de Unidades escolares
-        /// </summary>
-
         [HttpGet("all")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<IList<AulaDto>>>> ListaDeAulas()
+        public async Task<ActionResult> ListaDeAulas()
         {
-            return Ok(await Mediator.Send(new ListaAulasQuery()));
+            try
+            {
+                using (var connection = ctx.CreateConnection())
+                {
+
+                    var classrooms = await connection.QueryAsync("LISTAR_AULAS", commandType: CommandType.StoredProcedure);
+                    return Ok(classrooms.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -25,13 +31,21 @@ namespace Controllers
         /// </summary>
 
         [HttpGet("aulasEstudiante/{estudianteId:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<IList<AulaDto>>>> ListaAulasEstudiantes(int estudianteId)
+        public async Task<ActionResult> ListaAulasEstudiantes(int studentId)
         {
-            return Ok(await Mediator.Send(new ListaAulasEstudianteQuery()
+            try
             {
-                EstudianteId = estudianteId
-            }));
+                using (var connection = ctx.CreateConnection())
+                {
+
+                    var classrooms = await connection.QueryAsync("LISTAR_AULAS_POR_ESTUDIANTE", new { studentId }, commandType: CommandType.StoredProcedure);
+                    return Ok(classrooms.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

@@ -1,4 +1,4 @@
-namespace Interfaces.Transactions
+﻿namespace angular.Server.Filters
 {
     public interface IDatabaseTransaction
     {

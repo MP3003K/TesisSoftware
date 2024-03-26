@@ -1,25 +1,33 @@
-﻿using Application.Features.PreguntaPsicologica.Queries;
-using Application.Wrappers;
+﻿using Context;
 using Controllers.Base;
-using DTOs;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace webapi.Controllers
 {
-    public class PreguntasPsicologicasController: BaseController
+    public class PreguntasPsicologicasController(DapperContext context): BaseController
     {
 
         /// <summary>
         /// Lista de preguntas psicologicas de una evaluacion psicologica (Test Psicologico)
         /// </summary>
-        [HttpGet("{evaPsiEstId:int}/{pageNumber:int}/{pageSize:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<IList<PreguntaPsicologicaDto>>>> ListaDePreguntasPsicologicas(int evaPsiEstId, int pageNumber, int pageSize)
+        [HttpGet("{evaluationId:int}")]
+        public async Task<ActionResult> ListaDePreguntasPsicologicas(int evaluationId, int limit, int start)
         {
-            return Ok(await Mediator.Send(new ListaPreguntasPsicologicasQuery() {
-                EvaPsiEstId = evaPsiEstId, 
-                PageNumber = pageNumber,
-                PageSize = pageSize}));
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    var questions = await connection.QueryAsync("LISTAR_PREGUNTAS", new { evaluationId, limit, start }, commandType: CommandType.StoredProcedure);
+                    return Ok(questions.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

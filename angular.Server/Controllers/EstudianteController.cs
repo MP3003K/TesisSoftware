@@ -1,45 +1,31 @@
-﻿using Application.Features.Aula.Queries;
-using Application.Features.Estudiante.Queries;
-using Application.Wrappers;
-using DTOs;
+﻿using DTOs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Controllers.Base;
 using Context;
+using System.Data;
+using Dapper;
 
 namespace Controllers
 {
-    public class EstudianteController: BaseController
+    public class EstudianteController(DapperContext context) : BaseController
     {
-        private readonly ApplicationDbContext _context;
-
-        public EstudianteController(ApplicationDbContext context)
-        {
-            this._context = context;
-        }
         /// <summary>
         /// Informacion Basica de un Estudiante
         /// </summary>
-        [HttpGet("{personaId:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<IList<EstudianteDto>>>> InformacionEstudiante(int personaId)
-        {
-            return Ok(await Mediator.Send(new InformacionEstudianteQuery() {
-                PersonaId = personaId,
-            }));
-        }
-
-
-        [HttpPost("")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> CrearEstudiante(CrearEstudianteDto crearEstudianteDto)
+        [HttpGet("{studentId:int}")]
+        public async Task<ActionResult> InformacionEstudiante(int studentId)
         {
             try
             {
-                Console.WriteLine(crearEstudianteDto.Nombres);
-                var response = await _context.Database.ExecuteSqlInterpolatedAsync($"EXEC PROC_CREAR_ESTUDIANTE_Y_EVALUACION @v_aulaId = {crearEstudianteDto.AulaId}, @v_nombreEstudiante = {crearEstudianteDto.Nombres}, @v_ape_pat = {crearEstudianteDto.ApellidoPaterno}, @v_ape_mat = {crearEstudianteDto.ApellidoMaterno}, @v_dni = {crearEstudianteDto.DNI}");
-                Console.Write(response);
-                return Ok(response);
+                using (var connection = context.CreateConnection())
+                {
+
+                    await connection.QueryAsync("PROC_CREAR_ESTUDIANTE_Y_EVALUACION", new
+                    {
+                        studentId
+                    }, commandType: CommandType.StoredProcedure);
+                    return Ok();
+                }
 
             }
             catch (Exception ex)
@@ -49,19 +35,34 @@ namespace Controllers
             }
         }
 
-        /// <summary>
-        /// Lista de los estudiantes que participaron en una Evalucion Psicologica
-        /// </summary>
-        [HttpGet("{aulaId:int}/{unidadId:int}/{dimensionId:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<IList<EstudianteDto>>>> ListaEstudiantesEvaPsiAula(int aulaId, int unidadId, int dimensionId)
+
+        [HttpPost]
+        public async Task<IActionResult> CrearEstudiante(CrearEstudianteDto crearEstudianteDto)
         {
-            return Ok(await Mediator.Send(new ListaEstudiantesDeUnAulaQuery()
+            try
             {
-                AulaId = aulaId,
-                UnidadId = unidadId,
-                DimensionId = dimensionId
-            }));
+                using (var connection = context.CreateConnection())
+                {
+
+                    await connection.QueryAsync("PROC_CREAR_ESTUDIANTE_Y_EVALUACION", new
+                    {
+                        v_aulaId = crearEstudianteDto.AulaId,
+                        v_nombreEstudiante = crearEstudianteDto.Nombres,
+                        v_ape_pat = crearEstudianteDto.ApellidoPaterno,
+                        v_ape_mat = crearEstudianteDto.ApellidoMaterno,
+                        v_dni = crearEstudianteDto.DNI
+                    }, commandType: CommandType.StoredProcedure);
+                    return Ok();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
+
+        
     }
 }

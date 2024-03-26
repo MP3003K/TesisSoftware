@@ -3,31 +3,33 @@ using Context;
 using Controllers.Base;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Entities;
+
 
 namespace Controllers
 {
-    public class ClassroomsController : BaseController
+    public class ClassroomController(DapperContext context) : BaseController
     {
-        private readonly ApplicationDbContext _context;
-        private readonly DapperContext _ctx;
-
-
-        public ClassroomsController(ApplicationDbContext context, DapperContext ctx)
-        {
-            this._context = context;
-            this._ctx = ctx;
-        }
 
         /// <summary>
         /// Lista de unidades
         /// </summary>
         [HttpGet("unidades/all")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<List<Unidad>> UnidadesAll()
+        public async Task<ActionResult> UnidadesAll()
         {
-            return await _context.Unidades.FromSqlRaw("select * from unidades order by Año, NUnidad;").ToListAsync();
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    var classrooms = await connection.QueryAsync("SELECT * from UNIDADES order by Año, NUnidad;");
+                    return Ok(classrooms.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -39,8 +41,13 @@ namespace Controllers
         {
             try
             {
-                await _context.Database.ExecuteSqlInterpolatedAsync($"EXEC proc_crear_evalucion_psicologica_aula @v_aulaId = {aulaId}");
-                return Ok();
+                using (var connection = context.CreateConnection())
+                {
+
+                    await connection.QueryAsync("proc_crear_evalucion_psicologica_aula", new { v_aulaId = aulaId }, commandType: CommandType.StoredProcedure);
+                    return Ok();
+                }
+   
             }
             catch (Exception ex)
             {
@@ -58,7 +65,7 @@ namespace Controllers
         {
             try
             {
-                using (var connection = _ctx.CreateConnection())
+                using (var connection = context.CreateConnection())
                 {
                     
                     var students = await connection.QueryAsync("get_estudiantes_de_evalucion_aula", new { v_aulaid=aulaId }, commandType: CommandType.StoredProcedure);
