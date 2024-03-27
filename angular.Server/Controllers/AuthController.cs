@@ -20,7 +20,6 @@ namespace Controllers
         public string Name { get; set; }
         public string Email { get; set; }
         public string Avatar { get; set; }
-
         public string Status { get; set; }
     }
     public class LoginDto
@@ -34,13 +33,13 @@ namespace Controllers
     public class AuthController : ControllerBase
     {
         private readonly DapperContext context;
-        private readonly JwtOptions options;
-        private readonly JwtBearerOptions jwtOptions;
-        public AuthController(DapperContext context, IOptions<JwtOptions> options, IOptions<JwtBearerOptions> jwtOptions)
+        private readonly IConfiguration config;
+
+        public AuthController(DapperContext context, IConfiguration configuration)
         {
             this.context = context;
-            this.options = options.Value;
-            this.jwtOptions = jwtOptions.Value;
+            this.config = configuration;
+          
         }
 
 
@@ -59,7 +58,24 @@ namespace Controllers
 
                     if (user == null) { return Unauthorized(); }
 
-                    var accessToken = GenerateJwtToken(user.Email);
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var key = Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!);
+                    var claims = new List<Claim>
+                    {
+
+                    };
+
+                    var tokenDescriptor = new SecurityTokenDescriptor()
+                    {
+                        Subject = new ClaimsIdentity(claims),
+                        Expires = DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
+                        Issuer = config["Jwt:Issuer"],
+                        Audience = config["Jwt:Audience"],
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+                    };
+
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    var accessToken = tokenHandler.WriteToken(token);
 
                     return Ok(new { accessToken, user });
                 }
@@ -72,57 +88,17 @@ namespace Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("Profile")]
-        [Authorize]
-
-        public async Task<ActionResult> Profile()
+        public async Task<ActionResult> GetProfile()
         {
-            try
+            var profile = "profile";
+            return Ok(new
             {
-
-                using (var connection = context.CreateConnection())
-                {
-
-                    var response = await connection.QueryAsync<User>("OBTENER_PERFIL", new { }, commandType: CommandType.StoredProcedure);
-                    if (!response.Any()) { return Unauthorized(); }
-
-                    var user = response.FirstOrDefault();
-
-                    if (user == null) { return Unauthorized(); }
-
-                    var accessToken = GenerateJwtToken(user.Email);
-
-                    return Ok(new { accessToken, user });
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return Unauthorized(new Response<dynamic> { Data = null, Message = "Unauthorized", Succeeded = false });
-            }
+                profile
+            });
         }
 
-        [Authorize]
-        [HttpGet("Test")]
-        public async Task<ActionResult> TestLogin()
-        {
-            Console.WriteLine(jwtOptions.TokenValidationParameters.IssuerSigningKey);
-            return Ok("testes");
-        }
-
-        private string GenerateJwtToken(string username)
-        {
-
-            var claims = new Claim[]
-            {
-                new(JwtRegisteredClaimNames.Sub, username)
-            };
-
-            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SecretKey)), SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(claims: claims, expires: DateTime.UtcNow.AddHours(1), signingCredentials: signingCredentials);
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
     }
 
 
