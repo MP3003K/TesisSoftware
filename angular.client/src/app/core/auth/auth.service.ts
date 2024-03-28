@@ -91,8 +91,10 @@ export class AuthService
     signInUsingToken(): Observable<any>
     {
         // Sign in using the token
-        return this._httpClient.post(`${environment.baseURL}/auth/profile`, {
-            accessToken: this.accessToken,
+        return this._httpClient.get(`${environment.baseURL}/auth/profile`, {
+             headers:{
+                "Authorization": `Berarer ${this.accessToken}`
+             }
         }).pipe(
             catchError(() =>
 

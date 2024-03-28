@@ -8,7 +8,6 @@ namespace Entities
         public string Password { get; private set; }
         public int PersonaId { get; private set; }
         public virtual Persona? Persona{get ; private set; }
-        public virtual IList<RolUsuario>? RolesUsuarios { get; private set; }
 
         public Usuario(string username, string password, int personaId)
         {

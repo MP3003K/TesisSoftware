@@ -7,7 +7,6 @@ namespace Entities
         public string Nombre { get; private set; }
         public string Estado { get; private set; }
         public virtual IList<RolAcceso>? RolesAccesos { get; private set; }
-        public virtual IList<RolUsuario>? RolesUsuarios { get; private set; }
 
         public Rol(string nombre, string estado)
         {
