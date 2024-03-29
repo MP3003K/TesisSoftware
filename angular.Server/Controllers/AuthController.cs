@@ -124,10 +124,11 @@ namespace Controllers
         {
             try
             {
+                int UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
                 using (var connection = context.CreateConnection())
                 {
-
-                    var accesses = await connection.QueryAsync<Access>("OBTENER_ACCESOS", new { UserId = 5 }, commandType: CommandType.StoredProcedure);
+                    var accesses = await connection.QueryAsync<Access>("OBTENER_ACCESOS", new { UserId }, commandType: CommandType.StoredProcedure);
                     return Ok(new Navigation(accesses.ToList()));
                 }
             }

@@ -155,7 +155,8 @@ export class ClassroomsComponent implements OnInit {
 
     loadClassrooms() {
         this.classroomsService.getClassrooms().subscribe({
-            next: (data) => {
+            next: ({data}) => {
+                console.log(this.classrooms)
                 this.classrooms = data;
             },
             error: (err) => {
@@ -185,8 +186,8 @@ export class ClassroomsComponent implements OnInit {
         // Extract unique grados
         const uniqueGrados = new Map<number, Grado>();
         aulas.forEach(aula => {
-            if (!uniqueGrados.has(aula.grado.id)) {
-                uniqueGrados.set(aula.grado.id, aula.grado);
+            if (!uniqueGrados.has(aula?.grado?.id)) {
+                uniqueGrados.set(aula?.grado?.id, aula.grado);
             }
         });
         this.grados = Array.from(uniqueGrados.values());

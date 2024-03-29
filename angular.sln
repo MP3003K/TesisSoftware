@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "angular.Server", "D:\CSharpProjects\Cuestionario\Angular.Server\angular.Server.csproj", "{FE7B529E-94D1-4225-9B52-D3FA19CC0568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "angular.Server", "angular.Server\angular.Server.csproj", "{E839A6FD-25FF-4F55-A46C-B352E47EBB7E}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "angular.client", "angular.client\angular.client.esproj", "{254B6608-7030-4618-8EC0-1CB2B21D8248}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FE7B529E-94D1-4225-9B52-D3FA19CC0568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE7B529E-94D1-4225-9B52-D3FA19CC0568}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE7B529E-94D1-4225-9B52-D3FA19CC0568}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE7B529E-94D1-4225-9B52-D3FA19CC0568}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E839A6FD-25FF-4F55-A46C-B352E47EBB7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E839A6FD-25FF-4F55-A46C-B352E47EBB7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E839A6FD-25FF-4F55-A46C-B352E47EBB7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E839A6FD-25FF-4F55-A46C-B352E47EBB7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{254B6608-7030-4618-8EC0-1CB2B21D8248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{254B6608-7030-4618-8EC0-1CB2B21D8248}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{254B6608-7030-4618-8EC0-1CB2B21D8248}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{254B6608-7030-4618-8EC0-1CB2B21D8248}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{254B6608-7030-4618-8EC0-1CB2B21D8248}.Release|Any CPU.Build.0 = Release|Any CPU
+		{254B6608-7030-4618-8EC0-1CB2B21D8248}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

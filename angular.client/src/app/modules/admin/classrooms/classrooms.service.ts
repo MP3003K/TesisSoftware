@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpResponse } from 'app/shared/interfaces/response.interface';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 
@@ -43,8 +44,8 @@ export class ClassroomsService {
 
   constructor(private http: HttpClient) { }
 
-  getClassrooms(): Observable<ClassroomUnit[]> {
-    return this.http.get<ClassroomUnit[]>(`${environment.baseURL}/classroom/unidades/all`);
+  getClassrooms(): Observable<HttpResponse<ClassroomUnit[]>> {
+    return this.http.get<HttpResponse<ClassroomUnit[]>>(`${environment.baseURL}/classroom/unidades/all`);
   }
 
   getAulas(): Observable<AulaApiResponse> {
