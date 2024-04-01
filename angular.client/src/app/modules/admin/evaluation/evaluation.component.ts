@@ -43,47 +43,46 @@ export class EvaluationComponent {
     }
 
     ngOnInit(): void {
-        const { id: studentId } = this.userService.user;
-        if (studentId) {
-            this.evaluationService.getStudent(+studentId).subscribe({
-                next: ({ data }) => {
-                    console.log(data)
-                    const { evaPsiEstId } = data;
-                    if (evaPsiEstId) {
-                        this.evaPsiEstId = evaPsiEstId;
-                        this.evaluationService
-                            .getQuestionsApi(evaPsiEstId)
-                            .subscribe({
-                                next: (res) => {
-                                    this.questions = res;
-                                    this.updatePaginator();
-                                },
-                                error: (err) => {
-                                    if (err.status == 400) {
-                                        this.endedTest = true;
-                                        this._snackbar.open(
-                                            'No hay test disponibles para este usuario',
-                                            '',
-                                            {
-                                                duration: 3000,
-                                            }
-                                        );
-                                    }
-                                },
-                            });
-                    } else {
-                        this.endedTest = true;
-                        this._snackbar.open(
-                            'No hay test disponibles para este usuario',
-                            '',
-                            {
-                                duration: 3000,
-                            }
-                        );
-                    }
-                },
-            });
-        }
+
+        this.evaluationService.getStudent().subscribe({
+            next: ({ data }) => {
+                console.log()
+                if (data?.evaPsiEstId) {
+                    this.evaPsiEstId = data?.evaPsiEstId;
+                    this.evaluationService
+                        .getQuestionsApi(data?.evaPsiEstId)
+                        .subscribe({
+                            next: (res) => {
+                                this.questions = res;
+                                this.updatePaginator();
+                            },
+                            error: (err) => {
+                                if (err.status == 400) {
+                                    this.endedTest = true;
+                                    this._snackbar.open(
+                                        'No hay test disponibles para este usuario',
+                                        '',
+                                        {
+                                            duration: 3000,
+                                        }
+                                    );
+                                }
+                            },
+                        });
+                } else {
+                    this.endedTest = true;
+                    this._snackbar.open(
+                        'No hay test disponibles para este usuario',
+                        '',
+                        {
+                            duration: 3000,
+                        }
+                    );
+                }
+            },
+        });
+
+
     }
 
     public goToLogin() {

@@ -4,6 +4,8 @@ using Context;
 using System.Data;
 using Dapper;
 using Application.Wrappers;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers
 {
@@ -14,26 +16,28 @@ namespace Controllers
         /// <summary>
         /// Informacion Basica de un Estudiante
         /// </summary>
-        [HttpGet("{studentId:int}")]
-        public async Task<ActionResult> InformacionEstudiante(int studentId)
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult> InformacionEstudiante()
         {
             try
             {
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
                 using (var connection = context.CreateConnection())
                 {
 
-                    await connection.QueryAsync("PROC_CREAR_ESTUDIANTE_Y_EVALUACION", new
+                    var students = await connection.QueryAsync("OBTENER_ESTUDIANTE", new
                     {
-                        studentId
+                        userId
                     }, commandType: CommandType.StoredProcedure);
-                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = null });
+                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = students.FirstOrDefault() });
 
                 }
 
             }
             catch (Exception ex)
             {
-
                 return BadRequest(ex.Message);
             }
         }

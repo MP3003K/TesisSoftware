@@ -34,7 +34,7 @@ export class StudentReportComponent implements OnInit {
         this.classroomId = classroomId;
 
         if (this.studentId && typeof this.studentId === 'number') {
-            this.getStudent(this.studentId);
+            this.getStudent();
             this.toggleChange(1);
         }
     }
@@ -50,9 +50,8 @@ export class StudentReportComponent implements OnInit {
         return studentInfo;
     }
 
-    getStudent(studentId: number) {
-        this.evaluationService.getStudent(studentId).subscribe(({ data }) => {
-            console.log(data);
+    getStudent() {
+        this.evaluationService.getStudent().subscribe(({ data }) => {
             this.student = this.studentService.students.find(
                 (e) => (e.id = this.studentId)
             );

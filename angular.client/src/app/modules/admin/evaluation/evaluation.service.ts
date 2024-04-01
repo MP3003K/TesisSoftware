@@ -85,9 +85,8 @@ export class EvaluationService {
             );
     }
 
-    getStudent(studentId: number) {
-        const { id } = this.userService.user;
-        return this.http.get<any>(`${environment.baseURL}/estudiante/${studentId}`);
+    getStudent() {
+        return this.http.get<any>(`${environment.baseURL}/estudiante`);
     }
 
     updateQuestion(answer: string, answerId: number, evaluationId: number) {
