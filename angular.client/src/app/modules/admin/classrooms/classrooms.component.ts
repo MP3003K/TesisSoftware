@@ -33,7 +33,7 @@ export class ClassroomsComponent implements OnInit {
 
 
     isTestEnabled?: boolean = null
-    displayedColumns: string[] = ['Nombres', 'DNI'];
+    displayedColumns: string[] = ['Nombres', 'DNI', 'EstadoEstudiante'];
     items: string = "list"
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
