@@ -10,12 +10,15 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { SharedModule } from "app/shared/shared.module";
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
-import { Observable, map, startWith } from "rxjs";
+import { BehaviorSubject, Observable, map, startWith } from "rxjs";
 import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from "@angular/material/icon";
 import { ClassroomUnit, ClassroomsService, Grado, Seccion } from "./classrooms.service";
+import { timeout } from 'rxjs/operators';
+import { Unidad, Aula } from "app/shared/interfaces";
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: "app-classrooms",
@@ -24,20 +27,10 @@ import { ClassroomUnit, ClassroomsService, Grado, Seccion } from "./classrooms.s
     imports: [SharedModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatTableModule, MatCheckboxModule, MatButtonModule, MatButtonToggleModule, MatAutocompleteModule, MatChipsModule, MatIconModule]
 })
 export class ClassroomsComponent implements OnInit {
-    //empieza elias
     showCreateUnitModal: boolean = false;
-    selectedUnit: number;
     classrooms: ClassroomUnit[] = [];
-    grados: Grado[] = [];
-    secciones: Seccion[] = [];
-    //selectedGrado: Grado | null = null;
-    //selectedSeccion: Seccion | null = null;
-    //selectedGradoId: number | null = null;
-    aulasCompletas: Seccion[] = [];
-    selectedSeccionId: number | null = null;
-    selectedGradoId: number | null = null;
 
-    //termina elias
+
 
     isTestEnabled?: boolean = null
     displayedColumns: string[] = ['select', 'Nombres', 'ApellidoPaterno', 'ApellidoMaterno', 'DNI'];
@@ -56,6 +49,20 @@ export class ClassroomsComponent implements OnInit {
 
     formRegistrarEstudiante: FormGroup;
 
+    estudiantes: any[] = [];
+
+    seccionSeleccionada: string;
+    aulasFiltradas: Aula[] = [];
+    gradosUnicos: number[] = [];
+    unidadIdSeleccionada: number;
+
+
+    gradoSeleccionado: number;
+    aulaIdSeleccionado: number;
+    seccionesSeleccionadas: string[] = [];
+    gradoSeleccionado$ = new BehaviorSubject<number>(null);
+    seccionSeleccionada$ = new BehaviorSubject<string>(null);
+
     constructor(private fb: FormBuilder, private classroomsService: ClassroomsService) {
         this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
             startWith(null),
@@ -63,20 +70,50 @@ export class ClassroomsComponent implements OnInit {
         );
 
     }
-    ngOnInit(): void {
-        this.isTestEnabled = true
+
+
+    ngOnInit() {
+        this.obtenerListadeUnidades();
+        this.obtenerListadeAulas();
+        this.gradoSeleccionado$.pipe(
+            distinctUntilChanged()
+        ).subscribe(grado => {
+            this.aulasFiltradas = this.aulas.filter(aula => aula.Grado === grado);
+            this.seccionesSeleccionadas = [...new Set(this.aulasFiltradas.map(aula => aula.Seccion))];
+        });
+        this.seccionSeleccionada$.pipe(
+            distinctUntilChanged()
+
+        ).subscribe(seccion => {
+            this.aulasFiltradas = this.aulasFiltradas.filter(aula => aula.Seccion === seccion);
+        });
         this.crearFormularioRegistrarEstudiante();
-        this.loadClassrooms();
-        this.loadGradosYSecciones();
-
     }
 
-    filterStudentsByClassroom() {
-        console.log(this.selectedSeccionId)
-        this.classroomsService.getStudentsByClassroom(this.selectedSeccionId).subscribe(res => {
-            this.dataSource.data = res
-        })
+    cambiarGrado(nuevoGrado: number) {
+        this.gradoSeleccionado = nuevoGrado;
+        this.gradoSeleccionado$.next(nuevoGrado);
     }
+
+    cambiarSeccion(nuevaSeccion: string) {
+        this.seccionSeleccionada = nuevaSeccion;
+        this.seccionSeleccionada$.next(nuevaSeccion);
+        const aula = this.aulasFiltradas.find(aula => aula.Seccion === nuevaSeccion);
+        if (aula) {
+            this.aulaIdSeleccionado = aula.AulaId;
+        }
+    }
+
+    obtnerEstudiantesPorAulaYUnidad() {
+        this.classroomsService.getStudentsByAulaYUnidad(this.aulaIdSeleccionado).subscribe(response => {
+            if (response.succeeded) {
+                this.dataSource.data = response.data;
+            }
+        });
+    }
+
+
+
     isAllSelected() {
         const numSelected = this.selection.selected.length;
         const numRows = this.dataSource.data.length;
@@ -141,7 +178,7 @@ export class ClassroomsComponent implements OnInit {
     }
 
 
-
+    // Inicio Codigo Jhonatan
     private crearFormularioRegistrarEstudiante(): void {
         this.formRegistrarEstudiante = this.fb.group({
             nombre: ['', Validators.required],
@@ -150,60 +187,37 @@ export class ClassroomsComponent implements OnInit {
             dni: ['', [Validators.required, Validators.pattern('^[0-9]{8}$')]]
         });
     }
+    public unidades: Unidad[] = [];
+    public aulas: Aula[] = []
 
-    //Inicio codigo de elias
-
-    loadClassrooms() {
-        this.classroomsService.getClassrooms().subscribe({
-            next: ({data}) => {
-                console.log(this.classrooms)
-                this.classrooms = data;
-            },
-            error: (err) => {
-                console.error(err);
+    private obtenerListadeUnidades(): void {
+        this.classroomsService.getUnidadesAll().pipe(
+            timeout(5000) // Tiempo de espera en milisegundos
+        ).subscribe((response) => {
+            if (response.succeeded) {
+                this.unidades = response.data;
             }
+        }, error => {
+        })
+
+    }
+    private obtenerListadeAulas(): void {
+        this.classroomsService.getAulas().pipe(
+            timeout(5000) // Tiempo de espera en milisegundos
+        ).subscribe((response) => {
+            if (response.succeeded) {
+                this.aulas = response.data;
+                this.gradosUnicos = [...new Set(this.aulas.map(aula => aula.Grado))];
+                console.log(this.aulas);
+            }
+        }, error => {
         });
     }
 
-    loadGradosYSecciones(): void {
-        this.classroomsService.getAulas().subscribe({
-            next: (response) => {
-                if (response.succeeded) {
-                    console.log('Aulas cargadas:', response.data);
-                    this.aulasCompletas = response.data;
-                    this.extractGradosAndSecciones(response.data);
-                } else {
-                    console.error('Failed to load grados y secciones:', response.message);
-                }
-            },
-            error: (err) => {
-                console.error('Error loading grados y secciones:', err);
-            }
-        });
-    }
 
-    private extractGradosAndSecciones(aulas: Seccion[]): void {
-        // Extract unique grados
-        const uniqueGrados = new Map<number, Grado>();
-        aulas.forEach(aula => {
-            if (!uniqueGrados.has(aula?.grado?.id)) {
-                uniqueGrados.set(aula?.grado?.id, aula.grado);
-            }
-        });
-        this.grados = Array.from(uniqueGrados.values());
-        // Init secciones to empty as they will be loaded based on selected grado
-        this.secciones = [];
-    }
 
-    onGradoSelected(gradoId: number): void {
-        this.selectedGradoId = gradoId;
-        this.selectedSeccionId = null; // Resetea la sección seleccionada
+    // Fin Codigo Jhonatan
 
-        // Filtra las secciones basándose en el grado seleccionado y actualiza la propiedad 'secciones'
-        this.secciones = this.aulasCompletas
-            .filter(aula => aula.gradoId === gradoId);
-        console.log(this.secciones)
-    }
     openCreateUnitModal(): void {
         this.showCreateUnitModal = true;
     }
