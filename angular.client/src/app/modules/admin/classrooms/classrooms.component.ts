@@ -1,3 +1,7 @@
+
+
+
+
 import { Component, ElementRef, OnInit, ViewChild, inject } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -15,7 +19,7 @@ import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from "@angular/material/icon";
-import { ClassroomUnit, ClassroomsService } from "./classrooms.service";
+import { ClassroomUnit, ClassroomsService, Grado, Seccion } from "./classrooms.service";
 import { timeout } from 'rxjs/operators';
 import { Unidad, Aula } from "app/shared/interfaces";
 import { distinctUntilChanged } from 'rxjs/operators';
@@ -33,7 +37,9 @@ export class ClassroomsComponent implements OnInit {
 
 
     isTestEnabled?: boolean = null
-    displayedColumns: string[] = ['Nombres', 'DNI', 'EstadoEstudiante'];
+    displayedColumns: string[] = ['select', 'Nombres', 'ApellidoPaterno', 'ApellidoMaterno', 'DNI'];
+    dataSource = new MatTableDataSource([]);
+    selection = new SelectionModel(true, []);
     items: string = "list"
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
@@ -107,10 +113,36 @@ export class ClassroomsComponent implements OnInit {
             this.classroomsService.getStudentsByAulaYUnidad(this.unidadIdSeleccionada, this.aulaIdSeleccionado).subscribe(response => {
                 if (response.succeeded) {
                     this.estudiantes = response.data;
+                    console.log(this.estudiantes);
                 }
             });
         }
     }
+
+
+
+    isAllSelected() {
+        const numSelected = this.selection.selected.length;
+        const numRows = this.dataSource.data.length;
+        return numSelected === numRows;
+    }
+
+    toggleAllRows() {
+        if (this.isAllSelected()) {
+            this.selection.clear();
+            return;
+        }
+
+        this.selection.select(...this.dataSource.data);
+    }
+
+    checkboxLabel(row?: any): string {
+        if (!row) {
+            return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+        }
+        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+    }
+
 
 
 
@@ -166,27 +198,26 @@ export class ClassroomsComponent implements OnInit {
     public aulas: Aula[] = []
 
     private obtenerListadeUnidades(): void {
-        this.classroomsService.getUnidadesAll().subscribe({
-            next(response) {
-                console.log(response)
-                if (response.succeeded) {
-                    this.unidades = response.data;
-                }
-            }, error(err) {
+        this.classroomsService.getUnidadesAll().pipe(
+            timeout(5000) // Tiempo de espera en milisegundos
+        ).subscribe((response) => {
+            if (response.succeeded) {
+                this.unidades = response.data;
             }
+        }, error => {
         })
 
     }
     private obtenerListadeAulas(): void {
-        this.classroomsService.getAulas().subscribe({
-            next(response) {
-                if (response.succeeded) {
-                    this.aulas = response.data;
-                    this.gradosUnicos = [...new Set(this.aulas.map(aula => aula.Grado))];
-                    console.log(this.aulas);
-                }
-            }, error(err) {
+        this.classroomsService.getAulas().pipe(
+            timeout(5000) // Tiempo de espera en milisegundos
+        ).subscribe((response) => {
+            if (response.succeeded) {
+                this.aulas = response.data;
+                this.gradosUnicos = [...new Set(this.aulas.map(aula => aula.Grado))];
+                console.log(this.aulas);
             }
+        }, error => {
         });
     }
 
