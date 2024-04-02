@@ -105,7 +105,9 @@ export class ClassroomsComponent implements OnInit {
     }
 
     obtnerEstudiantesPorAulaYUnidad() {
-        this.classroomsService.getStudentsByAulaYUnidad(this.aulaIdSeleccionado).subscribe(response => {
+        let unidadId = 1;
+        let aulaId = 1;
+        this.classroomsService.getStudentsByAulaYUnidad(aulaId, unidadId).subscribe(response => {
             if (response.succeeded) {
                 this.dataSource.data = response.data;
             }
