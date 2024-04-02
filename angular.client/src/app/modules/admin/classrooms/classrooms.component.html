@@ -217,12 +217,13 @@
                         } @case("assign"){
                         <div class="flex flex-col gap-2">
                             <div class="flex flex-wrap gap-2">
-                                @for (fruit of fruits; track fruit) {
-                                <mat-chip-row (removed)="remove(fruit)">
-                                    {{ fruit }}
+                                @for (student of selectedStudents; track
+                                student; let i = $index) {
+                                <mat-chip-row (removed)="remove(i)">
+                                    {{ student.nombre }}
                                     <button
                                         matChipRemove
-                                        [attr.aria-label]="'remove ' + fruit"
+                                        [attr.aria-label]="'remove ' + student.nombre"
                                     >
                                         <mat-icon [svgIcon]="'remove'" />
                                     </button>
@@ -232,20 +233,19 @@
                             <mat-form-field class="flex flex-col">
                                 <input
                                     matInput
-                                    #fruitInput
-                                    [formControl]="fruitCtrl"
+                                    [ngModel]="inputValue"
+                                    (ngModelChange)="onInputChange($event)"
                                     [matAutocomplete]="auto"
-                                    (matChipInputTokenEnd)="add($event)"
                                 />
                                 <mat-autocomplete
                                     #auto="matAutocomplete"
                                     (optionSelected)="selected($event)"
+                                    [displayWith]="displayFn"
                                 >
-                                    @for (fruit of filteredFruits | async; track
-                                    fruit) {
-                                    <mat-option [value]="fruit">{{
-                                        fruit
-                                    }}</mat-option>
+                                    @for (student of students; track student) {
+                                    <mat-option [value]="student">
+                                        {{ student.nombre }}
+                                    </mat-option>
                                     }
                                 </mat-autocomplete>
                             </mat-form-field>

@@ -24,6 +24,8 @@ import { timeout } from 'rxjs/operators';
 import { Unidad, Aula } from "app/shared/interfaces";
 import { distinctUntilChanged } from 'rxjs/operators';
 import { FuseConfirmationService } from "@fuse/services/confirmation";
+import { PersonaService } from "./persona.service";
+import { query } from "@angular/animations";
 
 @Component({
     selector: "app-classrooms",
@@ -44,12 +46,8 @@ export class ClassroomsComponent implements OnInit {
     items: string = "list"
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
-    fruitCtrl = new FormControl('');
-    filteredFruits: Observable<string[]>;
-    fruits: string[] = [];
-    allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
-    @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
-
+    selectedStudents = []
+    students
     announcer = inject(LiveAnnouncer);
 
     formRegistrarEstudiante: FormGroup;
@@ -67,12 +65,8 @@ export class ClassroomsComponent implements OnInit {
     seccionesSeleccionadas: string[] = [];
     gradoSeleccionado$ = new BehaviorSubject<number>(null);
     seccionSeleccionada$ = new BehaviorSubject<string>(null);
-
-    constructor(private fb: FormBuilder, private classroomsService: ClassroomsService, private confirmationService: FuseConfirmationService) {
-        this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
-            startWith(null),
-            map((fruit: string | null) => (fruit ? this._filter(fruit) : this.allFruits.slice())),
-        );
+    inputValue: string = ''
+    constructor(private fb: FormBuilder, private classroomsService: ClassroomsService, private confirmationService: FuseConfirmationService, private personaService: PersonaService) {
 
     }
 
@@ -120,71 +114,18 @@ export class ClassroomsComponent implements OnInit {
         }
     }
 
-
-
-    isAllSelected() {
-        const numSelected = this.selection.selected.length;
-        const numRows = this.dataSource.data.length;
-        return numSelected === numRows;
-    }
-
-    toggleAllRows() {
-        if (this.isAllSelected()) {
-            this.selection.clear();
-            return;
-        }
-
-        this.selection.select(...this.dataSource.data);
-    }
-
-    checkboxLabel(row?: any): string {
-        if (!row) {
-            return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-        }
-        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
-    }
-
-
-
-
-
-
-    add(event: MatChipInputEvent): void {
-        const value = (event.value || '').trim();
-
-        // Add our fruit
-        if (value) {
-            this.fruits.push(value);
-        }
-
-        // Clear the input value
-        event.chipInput!.clear();
-
-        this.fruitCtrl.setValue(null);
-    }
-
-    remove(fruit: string): void {
-        const index = this.fruits.indexOf(fruit);
-
-        if (index >= 0) {
-            this.fruits.splice(index, 1);
-
-            this.announcer.announce(`Removed ${fruit}`);
-        }
+    remove(index: number): void {
+        this.selectedStudents.splice(index, 1)
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
-        this.fruits.push(event.option.viewValue);
-        this.fruitInput.nativeElement.value = '';
-        this.fruitCtrl.setValue(null);
+        this.selectedStudents.push(event.option.value);
+        this.inputValue = '';
     }
 
-    private _filter(value: string): string[] {
-        const filterValue = value.toLowerCase();
-
-        return this.allFruits.filter(fruit => fruit.toLowerCase().includes(filterValue));
+    displayFn(person: any): string {
+        return person?.nombre ?? '';
     }
-
 
     // Inicio Codigo Jhonatan
     private crearFormularioRegistrarEstudiante(): void {
@@ -241,13 +182,23 @@ export class ClassroomsComponent implements OnInit {
             icon: { color: 'info', name: 'info', show: true }
         })
         dialogRef.afterClosed().subscribe(res => {
-            if(res==='confirmed'){
+            if (res === 'confirmed') {
                 console.log('TODO: Crear Unidad')
             }
         })
     }
 
+    onInputChange(val: any) {
+        const query = val?.nombre?.trim() ?? val.trim()
+        if (query) {
+            this.personaService.getStudentsByQuery(query).subscribe(({ data }) => {
+                this.students = data
+            })
+        } else {
+            this.students = []
+        }
 
+    }
     //Fin codigo de elias
 
 }
