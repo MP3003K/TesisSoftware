@@ -15,7 +15,7 @@ import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from "@angular/material/icon";
-import { ClassroomUnit, ClassroomsService, Grado, Seccion } from "./classrooms.service";
+import { ClassroomUnit, ClassroomsService } from "./classrooms.service";
 import { timeout } from 'rxjs/operators';
 import { Unidad, Aula } from "app/shared/interfaces";
 import { distinctUntilChanged } from 'rxjs/operators';
@@ -33,9 +33,7 @@ export class ClassroomsComponent implements OnInit {
 
 
     isTestEnabled?: boolean = null
-    displayedColumns: string[] = ['select', 'Nombres', 'ApellidoPaterno', 'ApellidoMaterno', 'DNI'];
-    dataSource = new MatTableDataSource([]);
-    selection = new SelectionModel(true, []);
+    displayedColumns: string[] = ['Nombres', 'DNI'];
     items: string = "list"
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
@@ -116,31 +114,6 @@ export class ClassroomsComponent implements OnInit {
 
 
 
-    isAllSelected() {
-        const numSelected = this.selection.selected.length;
-        const numRows = this.dataSource.data.length;
-        return numSelected === numRows;
-    }
-
-    toggleAllRows() {
-        if (this.isAllSelected()) {
-            this.selection.clear();
-            return;
-        }
-
-        this.selection.select(...this.dataSource.data);
-    }
-
-    checkboxLabel(row?: any): string {
-        if (!row) {
-            return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-        }
-        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
-    }
-
-
-
-
 
 
     add(event: MatChipInputEvent): void {
@@ -193,26 +166,27 @@ export class ClassroomsComponent implements OnInit {
     public aulas: Aula[] = []
 
     private obtenerListadeUnidades(): void {
-        this.classroomsService.getUnidadesAll().pipe(
-            timeout(5000) // Tiempo de espera en milisegundos
-        ).subscribe((response) => {
-            if (response.succeeded) {
-                this.unidades = response.data;
+        this.classroomsService.getUnidadesAll().subscribe({
+            next(response) {
+                console.log(response)
+                if (response.succeeded) {
+                    this.unidades = response.data;
+                }
+            }, error(err) {
             }
-        }, error => {
         })
 
     }
     private obtenerListadeAulas(): void {
-        this.classroomsService.getAulas().pipe(
-            timeout(5000) // Tiempo de espera en milisegundos
-        ).subscribe((response) => {
-            if (response.succeeded) {
-                this.aulas = response.data;
-                this.gradosUnicos = [...new Set(this.aulas.map(aula => aula.Grado))];
-                console.log(this.aulas);
+        this.classroomsService.getAulas().subscribe({
+            next(response) {
+                if (response.succeeded) {
+                    this.aulas = response.data;
+                    this.gradosUnicos = [...new Set(this.aulas.map(aula => aula.Grado))];
+                    console.log(this.aulas);
+                }
+            }, error(err) {
             }
-        }, error => {
         });
     }
 
