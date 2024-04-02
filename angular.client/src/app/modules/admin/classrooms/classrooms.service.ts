@@ -1,57 +1,60 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpResponse } from 'app/shared/interfaces/response.interface';
 import { environment } from 'environments/environment';
+import { List } from 'lodash';
 import { Observable } from 'rxjs';
-
+import { HttpResponse, Unidad, Aula } from 'app/shared/interfaces';
 export interface ClassroomUnit {
-  nombre: string;
-  nUnidad: number;
-  fechaInicio: string;
-  fechaFin: string;
-  año: number;
-  escuelaId: number;
-  estado: string;
-  escuela: any; // Deberías reemplazar 'any' con una interfaz más específica si es necesario
-  evaluacionesPsicologicasAula: any; // Ídem
-  evaluacionesCompetenciasEstudiante: any; // Ídem
-  id: number;
+    nombre: string;
+    nUnidad: number;
+    fechaInicio: string;
+    fechaFin: string;
+    año: number;
+    escuelaId: number;
+    estado: string;
+    escuela: any; // Deberías reemplazar 'any' con una interfaz más específica si es necesario
+    evaluacionesPsicologicasAula: any; // Ídem
+    evaluacionesCompetenciasEstudiante: any; // Ídem
+    id: number;
 }
 export interface Grado {
-  id: number;
-  nombre: string;
-  nivelId: number;
-  nGrado: number;
+    id: number;
+    nombre: string;
+    nivelId: number;
+    nGrado: number;
 }
 
 export interface Seccion {
-  id: number;
-  secccion: string;  // Cambio realizado aquí de 'secccion' a 'seccion'
-  gradoId: number;
-  escuelaId: number;
-  grado: Grado;
+    id: number;
+    secccion: string;  // Cambio realizado aquí de 'secccion' a 'seccion'
+    gradoId: number;
+    escuelaId: number;
+    grado: Grado;
 }
 
 export interface AulaApiResponse {
-  succeeded: boolean;
-  message: string | null;
-  data: Seccion[];  // Asegúrate de que esto coincida con el tipo de datos que tu API devuelve realmente
+    succeeded: boolean;
+    message: string | null;
+    data: Seccion[];  // Asegúrate de que esto coincida con el tipo de datos que tu API devuelve realmente
 }
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class ClassroomsService {
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) { }
+    getUnidadesAll(): Observable<HttpResponse<Unidad[]>> {
+        return this.http.get<HttpResponse<Unidad[]>>(`${environment.baseURL}/classroom/unidades/all`);
+    }
 
-  getClassrooms(): Observable<HttpResponse<ClassroomUnit[]>> {
-    return this.http.get<HttpResponse<ClassroomUnit[]>>(`${environment.baseURL}/classroom/unidades/all`);
-  }
+    getClassrooms(): Observable<HttpResponse<ClassroomUnit[]>> {
+        return this.http.get<HttpResponse<ClassroomUnit[]>>(`${environment.baseURL}/classroom/unidades/all`);
+    }
 
-  getAulas(): Observable<AulaApiResponse> {
-    return this.http.get<AulaApiResponse>(`${environment.baseURL}/Aula/all`);
-  }
-  getStudentsByClassroom(id: number) {
-    return this.http.get<any>(`${environment.baseURL}/classroom/getEstudiantesDeEvalucionAula/${id}`);
-  }
+    getAulas(): Observable<HttpResponse<Aula[]>> {
+        return this.http.get<HttpResponse<Aula[]>>(`${environment.baseURL}/Aula/all`);
+    }
+    getStudentsByAulaYUnidad(id: number) {
+        return this.http.get<any>(`${environment.baseURL}/classroom/getEstudiantesDeEvalucionAula/${id}`);
+    }
 }

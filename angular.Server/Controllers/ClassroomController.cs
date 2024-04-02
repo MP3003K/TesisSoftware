@@ -27,7 +27,7 @@ namespace Controllers
                 {
 
                     var classrooms = await connection.QueryAsync("SELECT * from UNIDADES order by Año, NUnidad;");
-                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = classrooms.ToList() });
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = classrooms.ToList() });
 
                 }
             }
