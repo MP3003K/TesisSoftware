@@ -47,7 +47,7 @@ export class ClassroomsComponent implements OnInit {
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
     selectedStudents = []
-    students
+    students = []
     announcer = inject(LiveAnnouncer);
 
     formRegistrarEstudiante: FormGroup;
@@ -58,6 +58,7 @@ export class ClassroomsComponent implements OnInit {
     aulasFiltradas: Aula[] = [];
     gradosUnicos: number[] = [];
     unidadIdSeleccionada: number;
+    @ViewChild('autocompleteInput') autocompleteInput: ElementRef<HTMLInputElement>;
 
 
     gradoSeleccionado: number;
@@ -114,12 +115,20 @@ export class ClassroomsComponent implements OnInit {
         }
     }
 
+    get filteredStudents() {
+        return this.students.filter(e => !this.selectedStudentsId.includes(e.id))
+    }
+    get selectedStudentsId() {
+        return this.selectedStudents.map(e => e.id)
+    }
+
     remove(index: number): void {
         this.selectedStudents.splice(index, 1)
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
         this.selectedStudents.push(event.option.value);
+        this.autocompleteInput.nativeElement.value = ''
         this.inputValue = '';
     }
 

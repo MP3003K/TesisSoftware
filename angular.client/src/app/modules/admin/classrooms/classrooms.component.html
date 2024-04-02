@@ -223,7 +223,9 @@
                                     {{ student.nombre }}
                                     <button
                                         matChipRemove
-                                        [attr.aria-label]="'remove ' + student.nombre"
+                                        [attr.aria-label]="
+                                            'remove ' + student.nombre
+                                        "
                                     >
                                         <mat-icon [svgIcon]="'remove'" />
                                     </button>
@@ -233,6 +235,7 @@
                             <mat-form-field class="flex flex-col">
                                 <input
                                     matInput
+                                    #autocompleteInput
                                     [ngModel]="inputValue"
                                     (ngModelChange)="onInputChange($event)"
                                     [matAutocomplete]="auto"
@@ -242,7 +245,8 @@
                                     (optionSelected)="selected($event)"
                                     [displayWith]="displayFn"
                                 >
-                                    @for (student of students; track student) {
+                                    @for (student of filteredStudents; track
+                                    student) {
                                     <mat-option [value]="student">
                                         {{ student.nombre }}
                                     </mat-option>
@@ -252,7 +256,7 @@
                         </div>
 
                         <div>
-                            <button mat-button>Asignar</button>
+                            <button mat-button [disabled]="selectedStudents.length == 0">Asignar</button>
                         </div>
                         } @case("register"){
                         <!-- Agregar componente de registro aqui -->
