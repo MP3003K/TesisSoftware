@@ -105,11 +105,13 @@ export class ClassroomsComponent implements OnInit {
     }
 
     obtnerEstudiantesPorAulaYUnidad() {
-        this.classroomsService.getStudentsByAulaYUnidad(this.aulaIdSeleccionado).subscribe(response => {
-            if (response.succeeded) {
-                this.dataSource.data = response.data;
-            }
-        });
+        if (this.unidadIdSeleccionada && this.aulaIdSeleccionado) {
+            this.classroomsService.getStudentsByAulaYUnidad(this.unidadIdSeleccionada, this.aulaIdSeleccionado).subscribe(response => {
+                if (response.succeeded) {
+                    this.estudiantes = response.data;
+                }
+            });
+        }
     }
 
 

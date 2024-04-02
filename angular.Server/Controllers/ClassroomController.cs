@@ -62,18 +62,18 @@ namespace Controllers
 
 
         /// <summary>
-        /// Obtener los estudiantes de una evaluacion psicologica de un aula
+        /// Obtener los estudiantes de una Aula en una Unidad
         /// </summary>
-        [HttpGet("getEstudiantesDeEvalucionAula/{aulaId:int}")]
+        [HttpGet("getEstudiantesByAulaYUnidad/{unidadId:int}/{aulaId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetEstudiantesDeEvalucionAula(int aulaId)
+        public async Task<IActionResult> GetEstudiantesDeEvalucionAula(int unidadId, int aulaId)
         {
             try
             {
                 using (var connection = context.CreateConnection())
                 {
 
-                    var students = await connection.QueryAsync("get_estudiantes_de_evalucion_aula", new { v_aulaid = aulaId }, commandType: CommandType.StoredProcedure);
+                    var students = await connection.QueryAsync("LISTAR_ESTUDIANTES_POR_AULA_Y_UNIDAD", new { v_aulaid = aulaId, v_unidadId = unidadId }, commandType: CommandType.StoredProcedure);
                     return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = students.ToList() });
 
                 }

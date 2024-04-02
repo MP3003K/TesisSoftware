@@ -58,6 +58,10 @@
                                 }}</mat-option>
                         </mat-select>
                     </mat-form-field>
+                    <button mat-fab extended (click)="obtnerEstudiantesPorAulaYUnidad()" class="w-28">
+                        <mat-icon svgIcon="filter_alt"></mat-icon>
+                        Filtrar
+                    </button>
                 </div>
 
                 <!-- Inicio del modal para crear unidad -->
@@ -107,71 +111,22 @@
 
                                 }
                             </div>
-                            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-                                <!-- Checkbox Column -->
-                                <ng-container matColumnDef="select">
-                                    <th mat-header-cell *matHeaderCellDef>
-                                        <mat-checkbox (change)="
-                                            $event ? toggleAllRows() : null
-                                        " [checked]="
-                                            selection.hasValue() &&
-                                            isAllSelected()
-                                        " [indeterminate]="
-                                            selection.hasValue() &&
-                                            !isAllSelected()
-                                        " [aria-label]="checkboxLabel()">
-                                        </mat-checkbox>
-                                    </th>
-                                    <td mat-cell *matCellDef="let row">
-                                        <mat-checkbox (click)="$event.stopPropagation()" (change)="
-                                            $event
-                                                ? selection.toggle(row)
-                                                : null
-                                        " [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
-                                        </mat-checkbox>
-                                    </td>
+                            <table mat-table [dataSource]="estudiantes" class="mat-elevation-z8">
+
+                                <!-- Nombre Completo Column -->
+                                <ng-container matColumnDef="NombreCompleto">
+                                    <th mat-header-cell *matHeaderCellDef>Nombre Completo</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.NombreCompleto }}</td>
                                 </ng-container>
 
-                                <!-- Position Column -->
-                                <ng-container matColumnDef="Nombres">
-                                    <th mat-header-cell *matHeaderCellDef>Nombre</th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.Nombres }}
-                                    </td>
-                                </ng-container>
-
-                                <!-- Name Column -->
-                                <ng-container matColumnDef="ApellidoPaterno">
-                                    <th mat-header-cell *matHeaderCellDef>Apellido Paterno</th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.ApellidoPaterno }}
-                                    </td>
-                                </ng-container>
-
-                                <!-- Weight Column -->
-                                <ng-container matColumnDef="ApellidoMaterno">
-                                    <th mat-header-cell *matHeaderCellDef>
-                                        Apellido Materno
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.ApellidoMaterno }}
-                                    </td>
-                                </ng-container>
-
-                                <!-- Symbol Column -->
+                                <!-- DNI Column -->
                                 <ng-container matColumnDef="DNI">
-                                    <th mat-header-cell *matHeaderCellDef>
-                                        DNI
-                                    </th>
-                                    <td mat-cell *matCellDef="let element">
-                                        {{ element.DNI }}
-                                    </td>
+                                    <th mat-header-cell *matHeaderCellDef>DNI</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.DNI }}</td>
                                 </ng-container>
 
                                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns"
-                                    (click)="selection.toggle(row)">
-                                </tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
                             </table>
                         </div>
                         } @case("assign"){

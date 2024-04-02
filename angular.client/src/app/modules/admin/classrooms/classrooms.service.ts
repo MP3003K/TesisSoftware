@@ -54,7 +54,7 @@ export class ClassroomsService {
     getAulas(): Observable<HttpResponse<Aula[]>> {
         return this.http.get<HttpResponse<Aula[]>>(`${environment.baseURL}/Aula/all`);
     }
-    getStudentsByAulaYUnidad(id: number) {
-        return this.http.get<any>(`${environment.baseURL}/classroom/getEstudiantesDeEvalucionAula/${id}`);
+    getStudentsByAulaYUnidad(unidadId: number, aulaId: number) {
+        return this.http.get<any>(`${environment.baseURL}/classroom/getEstudiantesByAulaYUnidad/${unidadId}/${aulaId}`);
     }
 }
