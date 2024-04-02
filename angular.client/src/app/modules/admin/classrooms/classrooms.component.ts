@@ -23,6 +23,7 @@ import { ClassroomUnit, ClassroomsService, Grado, Seccion } from "./classrooms.s
 import { timeout } from 'rxjs/operators';
 import { Unidad, Aula } from "app/shared/interfaces";
 import { distinctUntilChanged } from 'rxjs/operators';
+import { FuseConfirmationService } from "@fuse/services/confirmation";
 
 @Component({
     selector: "app-classrooms",
@@ -31,13 +32,13 @@ import { distinctUntilChanged } from 'rxjs/operators';
     imports: [SharedModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatTableModule, MatCheckboxModule, MatButtonModule, MatButtonToggleModule, MatAutocompleteModule, MatChipsModule, MatIconModule]
 })
 export class ClassroomsComponent implements OnInit {
-    showCreateUnitModal: boolean = false;
     classrooms: ClassroomUnit[] = [];
-
-
-
     isTestEnabled?: boolean = null
-    displayedColumns: string[] = ['select', 'Nombres', 'ApellidoPaterno', 'ApellidoMaterno', 'DNI'];
+    displayedColumns: string[] = [
+        'numero',
+        'NombreCompleto',
+        'EstadoEstudiante'
+    ];
     dataSource = new MatTableDataSource([]);
     selection = new SelectionModel(true, []);
     items: string = "list"
@@ -67,7 +68,7 @@ export class ClassroomsComponent implements OnInit {
     gradoSeleccionado$ = new BehaviorSubject<number>(null);
     seccionSeleccionada$ = new BehaviorSubject<string>(null);
 
-    constructor(private fb: FormBuilder, private classroomsService: ClassroomsService) {
+    constructor(private fb: FormBuilder, private classroomsService: ClassroomsService, private confirmationService: FuseConfirmationService) {
         this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
             startWith(null),
             map((fruit: string | null) => (fruit ? this._filter(fruit) : this.allFruits.slice())),
@@ -226,16 +227,27 @@ export class ClassroomsComponent implements OnInit {
     // Fin Codigo Jhonatan
 
     openCreateUnitModal(): void {
-        this.showCreateUnitModal = true;
+        const dialogRef = this.confirmationService.open({
+            title: '¿Deseas Crear Unidad?',
+            message: null, dismissible: true,
+            actions: {
+                cancel: {
+                    label: 'Cancelar'
+                },
+                confirm: {
+                    label: 'Crear'
+                }
+            },
+            icon: { color: 'info', name: 'info', show: true }
+        })
+        dialogRef.afterClosed().subscribe(res => {
+            if(res==='confirmed'){
+                console.log('TODO: Crear Unidad')
+            }
+        })
     }
 
-    onCreateUnit(): void {
-        this.showCreateUnitModal = false;
-    }
 
-    onCancelCreateUnit(): void {
-        this.showCreateUnitModal = false;
-    }
     //Fin codigo de elias
 
 }
