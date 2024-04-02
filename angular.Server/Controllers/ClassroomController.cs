@@ -64,9 +64,9 @@ namespace Controllers
         /// <summary>
         /// Obtener los estudiantes de una Aula en una Unidad
         /// </summary>
-        [HttpGet("getEstudiantesByAulaYUnidad/{aulaId:int}/{unidadId:int}")]
+        [HttpGet("getEstudiantesByAulaYUnidad/{unidadId:int}/{aulaId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetEstudiantesDeEvalucionAula(int aulaId, int unidadId)
+        public async Task<IActionResult> GetEstudiantesDeEvalucionAula(int unidadId, int aulaId)
         {
             try
             {
