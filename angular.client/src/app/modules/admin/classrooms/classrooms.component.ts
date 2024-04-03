@@ -122,14 +122,40 @@ export class ClassroomsComponent implements OnInit {
         return this.selectedStudents.map(e => e.id)
     }
 
+    createStudent() {
+        const dialogRef = this.confirmationService.open({
+            title: '¿Deseas Crear Estudiante?',
+            message: null, dismissible: true,
+            actions: {
+                cancel: {
+                    label: 'Cancelar'
+                },
+                confirm: {
+                    label: 'Crear'
+                }
+            },
+            icon: { color: 'info', name: 'info', show: true }
+        })
+        dialogRef.afterClosed().subscribe(res => {
+            if (res === 'confirmed') {
+                this.items = 'register'
+            }
+        })
+    }
+
     remove(index: number): void {
         this.selectedStudents.splice(index, 1)
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
-        this.selectedStudents.push(event.option.value);
-        this.autocompleteInput.nativeElement.value = ''
-        this.inputValue = '';
+        if (event.option.value) {
+            this.selectedStudents.push(event.option.value);
+            this.autocompleteInput.nativeElement.value = ''
+            this.inputValue = '';
+        } else {
+            this.createStudent()
+        }
+
     }
 
     displayFn(person: any): string {
@@ -151,29 +177,35 @@ export class ClassroomsComponent implements OnInit {
     private obtenerListadeUnidades(): void {
         this.classroomsService.getUnidadesAll().pipe(
             timeout(5000) // Tiempo de espera en milisegundos
-        ).subscribe((response) => {
-            if (response.succeeded) {
-                this.unidades = response.data;
+        ).subscribe({
+            next(response) {
+                if (response.succeeded) {
+                    this.unidades = response.data;
+                }
+            }, error() {
             }
-        }, error => {
         })
 
     }
     private obtenerListadeAulas(): void {
         this.classroomsService.getAulas().pipe(
             timeout(5000) // Tiempo de espera en milisegundos
-        ).subscribe((response) => {
-            if (response.succeeded) {
-                this.aulas = response.data;
-                this.gradosUnicos = [...new Set(this.aulas.map(aula => aula.Grado))];
-                console.log(this.aulas);
+        ).subscribe({
+            next(response) {
+                if (response.succeeded) {
+                    this.aulas = response.data;
+                    this.gradosUnicos = [...new Set(this.aulas.map(aula => aula.Grado))];
+                    console.log(this.aulas);
+                }
+            }, error() {
             }
-        }, error => {
         });
     }
 
 
-
+    registerStudent() {
+        console.log(this.formRegistrarEstudiante.value)
+    }
     // Fin Codigo Jhonatan
 
     openCreateUnitModal(): void {
@@ -198,7 +230,7 @@ export class ClassroomsComponent implements OnInit {
     }
 
     onInputChange(val: any) {
-        const query = val?.nombre?.trim() ?? val.trim()
+        const query = val?.nombre?.trim() ?? val?.trim()
         if (query) {
             this.personaService.getStudentsByQuery(query).subscribe(({ data }) => {
                 this.students = data
