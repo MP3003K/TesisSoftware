@@ -209,15 +209,20 @@
                                             " (ngSubmit)="registerStudent()"
                                             class="flex flex-col p-8 bg-card rounded-2xl shadow overflow-hidden">
                                             <mat-form-field class="flex-auto">
-                                                <mat-label>Nombre</mat-label>
-                                                <input type="text" matInput formControlName="nombre"
-                                                    placeholder="Ingrese su nombre" />
-                                                <mat-error *ngIf="
+                                                <mat-label>Nombres</mat-label>
+                                                <input
+                                                    type="text"
+                                                    matInput
+                                                    formControlName="nombres"
+                                                    placeholder="Ingrese su nombre"
+                                                />
+                                                <mat-error
+                                                    *ngIf="
                                                         formRegistrarEstudiante.get(
-                                                            'nombre'
+                                                            'nombres'
                                                         ).invalid &&
                                                         formRegistrarEstudiante.get(
-                                                            'nombre'
+                                                            'nombres'
                                                         ).touched
                                                     ">
                                                     Falta ingresar nombre

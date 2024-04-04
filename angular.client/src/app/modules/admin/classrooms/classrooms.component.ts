@@ -19,6 +19,8 @@ import { ClassroomUnit, ClassroomsService } from './classrooms.service';
 import { Aula } from 'app/shared/interfaces';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { PersonaService } from './persona.service';
+import { StudentService } from './student.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-classrooms',
@@ -57,7 +59,7 @@ export class ClassroomsComponent implements OnInit {
     selectedUnity: number = null;
 
     formRegistrarEstudiante = new FormGroup({
-        nombre: new FormControl('', [Validators.required]),
+        nombres: new FormControl('', [Validators.required]),
         apellidoPaterno: new FormControl('', [Validators.required]),
         apellidoMaterno: new FormControl('', [Validators.required]),
         dni: new FormControl('', [
@@ -72,7 +74,9 @@ export class ClassroomsComponent implements OnInit {
     constructor(
         private classroomsService: ClassroomsService,
         private confirmationService: FuseConfirmationService,
-        private personaService: PersonaService
+        private personaService: PersonaService,
+        private studentService: StudentService,
+        private snack: MatSnackBar
     ) {}
 
     ngOnInit() {
@@ -156,7 +160,6 @@ export class ClassroomsComponent implements OnInit {
             next: (response) => {
                 if (response.succeeded) {
                     this.unidades = response.data;
-                    console.log(this.unidades);
                 }
             },
             error: (err) => {
@@ -169,7 +172,6 @@ export class ClassroomsComponent implements OnInit {
             next: (response) => {
                 if (response.succeeded) {
                     this.classrooms = response.data;
-                    console.log(this.classrooms);
                 }
             },
             error: (err) => {
@@ -177,9 +179,30 @@ export class ClassroomsComponent implements OnInit {
             },
         });
     }
-
+    get selectedPrincipalData() {
+        return this.selectedSection && this.selectedUnity;
+    }
     registerStudent() {
-        console.log(this.formRegistrarEstudiante.value);
+        if (!this.selectedPrincipalData) {
+            return this.snack.open(
+                'Seleccione una unidad y aula',
+                'Cerrar',
+                {}
+            );
+        }
+        this.studentService
+            .create({
+                ...this.formRegistrarEstudiante.value,
+                unidadId: this.selectedUnity,
+                aulaId: this.selectedSection,
+            })
+            .subscribe((response) => {
+                if (response.succeeded) {
+                    console.log(response.data);
+                    this.items = 'list';
+                    this.obtnerEstudiantesPorAulaYUnidad();
+                }
+            });
     }
     // Fin Codigo Jhonatan
 
