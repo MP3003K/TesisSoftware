@@ -11,7 +11,7 @@ namespace Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class EstudianteController(DapperContext context):ControllerBase
+    public class EstudianteController(DapperContext context) : ControllerBase
     {
         /// <summary>
         /// Informacion Basica de un Estudiante
@@ -51,15 +51,16 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
 
-                    await connection.QueryAsync("PROC_CREAR_ESTUDIANTE_Y_EVALUACION", new
+                    await connection.QueryAsync("PROC_CREAR_ESTUDIANTE", new
                     {
                         v_aulaId = crearEstudianteDto.AulaId,
                         v_nombreEstudiante = crearEstudianteDto.Nombres,
                         v_ape_pat = crearEstudianteDto.ApellidoPaterno,
                         v_ape_mat = crearEstudianteDto.ApellidoMaterno,
-                        v_dni = crearEstudianteDto.DNI
+                        v_dni = crearEstudianteDto.DNI,
+                        v_unidadId = crearEstudianteDto.UnidadId
                     }, commandType: CommandType.StoredProcedure);
-                    return Ok();
+                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = crearEstudianteDto });
                 }
 
             }
@@ -70,6 +71,6 @@ namespace Controllers
             }
         }
 
-        
+
     }
 }

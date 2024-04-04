@@ -278,20 +278,20 @@
                                             class="flex flex-col p-8 bg-card rounded-2xl shadow overflow-hidden"
                                         >
                                             <mat-form-field class="flex-auto">
-                                                <mat-label>Nombre</mat-label>
+                                                <mat-label>Nombres</mat-label>
                                                 <input
                                                     type="text"
                                                     matInput
-                                                    formControlName="nombre"
+                                                    formControlName="nombres"
                                                     placeholder="Ingrese su nombre"
                                                 />
                                                 <mat-error
                                                     *ngIf="
                                                         formRegistrarEstudiante.get(
-                                                            'nombre'
+                                                            'nombres'
                                                         ).invalid &&
                                                         formRegistrarEstudiante.get(
-                                                            'nombre'
+                                                            'nombres'
                                                         ).touched
                                                     "
                                                 >

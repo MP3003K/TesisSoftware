@@ -8,6 +8,7 @@
         public string ApellidoMaterno { get; set; }
         public int DNI { get; set; }
         public int AulaId { get; set; }
+        public int UnidadId { get; set; }
 
     }
 }
