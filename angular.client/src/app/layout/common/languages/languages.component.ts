@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { FuseNavigationService, FuseVerticalNavigationComponent } from '@fuse/components/navigation';
-import { AvailableLangs, TranslocoService } from '@ngneat/transloco';
+import { AvailableLangs, LangDefinition, TranslocoService } from '@ngneat/transloco';
 import { take } from 'rxjs';
 
 @Component({
@@ -17,7 +17,7 @@ import { take } from 'rxjs';
 })
 export class LanguagesComponent implements OnInit, OnDestroy
 {
-    availableLangs: AvailableLangs;
+    availableLangs: LangDefinition[];
     activeLang: string;
     flagCodes: any;
 
@@ -42,7 +42,7 @@ export class LanguagesComponent implements OnInit, OnDestroy
     ngOnInit(): void
     {
         // Get the available languages from transloco
-        this.availableLangs = this._translocoService.getAvailableLangs();
+        this.availableLangs = this._translocoService.getAvailableLangs() as LangDefinition[];
 
         // Subscribe to language changes
         this._translocoService.langChanges$.subscribe((activeLang) =>

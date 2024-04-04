@@ -52,51 +52,51 @@
             <div class="flex flex-col">
                 <div class="grid sm:grid-cols-4 gap-2 items-center">
                     <mat-form-field>
-                        <mat-label>Unidades</mat-label>
-                        <mat-select [(value)]="unidadIdSeleccionada">
-                            <mat-option
-                                *ngFor="let x of unidades"
-                                [value]="x.Id"
-                                >{{ x.Nombre }}</mat-option
-                            >
-                            <mat-option (click)="openCreateUnitModal()"
-                                >Crear Unidad</mat-option
-                            >
+                        <mat-label>Unidad</mat-label>
+                        <mat-select [(ngModel)]="selectedUnity">
+                            @for(unidad of unidades;track unidad){
+                            <mat-option [value]="unidad.Id">
+                                {{ unidad.Nombre }}
+                            </mat-option>
+                            }
+
+                            <mat-option (click)="openCreateUnitModal()">
+                                Crear Unidad
+                            </mat-option>
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Grado</mat-label>
                         <mat-select
-                            [(value)]="gradoSeleccionado"
-                            (selectionChange)="cambiarGrado($event.value)"
-                            [disabled]="!unidadIdSeleccionada"
+                            [(ngModel)]="selectedDegree"
+                            (selectionChange)="selectedSection = null"
                         >
-                            <mat-option
-                                *ngFor="let grado of gradosUnicos"
-                                [value]="grado"
-                                >{{ grado }}</mat-option
-                            >
+                            @for(degree of distinctClassrooms; track degree){
+                            <mat-option [value]="degree">
+                                {{ degree }}
+                            </mat-option>
+                            }
                         </mat-select>
                     </mat-form-field>
 
                     <mat-form-field>
                         <mat-label>Sección</mat-label>
                         <mat-select
-                            [(value)]="seccionSeleccionada"
-                            (selectionChange)="cambiarSeccion($event.value)"
-                            [disabled]="!gradoSeleccionado"
+                            [disabled]="!selectedDegree"
+                            [(ngModel)]="selectedSection"
                         >
-                            <mat-option
-                                *ngFor="let aula of aulasFiltradas"
-                                [value]="aula.Seccion"
-                                >{{ aula.Seccion }}</mat-option
-                            >
+                            @for(aula of sections; track aula){
+                            <mat-option [value]="aula.AulaId">
+                                {{ aula.Seccion }}
+                            </mat-option>
+                            }
                         </mat-select>
                     </mat-form-field>
                     <div>
                         <button
                             mat-fab
                             extended
+                            [disabled]="!selectedSection || !selectedUnity"
                             (click)="obtnerEstudiantesPorAulaYUnidad()"
                         >
                             <mat-icon svgIcon="filter_alt"></mat-icon>
@@ -137,12 +137,11 @@
                                 </button>
                                 }
                             </div>
-                            @if(aulaIdSeleccionado && unidadIdSeleccionada){
-                            @if(estudiantes.length){
+                            @if(true){ @if(classroomStudents.length > 0){
 
                             <table
                                 mat-table
-                                [dataSource]="estudiantes"
+                                [dataSource]="classroomStudents"
                                 class="mat-elevation-z8"
                             >
                                 <!-- Columna N° -->
@@ -246,8 +245,8 @@
                                     (optionSelected)="selected($event)"
                                     [displayWith]="displayFn"
                                 >
-                                    @for (student of filteredStudents; track
-                                    student) {
+                                    @for (student of filteredSearchedStudents;
+                                    track student) {
                                     <mat-option [value]="student">
                                         {{ student.nombre }} ({{ student.dni }})
                                     </mat-option>

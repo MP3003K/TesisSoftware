@@ -1,245 +1,221 @@
-
-
-
-
-import { Component, ElementRef, OnInit, ViewChild, inject } from "@angular/core";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { SelectionModel } from '@angular/cdk/collections';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatButtonModule } from "@angular/material/button";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { SharedModule } from "app/shared/shared.module";
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
-import { BehaviorSubject, Observable, map, startWith } from "rxjs";
-import { LiveAnnouncer } from "@angular/cdk/a11y";
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { SharedModule } from 'app/shared/shared.module';
+import {
+    MatAutocompleteModule,
+    MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from "@angular/material/icon";
-import { ClassroomUnit, ClassroomsService, Grado, Seccion } from "./classrooms.service";
-import { timeout } from 'rxjs/operators';
-import { Unidad, Aula } from "app/shared/interfaces";
-import { distinctUntilChanged } from 'rxjs/operators';
-import { FuseConfirmationService } from "@fuse/services/confirmation";
-import { PersonaService } from "./persona.service";
-import { query } from "@angular/animations";
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { ClassroomUnit, ClassroomsService } from './classrooms.service';
+import { Aula } from 'app/shared/interfaces';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { PersonaService } from './persona.service';
 
 @Component({
-    selector: "app-classrooms",
-    templateUrl: "classrooms.component.html",
+    selector: 'app-classrooms',
+    templateUrl: 'classrooms.component.html',
     standalone: true,
-    imports: [SharedModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatTableModule, MatCheckboxModule, MatButtonModule, MatButtonToggleModule, MatAutocompleteModule, MatChipsModule, MatIconModule]
+    imports: [
+        SharedModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatTableModule,
+        MatCheckboxModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatAutocompleteModule,
+        MatChipsModule,
+        MatIconModule,
+    ],
 })
 export class ClassroomsComponent implements OnInit {
-    classrooms: ClassroomUnit[] = [];
-    isTestEnabled?: boolean = null
+    unidades: any = [];
+    isTestEnabled?: boolean = null;
     displayedColumns: string[] = [
         'numero',
         'NombreCompleto',
-        'EstadoEstudiante'
+        'EstadoEstudiante',
     ];
-    dataSource = new MatTableDataSource([]);
-    selection = new SelectionModel(true, []);
-    items: string = "list"
+    items: string = 'list';
 
-    separatorKeysCodes: number[] = [ENTER, COMMA];
-    selectedStudents = []
-    students = []
-    announcer = inject(LiveAnnouncer);
+    selectedStudents = [];
+    searchedStudents = [];
+    classroomStudents = [];
+    classrooms = [];
+    selectedDegree: number = null;
+    selectedSection: number = null;
+    selectedUnity: number = null;
 
-    formRegistrarEstudiante: FormGroup;
+    formRegistrarEstudiante = new FormGroup({
+        nombre: new FormControl('', [Validators.required]),
+        apellidoPaterno: new FormControl('', [Validators.required]),
+        apellidoMaterno: new FormControl('', [Validators.required]),
+        dni: new FormControl('', [
+            Validators.required,
+            Validators.pattern('^[0-9]{8}$'),
+        ]),
+    });
+    @ViewChild('autocompleteInput')
+    autocompleteInput: ElementRef<HTMLInputElement>;
+    inputValue: string = '';
 
-    estudiantes: any[] = [];
-
-    seccionSeleccionada: string;
-    aulasFiltradas: Aula[] = [];
-    gradosUnicos: number[] = [];
-    unidadIdSeleccionada: number;
-    @ViewChild('autocompleteInput') autocompleteInput: ElementRef<HTMLInputElement>;
-
-
-    gradoSeleccionado: number;
-    aulaIdSeleccionado: number;
-    seccionesSeleccionadas: string[] = [];
-    gradoSeleccionado$ = new BehaviorSubject<number>(null);
-    seccionSeleccionada$ = new BehaviorSubject<string>(null);
-    inputValue: string = ''
-    constructor(private fb: FormBuilder, private classroomsService: ClassroomsService, private confirmationService: FuseConfirmationService, private personaService: PersonaService) {
-
-    }
-
+    constructor(
+        private classroomsService: ClassroomsService,
+        private confirmationService: FuseConfirmationService,
+        private personaService: PersonaService
+    ) {}
 
     ngOnInit() {
         this.obtenerListadeUnidades();
         this.obtenerListadeAulas();
-        this.gradoSeleccionado$.pipe(
-            distinctUntilChanged()
-        ).subscribe(grado => {
-            this.aulasFiltradas = this.aulas.filter(aula => aula.Grado === grado);
-            this.seccionesSeleccionadas = [...new Set(this.aulasFiltradas.map(aula => aula.Seccion))];
-        });
-        this.seccionSeleccionada$.pipe(
-            distinctUntilChanged()
-
-        ).subscribe(seccion => {
-            this.aulasFiltradas = this.aulasFiltradas.filter(aula => aula.Seccion === seccion);
-        });
-        this.crearFormularioRegistrarEstudiante();
     }
 
-    cambiarGrado(nuevoGrado: number) {
-        this.gradoSeleccionado = nuevoGrado;
-        this.gradoSeleccionado$.next(nuevoGrado);
+    get filteredSearchedStudents() {
+        return this.searchedStudents.filter(
+            (e) => !this.selectedStudentsId.includes(e.id)
+        );
+    }
+    get selectedStudentsId() {
+        return this.selectedStudents.map((e) => e.id);
     }
 
-    cambiarSeccion(nuevaSeccion: string) {
-        this.seccionSeleccionada = nuevaSeccion;
-        this.seccionSeleccionada$.next(nuevaSeccion);
-        const aula = this.aulasFiltradas.find(aula => aula.Seccion === nuevaSeccion);
-        if (aula) {
-            this.aulaIdSeleccionado = aula.AulaId;
-        }
+    get academicDegrees() {
+        return this.unidades;
+    }
+
+    get distinctClassrooms() {
+        const classrooms = this.classrooms.map((e) => e.Grado);
+        return [...new Set(classrooms)];
+    }
+    get sections() {
+        return this.classrooms.filter((e) => e.Grado == this.selectedDegree);
     }
 
     obtnerEstudiantesPorAulaYUnidad() {
-        if (this.unidadIdSeleccionada && this.aulaIdSeleccionado) {
-            this.classroomsService.getStudentsByAulaYUnidad(this.unidadIdSeleccionada, this.aulaIdSeleccionado).subscribe(response => {
+        this.classroomsService
+            .getStudentsByAulaYUnidad(this.selectedUnity, this.selectedSection)
+            .subscribe((response) => {
                 if (response.succeeded) {
-                    this.estudiantes = response.data;
-                    console.log(this.estudiantes);
+                    this.classroomStudents = response.data;
                 }
             });
-        }
-    }
-
-    get filteredStudents() {
-        return this.students.filter(e => !this.selectedStudentsId.includes(e.id))
-    }
-    get selectedStudentsId() {
-        return this.selectedStudents.map(e => e.id)
     }
 
     createStudent() {
         const dialogRef = this.confirmationService.open({
             title: '¿Deseas Crear Estudiante?',
-            message: null, dismissible: true,
+            message: null,
+            dismissible: true,
             actions: {
                 cancel: {
-                    label: 'Cancelar'
+                    label: 'Cancelar',
                 },
                 confirm: {
-                    label: 'Crear'
-                }
+                    label: 'Crear',
+                },
             },
-            icon: { color: 'info', name: 'info', show: true }
-        })
-        dialogRef.afterClosed().subscribe(res => {
+            icon: { color: 'info', name: 'info', show: true },
+        });
+        dialogRef.afterClosed().subscribe((res) => {
             if (res === 'confirmed') {
-                this.items = 'register'
+                this.items = 'register';
             }
-        })
+        });
     }
 
     remove(index: number): void {
-        this.selectedStudents.splice(index, 1)
+        this.selectedStudents.splice(index, 1);
     }
 
     selected(event: MatAutocompleteSelectedEvent): void {
         if (event.option.value) {
             this.selectedStudents.push(event.option.value);
-            this.autocompleteInput.nativeElement.value = ''
+            this.autocompleteInput.nativeElement.value = '';
             this.inputValue = '';
         } else {
-            this.createStudent()
+            this.createStudent();
         }
-
     }
 
     displayFn(person: any): string {
         return person?.nombre ?? '';
     }
 
-    // Inicio Codigo Jhonatan
-    private crearFormularioRegistrarEstudiante(): void {
-        this.formRegistrarEstudiante = this.fb.group({
-            nombre: ['', Validators.required],
-            apellidoPaterno: ['', Validators.required],
-            apellidoMaterno: ['', Validators.required],
-            dni: ['', [Validators.required, Validators.pattern('^[0-9]{8}$')]]
-        });
-    }
-    public unidades: Unidad[] = [];
-    public aulas: Aula[] = []
-
     private obtenerListadeUnidades(): void {
-        this.classroomsService.getUnidadesAll().pipe(
-            timeout(5000) // Tiempo de espera en milisegundos
-        ).subscribe({
-            next(response) {
+        this.classroomsService.getUnidadesAll().subscribe({
+            next: (response) => {
                 if (response.succeeded) {
                     this.unidades = response.data;
+                    console.log(this.unidades);
                 }
-            }, error() {
-            }
-        })
-
+            },
+            error: (err) => {
+                console.log(err);
+            },
+        });
     }
     private obtenerListadeAulas(): void {
-        this.classroomsService.getAulas().pipe(
-            timeout(5000) // Tiempo de espera en milisegundos
-        ).subscribe({
-            next(response) {
+        this.classroomsService.getAulas().subscribe({
+            next: (response) => {
                 if (response.succeeded) {
-                    this.aulas = response.data;
-                    this.gradosUnicos = [...new Set(this.aulas.map(aula => aula.Grado))];
-                    console.log(this.aulas);
+                    this.classrooms = response.data;
+                    console.log(this.classrooms);
                 }
-            }, error() {
-            }
+            },
+            error: (err) => {
+                console.log(err);
+            },
         });
     }
 
-
     registerStudent() {
-        console.log(this.formRegistrarEstudiante.value)
+        console.log(this.formRegistrarEstudiante.value);
     }
     // Fin Codigo Jhonatan
 
     openCreateUnitModal(): void {
         const dialogRef = this.confirmationService.open({
             title: '¿Deseas Crear Unidad?',
-            message: null, dismissible: true,
+            message: null,
+            dismissible: true,
             actions: {
                 cancel: {
-                    label: 'Cancelar'
+                    label: 'Cancelar',
                 },
                 confirm: {
-                    label: 'Crear'
-                }
+                    label: 'Crear',
+                },
             },
-            icon: { color: 'info', name: 'info', show: true }
-        })
-        dialogRef.afterClosed().subscribe(res => {
+            icon: { color: 'info', name: 'info', show: true },
+        });
+        dialogRef.afterClosed().subscribe((res) => {
             if (res === 'confirmed') {
-                console.log('TODO: Crear Unidad')
+                console.log('TODO: Crear Unidad');
             }
-        })
+        });
     }
 
     onInputChange(val: any) {
-        const query = val?.nombre?.trim() ?? val?.trim()
+        const query = val?.nombre?.trim() ?? val?.trim();
         if (query) {
-            this.personaService.getStudentsByQuery(query).subscribe(({ data }) => {
-                this.students = data
-            })
+            this.personaService
+                .getStudentsByQuery(query)
+                .subscribe(({ data }) => {
+                    this.searchedStudents = data;
+                });
         } else {
-            this.students = []
+            this.searchedStudents = [];
         }
-
     }
     //Fin codigo de elias
-
 }
