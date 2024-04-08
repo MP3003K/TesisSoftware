@@ -51,18 +51,7 @@
     <div class="flex-auto p-6 sm:p-10">
         <div class="flex flex-col gap-4">
             <div class="flex flex-col items-start">
-                <div class="grid grid-cols-4 gap-4 w-full">
-                    <mat-form-field>
-                        <mat-label>Año</mat-label>
-                        <mat-select [(ngModel)]="selectedYear">
-                            <mat-option
-                                [value]="year"
-                                *ngFor="let year of years"
-                            >
-                                {{ year }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                <div class="grid grid-cols-3 gap-4 w-full">
                     <mat-form-field>
                         <mat-label>Unidad</mat-label>
                         <mat-select
@@ -136,7 +125,7 @@
                 <button
                     (click)="openStudentRegistrationModal(selectedClass)"
                     type="button"
-                    class=" mx-2 border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline"
+                    class="mx-2 border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline"
                 >
                     Registrar Estudiante
                 </button>
