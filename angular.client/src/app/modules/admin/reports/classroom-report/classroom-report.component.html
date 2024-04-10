@@ -54,47 +54,35 @@
                 <div class="grid grid-cols-3 gap-4 w-full">
                     <mat-form-field>
                         <mat-label>Unidad</mat-label>
-                        <mat-select
-                            [(ngModel)]="selectedUnity"
-                            [disabled]="!selectedYear"
-                        >
-                            <mat-option
-                                [value]="unity.id"
-                                *ngFor="
-                                    let unity of filterUnities();
-                                    let i = index
-                                "
-                            >
+                        <mat-select [(ngModel)]="selectedUnity">
+                            @for(unity of unities; track unity; let i = $index){
+                            <mat-option [value]="unity.id">
                                 {{ unity.nombre }}
                             </mat-option>
+                            }
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Grado</mat-label>
-                        <mat-select
-                            [disabled]="!selectedUnity"
-                            [(ngModel)]="selectedGrade"
-                        >
-                            <mat-option
-                                *ngFor="let grade of [1, 2, 3, 4, 5]"
-                                [value]="grade"
-                            >
-                                {{ grade }}° Grado
+                        <mat-select [(ngModel)]="selectedDegree">
+                            @for(degree of academicDegrees; track degree){
+                            <mat-option [value]="degree">
+                                {{ degree }}
                             </mat-option>
+                            }
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>Salón</mat-label>
+                        <mat-label>Sección</mat-label>
                         <mat-select
-                            [disabled]="!selectedGrade"
-                            [(ngModel)]="selectedClass"
+                            [disabled]="!selectedDegree"
+                            [(ngModel)]="selectedSection"
                         >
-                            <mat-option
-                                *ngFor="let classroom of filterClass()"
-                                [value]="classroom.id"
-                            >
-                                {{ classroom.secccion }}
+                            @for(section of sections; track section){
+                            <mat-option [value]="section.id">
+                                {{ section.seccion }}
                             </mat-option>
+                            }
                         </mat-select>
                     </mat-form-field>
                 </div>
@@ -121,106 +109,97 @@
                 </div>
             </div>
 
-            <div *ngIf="scales.length > 0" class="flex flex-col gap-4">
-                <button
-                    (click)="openStudentRegistrationModal(selectedClass)"
-                    type="button"
-                    class="mx-2 border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline"
-                >
-                    Registrar Estudiante
-                </button>
-                <div class="scale_container flex flex-col divide-y">
-                    <details
-                        *ngFor="let scale of scales"
-                        class="px-4 bg-white shadow"
-                    >
-                        <summary
-                            class="py-2 cursor-pointer flex items-center justify-between"
-                        >
-                            <span>{{ scale.name }}</span>
-                            <span
-                                [className]="
-                                    getMeanClasses(scale.mean) +
-                                    ' text-xs text-white px-4 py-2 rounded'
-                                "
-                                >{{ scale.mean | number : ".2-2" }}</span
-                            >
-                        </summary>
-                        <div class="py-2">
-                            <ul class="flex flex-col p-4 gap-4">
-                                <li
-                                    *ngFor="let indicator of scale.indicators"
-                                    class="p-2 flex gap-2 items-center"
-                                >
-                                    <span> {{ indicator.name }}</span>
-                                    <div
-                                        [className]="
-                                            getMeanClasses(indicator.mean) +
-                                            ' px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center'
-                                        "
-                                        class=""
-                                    >
-                                        {{ indicator.mean | number : ".2-2" }}
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </details>
-                </div>
-                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <table *ngIf="studentList().length > 0">
-                        <thead>
-                            <tr>
-                                <th scope="col">Nombre Completo</th>
-                                <th scope="col">Documento de identidad</th>
-                                <th scope="col">Indicador</th>
-
-                                <th scope="col" class="text-center">Opcion</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                *ngFor="
-                                    let student of studentList();
-                                    let i = index
-                                "
-                            >
-                                <th scope="row">{{ student.name }}</th>
-                                <td>{{ student.dni }}</td>
-                                <td>
-                                    <div *ngIf="student.mean == 0">
-                                        No realizado
-                                    </div>
-                                    <div
-                                        *ngIf="student.mean > 0"
-                                        [className]="
-                                            getMeanClasses(student.mean) +
-                                            ' w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center'
-                                        "
-                                    >
-                                        {{ student.mean | number : ".2-2" }}
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <button
-                                        [disabled]="student.mean == 0"
-                                        mat-icon-button
-                                        (click)="redirectStudent(student.id)"
-                                    >
-                                        <mat-icon>visibility</mat-icon>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div
-                *ngIf="scales.length == 0"
-                class="text-center py-4 font-light text-gray-300"
+            <button
+                (click)="openStudentRegistrationModal(selectedSection)"
+                type="button"
+                class="mx-2 border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline"
             >
-                {{ dataInfo }}
+                Registrar Estudiante
+            </button>
+            <div class="scale_container flex flex-col divide-y">
+                @for(scale of scales; track scale){
+                <details class="px-4 bg-white shadow">
+                    <summary
+                        class="py-2 cursor-pointer flex items-center justify-between"
+                    >
+                        <span>{{ scale.name }}</span>
+                        <span
+                            [className]="
+                                getMeanClasses(scale.mean) +
+                                ' text-xs text-white px-4 py-2 rounded'
+                            "
+                            >{{ scale.mean | number : ".2-2" }}</span
+                        >
+                    </summary>
+                    <div class="py-2">
+                        <ul class="flex flex-col p-4 gap-4">
+                            @for(indicator of scale.indicators; track
+                            indicator){
+                            <li class="p-2 flex gap-2 items-center">
+                                <span> {{ indicator.name }}</span>
+                                <div
+                                    [className]="
+                                        getMeanClasses(indicator.mean) +
+                                        ' px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center'
+                                    "
+                                >
+                                    {{ indicator.mean | number : ".2-2" }}
+                                </div>
+                            </li>
+                            }
+                        </ul>
+                    </div>
+                </details>
+                } @empty {
+                <div class="text-center py-4 font-light text-gray-300">
+                    {{ dataInfo }}
+                </div>
+                }
             </div>
+            @if(studentsClassroom.length > 0){
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre Completo</th>
+                            <th scope="col">Indicador</th>
+                            <th scope="col" class="text-center">Opcion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for( student of studentsClassroom; track student; let i
+                        = $index){
+                        <tr>
+                            <th scope="row">{{ student.nombre }}</th>
+                            <td>
+                                <div *ngIf="student.promedio == 0">
+                                    No realizado
+                                </div>
+                                <div
+                                    *ngIf="student.promedio > 0"
+                                    [className]="
+                                        getMeanClasses(student.promedio) +
+                                        ' w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center'
+                                    "
+                                >
+                                    {{ student.promedio | number : ".2-2" }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <button
+                                    [disabled]="student.mean == 0"
+                                    mat-icon-button
+                                    (click)="redirectStudent(student.id)"
+                                >
+                                    <mat-icon>visibility</mat-icon>
+                                </button>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            }
         </div>
     </div>
 </div>

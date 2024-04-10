@@ -1,5 +1,5 @@
 export interface Aula {
-    AulaId: number,
+    Id: number,
     Grado: number,
     Seccion: string
 }

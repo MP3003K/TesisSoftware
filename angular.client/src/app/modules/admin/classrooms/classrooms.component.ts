@@ -12,11 +12,9 @@ import {
     MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import { ClassroomUnit, ClassroomsService } from './classrooms.service';
-import { Aula } from 'app/shared/interfaces';
+import { ClassroomsService } from './classrooms.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { PersonaService } from './persona.service';
 import { StudentService } from './student.service';
@@ -41,7 +39,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ],
 })
 export class ClassroomsComponent implements OnInit {
-    unidades: any = [];
+    unities: any = [];
     isTestEnabled?: boolean = null;
     displayedColumns: string[] = [
         'numero',
@@ -94,7 +92,7 @@ export class ClassroomsComponent implements OnInit {
     }
 
     get academicDegrees() {
-        return this.unidades;
+        return this.unities;
     }
 
     get distinctClassrooms() {
@@ -159,7 +157,7 @@ export class ClassroomsComponent implements OnInit {
         this.classroomsService.getUnidadesAll().subscribe({
             next: (response) => {
                 if (response.succeeded) {
-                    this.unidades = response.data;
+                    this.unities = response.data;
                 }
             },
             error: (err) => {

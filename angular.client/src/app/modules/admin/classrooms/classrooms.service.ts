@@ -41,8 +41,8 @@ export interface AulaApiResponse {
 })
 export class ClassroomsService {
     http = inject(HttpClient);
-    getUnidadesAll(): Observable<any> {
-        return this.http.get<any>(
+    getUnidadesAll(): Observable<HttpResponse<any>> {
+        return this.http.get<HttpResponse<any>>(
             `${environment.baseURL}/classroom/unidades/all`
         );
     }
@@ -55,6 +55,21 @@ export class ClassroomsService {
     getStudentsByAulaYUnidad(unidadId: number, aulaId: number) {
         return this.http.get<any>(
             `${environment.baseURL}/classroom/getEstudiantesByAulaYUnidad/${unidadId}/${aulaId}`
+        );
+    }
+
+    getEvaluation(
+        unityId: number,
+        classroomId: number
+    ): Observable<HttpResponse<any>> {
+        return this.http.get<HttpResponse<any>>(
+            `${environment.baseURL}/aula/evaluacion`,
+            {
+                params: {
+                    unityId,
+                    classroomId,
+                },
+            }
         );
     }
 }
