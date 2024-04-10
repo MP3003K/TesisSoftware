@@ -2,12 +2,23 @@
 using Context;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using DTOs.Exceptions;
 using Application.Wrappers;
 
 
 namespace Controllers
 {
+
+    public class Unity
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public int NUnidad { get; set; }
+        public DateTime FechaInicio { get; set; }
+        public DateTime FechaFin { get; set; }
+        public int Año { get; set; }
+        public int EscuelaId { get; set; }
+        public bool Estado { get; set; }
+    }
 
     [ApiController]
     [Route("[controller]")]
@@ -26,7 +37,7 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
 
-                    var classrooms = await connection.QueryAsync("SELECT * from UNIDADES order by Año, NUnidad;");
+                    var classrooms = await connection.QueryAsync<Unity>("LISTAR_UNIDADES", commandType: CommandType.StoredProcedure);
                     return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = classrooms.ToList() });
 
                 }
