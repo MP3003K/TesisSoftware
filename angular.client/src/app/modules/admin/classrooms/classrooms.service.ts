@@ -43,7 +43,7 @@ export class ClassroomsService {
     http = inject(HttpClient);
     getUnidadesAll(): Observable<any> {
         return this.http.get<any>(
-            `${environment.baseURL}/classroom/unidades/all`
+            `${environment.baseURL}/Unidad/all`
         );
     }
 
