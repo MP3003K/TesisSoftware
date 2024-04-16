@@ -75,11 +75,14 @@ export class ClassroomsComponent implements OnInit {
         private personaService: PersonaService,
         private studentService: StudentService,
         private snack: MatSnackBar
-    ) {}
+    ) { }
+    searchText: string = ''; // Aquí se almacena el texto de búsqueda
+    filteredStudents: any[] = []; // Aquí se almacenan los estudiantes filtrados
 
     ngOnInit() {
         this.obtenerListadeUnidades();
         this.obtenerListadeAulas();
+        this.applyFilter('');
     }
 
     get filteredSearchedStudents() {
@@ -239,4 +242,26 @@ export class ClassroomsComponent implements OnInit {
         }
     }
     //Fin codigo de elias
+
+    applyFilter(searchText: string) {
+        // Si el texto de búsqueda está vacío, mostramos todos los estudiantes
+        if (!searchText) {
+            this.filteredStudents = this.classroomStudents;
+        } else {
+            // Convertimos el texto de búsqueda a minúsculas para hacer la búsqueda insensible a mayúsculas y minúsculas
+            let searchTextLower = searchText.toLowerCase();
+
+            // Filtramos los estudiantes cuyo nombre contenga el texto de búsqueda
+            this.filteredStudents = this.classroomStudents.filter(student =>
+                student.NombreCompleto.toLowerCase().includes(searchTextLower)
+            );
+        }
+    }
+
+    deleteStudent() {
+
+    }
+    formatName(name: string): string {
+        return name.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.substring(1)).join(' ');
+    }
 }
