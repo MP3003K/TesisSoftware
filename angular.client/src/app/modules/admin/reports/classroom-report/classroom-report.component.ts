@@ -92,7 +92,7 @@ export class ClassroomReportComponent {
                             .subscribe({
                                 next: (response) => {
                                     if (response.succeeded) {
-                                        console.log(response.data)
+                                        console.log(response.data);
                                         this.studentsClassroom = response.data;
                                     }
                                 },
@@ -152,7 +152,7 @@ export class ClassroomReportComponent {
 
     redirectStudent(index: number) {
         console.log(index);
-        this.router.navigate([`/dashboards/reports/${index}`], {
+        this.router.navigate(['reports', index], {
             queryParams: {
                 classroomId: this.selectedSection,
                 unityId: this.selectedUnity,
@@ -167,8 +167,8 @@ export class ClassroomReportComponent {
                 : 'bg-[#00b050]';
         } else if (mean >= 2.1 && mean <= 3.9) {
             return this.selectedDimension == 1
-                ? 'bg-[#70ad47]'
-                : 'bg-[#ffff00]';
+                ? 'bg-[#70ad47] text-black'
+                : 'bg-[#ffff00] text-black';
         } else if (mean >= 4 && mean <= 5) {
             return this.selectedDimension == 1
                 ? 'bg-[#548135]'

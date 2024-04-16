@@ -19,6 +19,14 @@ namespace Controllers
         public string? Nombre { get; set; }
         public double? Promedio { get; set; }
     }
+    public class StudentReport {
+        public string? Dimension { get; set; }
+        public double? DimensionMean { get; set; }
+        public string? Scale { get; set; }
+        public string? ScaleMean { get; set; }
+        public string? Indicator { get; set; }
+        public string? IndicatorMean { get; set; }
+    }
 
     [ApiController]
     [Route("[controller]")]
@@ -80,17 +88,16 @@ namespace Controllers
         /// Resultados psicologicos obtenido por un Estudiante en un Unidad
         /// </summary>
         /// 
-        [HttpGet("RespuestasEstudiante/{evaluationId:int}")]
-        public async Task<ActionResult> RespuestasPsicologicasEstudiante(int evaluationId)
+        [HttpGet("RespuestasEstudiante/{code}/{evaluationId:int}")]
+        public async Task<ActionResult> RespuestasPsicologicasEstudiante(string code, int evaluationId)
         {
-
             try
             {
-
                 using (var connection = context.CreateConnection())
                 {
-                    await connection.QueryAsync("LISTAR_RESPUESTAS_ESTUDIANTE", new { evaluationId }, commandType: CommandType.StoredProcedure);
-                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = null });
+                    var responses = await connection.QueryAsync<StudentReport>("LISTAR_RESPUESTAS_ESTUDIANTE", new { code, evaluationId }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = responses.ToList() });
+
                 }
             }
             catch (Exception ex)
