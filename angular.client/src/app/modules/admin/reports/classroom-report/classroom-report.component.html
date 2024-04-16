@@ -172,11 +172,9 @@
                         <tr>
                             <th scope="row">{{ student.nombre }}</th>
                             <td>
-                                <div *ngIf="student.promedio == 0">
-                                    No realizado
-                                </div>
+                                @if(student.promedio == 0){ No realizado }
+                                @else{
                                 <div
-                                    *ngIf="student.promedio > 0"
                                     [className]="
                                         getMeanClasses(student.promedio) +
                                         ' w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center'
@@ -184,6 +182,7 @@
                                 >
                                     {{ student.promedio | number : ".2-2" }}
                                 </div>
+                                }
                             </td>
                             <td class="text-center">
                                 <button
