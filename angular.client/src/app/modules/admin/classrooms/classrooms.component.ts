@@ -94,12 +94,12 @@ export class ClassroomsComponent implements OnInit {
     }
 
     get distinctClassrooms() {
-        const classrooms = this.classrooms.map((e) => e.Grado);
+        const classrooms = this.classrooms.map((e) => e.grado);
         return [...new Set(classrooms)];
     }
 
     get sections() {
-        return this.classrooms.filter((e) => e.Grado == this.selectedDegree);
+        return this.classrooms.filter((e) => e.grado == this.selectedDegree);
     }
     obtnerEstudiantesPorAulaYUnidad() {
         this.classroomsService

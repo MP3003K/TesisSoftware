@@ -10,22 +10,29 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from 'app/shared/shared.module';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { ClassroomsService } from '../../classrooms/classrooms.service';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-    selector: "app-classroom-report",
+    selector: 'app-classroom-report',
     templateUrl: './classroom-report.component.html',
     styleUrl: './reports.component.scss',
     standalone: true,
-    imports: [SharedModule, MatIconModule, MatSelectModule, MatButtonToggleModule]
+    imports: [
+        SharedModule,
+        MatIconModule,
+        MatSelectModule,
+        MatButtonToggleModule,
+        MatButtonModule,
+    ],
 })
 export class ClassroomReportComponent {
     public dataInfo: string = 'Seleccione un formulario';
-    public years: number[] = [];
     public selectedUnity!: number;
     public selectedDimension!: number;
-    public selectedYear!: number;
-    public selectedGrade!: number;
-    public selectedClass!: number;
+    public selectedDegree!: number;
+    public selectedSection!: number;
+    public studentsClassroom: any[] = [];
 
     dimensions: any[] = [];
     unities: any[] = [];
@@ -38,118 +45,116 @@ export class ClassroomReportComponent {
         public dialog: MatDialog,
         private _snackbar: MatSnackBar,
         private router: Router,
-        private studentService: StudentService,
-        private excelService: ExcelService
-    ) { }
+        private excelService: ExcelService,
+        private classroomsService: ClassroomsService
+    ) {}
 
     ngOnInit(): void {
-        this.getTechs();
+        this.getUnities();
         this.getClasses();
     }
+    getTest() {
+        const scales = [].map(
+            ({
+                indicadoresPsicologicos,
+                nombre: name,
+                promedioEscala: mean,
+            }: {
+                indicadoresPsicologicos: any[];
+                nombre: string;
+                promedioEscala: number;
+            }) => ({
+                name,
+                mean,
+                indicators: indicadoresPsicologicos.map(
+                    ({ nombreIndicador: name, promedioIndicador: mean }) => ({
+                        name,
+                        mean,
+                    })
+                ),
+            })
+        );
 
-    filterUnities() {
-        return this.unities.filter((e) => e['año'] == this.selectedYear) ?? [];
+        console.log(scales);
+        //this.scales = scales;
     }
 
     filterAll() {
-        if (
-            this.selectedClass &&
-            this.selectedDimension &&
-            this.selectedUnity
-        ) {
-            this.getStudents();
-            this.scales = [];
-            this.dataInfo = 'Buscando Elementos';
-            this.evaluationService
-                .getClasroomAnswers(
-                    this.selectedClass,
-                    this.selectedDimension,
-                    this.selectedUnity
-                )
-                .subscribe({
-                    next: (data: any[]) => {
-                        this.scales = data.map(
-                            ({
-                                indicadoresPsicologicos,
-                                nombre: name,
-                                promedioEscala: mean,
-                            }: {
-                                indicadoresPsicologicos: any[];
-                                nombre: string;
-                                promedioEscala: number;
-                            }) => ({
-                                name,
-                                mean,
-                                indicators: indicadoresPsicologicos.map(
-                                    ({
-                                        nombreIndicador: name,
-                                        promedioIndicador: mean,
-                                    }) => ({
-                                        name,
-                                        mean,
-                                    })
-                                ),
-                            })
-                        );
-                    },
-                    error: ({ status }) => {
-                        this.dataInfo = 'Sin Elementos';
-                        if (status === 400) {
-                            this._snackbar.open('Sin elementos', '', {
-                                duration: 2000,
+        this.classroomsService
+            .getEvaluation(this.selectedUnity, this.selectedSection)
+            .subscribe((response) => {
+                if (response.succeeded) {
+                    const { id } = response.data;
+                    console.log(id);
+                    if (id) {
+                        this.evaluationService
+                            .getClasroomAnswers(id)
+                            .subscribe({
+                                next: (response) => {
+                                    if (response.succeeded) {
+                                        console.log(response.data)
+                                        this.studentsClassroom = response.data;
+                                    }
+                                },
+                                error: ({ status }) => {
+                                    this.dataInfo = 'Sin Elementos';
+                                    if (status === 400) {
+                                        this._snackbar.open(
+                                            'Sin elementos',
+                                            '',
+                                            {
+                                                duration: 2000,
+                                            }
+                                        );
+                                    }
+                                },
                             });
-                        }
-                    },
-                });
-        } else {
-            this._snackbar.open('Datos faltantes', '', { duration: 2000 });
-        }
+                    } else {
+                        this._snackbar.open(
+                            'La evaluación aún no fue iniciada',
+                            '',
+                            { duration: 3000 }
+                        );
+                    }
+                }
+            });
     }
 
-    filterClass() {
+    get sections() {
         return (
-            this.classrooms.filter((e) => e.gradoId == this.selectedGrade) ?? []
+            this.classrooms.filter((e) => e.grado == this.selectedDegree) ?? []
         );
     }
 
-    getTechs() {
-        this.evaluationService.getTechs().subscribe(({ data }) => {
-            this.years = (
-                [...new Set(data.map((e: any) => e['año']))] as number[]
-            ).sort((a, b) => b - a);
-            this.unities = data;
+    getUnities() {
+        this.classroomsService.getUnidadesAll().subscribe({
+            next: (response) => {
+                if (response.succeeded) {
+                    this.unities = response.data;
+                }
+            },
+            error: (err) => {
+                console.log(err);
+            },
         });
     }
 
     getClasses() {
         this.evaluationService.getClassrooms().subscribe(({ data }) => {
+            console.log(data);
             this.classrooms = data;
         });
     }
 
-    getStudents() {
-        this.studentService
-            .getStudents(
-                this.selectedClass,
-                this.selectedUnity,
-                this.selectedDimension
-            )
-            .subscribe({
-                complete: () => {
-                    console.log('students completed');
-                },
-            });
-    }
-
-    studentList() {
-        return this.studentService.students;
+    get academicDegrees() {
+        return [...new Set(this.classrooms.map((e) => e.grado))];
     }
 
     redirectStudent(index: number) {
         console.log(index);
         this.router.navigate([`/dashboards/reports/${index}`], {
             queryParams: {
-                classroomId: this.selectedClass,
+                classroomId: this.selectedSection,
                 unityId: this.selectedUnity,
             },
         });
@@ -181,7 +186,7 @@ export class ClassroomReportComponent {
     }
     openStudentRegistrationModal(classroomId: number): void {
         const dialogRef = this.dialog.open(StudentRegistrationComponent, {
-            data: { classroomId } // Pasa el classroomId como dato al modal
+            data: { classroomId }, // Pasa el classroomId como dato al modal
         });
 
         dialogRef.afterClosed().subscribe((result) => {

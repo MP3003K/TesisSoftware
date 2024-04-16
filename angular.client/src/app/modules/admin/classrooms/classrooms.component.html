@@ -41,8 +41,8 @@
                         <mat-label>Unidad</mat-label>
                         <mat-select [(ngModel)]="selectedUnity">
                             @for(unidad of unidades;track unidad){
-                            <mat-option [value]="unidad.Id">
-                                {{ unidad.Nombre }}
+                            <mat-option [value]="unidad.id">
+                                {{ unidad.nombre }}
                             </mat-option>
                             }
 
@@ -66,8 +66,8 @@
                         <mat-label>Sección</mat-label>
                         <mat-select [disabled]="!selectedDegree" [(ngModel)]="selectedSection">
                             @for(aula of sections; track aula){
-                            <mat-option [value]="aula.Id">
-                                {{ aula.Seccion }}
+                            <mat-option [value]="aula.id">
+                                {{ aula.seccion }}
                             </mat-option>
                             }
                         </mat-select>

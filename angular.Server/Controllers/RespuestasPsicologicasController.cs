@@ -13,6 +13,12 @@ namespace Controllers
         public int? EvaluationId { get; set; }
         public int? QuestionId { get; set; }
     }
+    public class ClassroomStudentAnswer
+    {
+        public string? Id { get; set; }
+        public string? Nombre { get; set; }
+        public double? Promedio { get; set; }
+    }
 
     [ApiController]
     [Route("[controller]")]
@@ -43,9 +49,25 @@ namespace Controllers
 
                 using (var connection = context.CreateConnection())
                 {
-                    var respuestas = await connection.QueryAsync("LISTAR_RESPUESTAS_AULA", new { evaluationId  }, commandType: CommandType.StoredProcedure);
-                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = respuestas.ToList() });
+                    var response = await connection.QueryAsync("LISTAR_RESPUESTAS_AULA", new { evaluationId }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = response.ToList() });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("RespuestasEstudianteAula/{evaluationId:int}")]
+        public async Task<ActionResult> RespuestasPsicologicasEstudianteAula(int evaluationId)
+        {
+            try
+            {
 
+                using (var connection = context.CreateConnection())
+                {
+                    var response = await connection.QueryAsync<ClassroomStudentAnswer>("LISTAR_RESPUESTAS_ESTUDIANTES_AULA", new { evaluationId }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = response.ToList() });
                 }
             }
             catch (Exception ex)
@@ -61,7 +83,7 @@ namespace Controllers
         [HttpGet("RespuestasEstudiante/{evaluationId:int}")]
         public async Task<ActionResult> RespuestasPsicologicasEstudiante(int evaluationId)
         {
-           
+
             try
             {
 
@@ -116,7 +138,7 @@ namespace Controllers
             {
                 return BadRequest(ex.Message);
             }
-      
+
         }
 
         [HttpGet("ReporteEstudiante/{evaluacionId:int}/{estudianteId:int}/{codigo}")]
