@@ -1,26 +1,21 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from 'app/shared/shared.module';
-import {
-    MatAutocompleteModule,
-    MatAutocompleteSelectedEvent,
-} from '@angular/material/autocomplete';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { ClassroomUnit, ClassroomsService } from './classrooms.service';
-import { Aula } from 'app/shared/interfaces';
+import { ClassroomsService } from './classrooms.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { PersonaService } from './persona.service';
 import { StudentService } from './student.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-classrooms',
@@ -41,15 +36,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ],
 })
 export class ClassroomsComponent implements OnInit {
+    // Propiedades
     unidades: any = [];
-    isTestEnabled?: boolean = null;
-    displayedColumns: string[] = [
-        'numero',
-        'NombreCompleto',
-        'EstadoEstudiante',
-    ];
-    items: string = 'list';
-
+    displayedColumns: string[] = ['numero', 'NombreCompleto', 'EstadoEstudiante'];
     selectedStudents = [];
     searchedStudents = [];
     classroomStudents = [];
@@ -57,20 +46,22 @@ export class ClassroomsComponent implements OnInit {
     selectedDegree: number = null;
     selectedSection: number = null;
     selectedUnity: number = null;
-
+    searchText: string = '';
+    filteredStudents: any[] = [];
     formRegistrarEstudiante = new FormGroup({
         nombres: new FormControl('', [Validators.required]),
         apellidoPaterno: new FormControl('', [Validators.required]),
         apellidoMaterno: new FormControl('', [Validators.required]),
-        dni: new FormControl('', [
-            Validators.required,
-            Validators.pattern('^[0-9]{8}$'),
-        ]),
+        dni: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{8}$')]),
     });
-    @ViewChild('autocompleteInput')
-    autocompleteInput: ElementRef<HTMLInputElement>;
+
+    items: string = 'list';
+    estadoEvalucionPsicologicaAula: string = 'N';
+
+    @ViewChild('autocompleteInput') autocompleteInput: ElementRef<HTMLInputElement>;
     inputValue: string = '';
 
+    // Constructor
     constructor(
         private classroomsService: ClassroomsService,
         private confirmationService: FuseConfirmationService,
@@ -78,20 +69,22 @@ export class ClassroomsComponent implements OnInit {
         private studentService: StudentService,
         private snack: MatSnackBar
     ) { }
-    searchText: string = ''; // Aquí se almacena el texto de búsqueda
-    filteredStudents: any[] = []; // Aquí se almacenan los estudiantes filtrados
 
+    // Métodos de ciclo de vida
     ngOnInit() {
         this.obtenerListadeUnidades();
         this.obtenerListadeAulas();
         this.applyFilter('');
     }
 
+    // MétodosngOnInit() {
+
     get filteredSearchedStudents() {
         return this.searchedStudents.filter(
             (e) => !this.selectedStudentsId.includes(e.id)
         );
     }
+
     get selectedStudentsId() {
         return this.selectedStudents.map((e) => e.id);
     }
@@ -104,16 +97,18 @@ export class ClassroomsComponent implements OnInit {
         const classrooms = this.classrooms.map((e) => e.Grado);
         return [...new Set(classrooms)];
     }
+
     get sections() {
         return this.classrooms.filter((e) => e.Grado == this.selectedDegree);
     }
-
     obtnerEstudiantesPorAulaYUnidad() {
         this.classroomsService
             .getStudentsByAulaYUnidad(this.selectedUnity, this.selectedSection)
             .subscribe((response) => {
                 if (response.succeeded) {
                     this.classroomStudents = response.data;
+                    this.estadoEvalucionPsicologicaAula = this.classroomStudents[1].EstadoAula ?? 'N';
+                    console.log(this.estadoEvalucionPsicologicaAula);
                 }
             });
     }
@@ -138,6 +133,19 @@ export class ClassroomsComponent implements OnInit {
                 this.items = 'register';
             }
         });
+    }
+    getEstadoPruebaPsicologicaAula(status: string): { text: string, class: string } {
+        let classStyle = 'text-white w-auto';
+        switch (status) {
+            case 'F':
+                return { text: 'Evaluación finalizada', class: `${classStyle} bg-red-500` };
+            case 'N':
+                return { text: 'Evaluación pendiente', class: `${classStyle} bg-gray-500` };
+            case 'P':
+                return { text: 'Evaluación activa', class: `${classStyle} bg-green-500` };
+            default:
+                return { text: '', class: '' };
+        }
     }
 
     remove(index: number): void {
@@ -170,6 +178,7 @@ export class ClassroomsComponent implements OnInit {
             },
         });
     }
+
     private obtenerListadeAulas(): void {
         this.classroomsService.getAulas().subscribe({
             next: (response) => {
@@ -182,9 +191,11 @@ export class ClassroomsComponent implements OnInit {
             },
         });
     }
+
     get selectedPrincipalData() {
         return this.selectedSection && this.selectedUnity;
     }
+
     registerStudent() {
         if (!this.selectedPrincipalData) {
             return this.snack.open(
@@ -207,7 +218,6 @@ export class ClassroomsComponent implements OnInit {
                 }
             });
     }
-    // Fin Codigo Jhonatan
 
     openCreateUnitModal(): void {
         const dialogRef = this.confirmationService.open({
@@ -243,17 +253,12 @@ export class ClassroomsComponent implements OnInit {
             this.searchedStudents = [];
         }
     }
-    //Fin codigo de elias
 
     applyFilter(searchText: string) {
-        // Si el texto de búsqueda está vacío, mostramos todos los estudiantes
         if (!searchText) {
             this.filteredStudents = this.classroomStudents;
         } else {
-            // Convertimos el texto de búsqueda a minúsculas para hacer la búsqueda insensible a mayúsculas y minúsculas
             let searchTextLower = searchText.toLowerCase();
-
-            // Filtramos los estudiantes cuyo nombre contenga el texto de búsqueda
             this.filteredStudents = this.classroomStudents.filter(student =>
                 student.NombreCompleto.toLowerCase().includes(searchTextLower)
             );
@@ -263,7 +268,16 @@ export class ClassroomsComponent implements OnInit {
     deleteStudent() {
 
     }
+
     formatName(name: string): string {
         return name.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.substring(1)).join(' ');
     }
+
+    showDNI: boolean = true;
+    showOptions: boolean = true;
+    onResize(event) {
+        this.showDNI = event.target.innerWidth > 768;
+        this.showOptions = event.target.innerWidth > 640;
+    }
+    // #region Hola
 }
