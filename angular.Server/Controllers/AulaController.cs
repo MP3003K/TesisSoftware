@@ -9,13 +9,13 @@ namespace Controllers
     public class Classroom
     {
         public int Id { get; set; }
-        public string Grado { get; set; }
-        public string Seccion { get; set; }
+        public string? Grado { get; set; }
+        public string? Seccion { get; set; }
     }
     public class ClassroomEvaluation
     {
         public int AulaId { get; set; }
-        public string Estado { get; set; }
+        public string? Estado { get; set; }
         public int EvaluacionPsicologicaId { get; set; }
         public DateTime FechaFin { get; set; }
         public DateTime FechaInicio { get; set; }

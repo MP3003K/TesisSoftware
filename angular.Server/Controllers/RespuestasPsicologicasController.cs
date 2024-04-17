@@ -19,13 +19,14 @@ namespace Controllers
         public string? Nombre { get; set; }
         public double? Promedio { get; set; }
     }
-    public class StudentReport {
+    public class StudentReport
+    {
         public string? Dimension { get; set; }
         public double? DimensionMean { get; set; }
         public string? Scale { get; set; }
-        public string? ScaleMean { get; set; }
+        public double? ScaleMean { get; set; }
         public string? Indicator { get; set; }
-        public string? IndicatorMean { get; set; }
+        public double? IndicatorMean { get; set; }
     }
 
     [ApiController]
@@ -96,6 +97,13 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
                     var responses = await connection.QueryAsync<StudentReport>("LISTAR_RESPUESTAS_ESTUDIANTE", new { code, evaluationId }, commandType: CommandType.StoredProcedure);
+                    foreach (var response in responses)
+                    {
+                        Console.WriteLine(response.Dimension);
+                        Console.WriteLine(response.Scale);
+                        Console.WriteLine(response.Indicator);
+
+                    }
                     return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = responses.ToList() });
 
                 }
