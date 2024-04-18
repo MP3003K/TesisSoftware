@@ -39,13 +39,11 @@ export class EvaluationService {
     }
 
     getStudentAnswers(
-        studentId: number,
-        unityId: number,
-        classroomId: number,
-        dimensionId: number
-    ) {
-        return this.http.get(
-            `${environment.baseURL}/respuestasPsicologicas/RespuestasEstudiante/${studentId}/${unityId}/${classroomId}/${dimensionId}`
+        evaluationId: number,
+        code: string
+    ): Observable<HttpResponse<any>> {
+        return this.http.get<HttpResponse<any>>(
+            `${environment.baseURL}/respuestasPsicologicas/RespuestasEstudiante/${code}/${evaluationId}`
         );
     }
 

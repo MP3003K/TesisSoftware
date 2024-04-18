@@ -7,36 +7,25 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { SharedModule } from 'app/shared/shared.module';
 import { EvaluationService } from '../../evaluation/evaluation.service';
 @Component({
-    selector: "app-student-report",
+    selector: 'app-student-report',
     templateUrl: './student-report.component.html',
     standalone: true,
-    imports: [SharedModule, MatIconModule, MatButtonToggleModule,]
+    imports: [SharedModule, MatIconModule, MatButtonToggleModule],
 })
 export class StudentReportComponent implements OnInit {
-    scales!: any;
-    student!: any;
-    studentId: number;
-    unityId = 1;
-    classroomId = 1;
-    dimensionId = 1;
-
-    students!: any;
+    student: any;
+    scales = [];
+    reportTypes: string[] = ['HSE', 'FR'];
+    selectedDimension = this.reportTypes[0];
+    evaluationId = 302;
     constructor(
         private route: ActivatedRoute,
         private evaluationService: EvaluationService,
         private router: Router,
         private studentService: StudentService
-    ) { }
+    ) {}
     ngOnInit(): void {
-        const { id, classroomId, unityId } = this.getStudentInfo();
-        this.studentId = parseInt(id);
-        this.unityId = unityId;
-        this.classroomId = classroomId;
-
-        if (this.studentId && typeof this.studentId === 'number') {
-            this.getStudent();
-            this.toggleChange(1);
-        }
+        this.getStudentReport();
     }
 
     returnRoute() {
@@ -50,56 +39,57 @@ export class StudentReportComponent implements OnInit {
         return studentInfo;
     }
 
-    getStudent() {
-        this.evaluationService.getStudent().subscribe(({ data }) => {
-            this.student = this.studentService.students.find(
-                (e) => (e.id = this.studentId)
-            );
-        });
-    }
     getMeanClasses(mean: number) {
         if (mean >= 1 && mean <= 2) {
-            return this.dimensionId == 1 ? 'bg-[#b6d7a8]' : 'bg-[#00b050]'
+            return this.selectedDimension == 'HSE'
+                ? 'bg-[#b6d7a8]'
+                : 'bg-[#00b050]';
         } else if (mean >= 2.1 && mean <= 3.9) {
-            return this.dimensionId == 1 ? 'bg-[#70ad47]' : 'bg-[#ffff00]'
+            return this.selectedDimension == 'HSE'
+                ? 'bg-[#70ad47]'
+                : 'bg-[#ffff00]';
         } else if (mean >= 4 && mean <= 5) {
-            return this.dimensionId == 1 ? 'bg-[#548135]' : 'bg-[#ff0000]'
+            return this.selectedDimension == 'HSE'
+                ? 'bg-[#548135]'
+                : 'bg-[#ff0000]';
         } else {
-            return 'bg-black'
+            return 'bg-black';
         }
     }
-    toggleChange(dimensionId: number) {
+    getStudentReport() {
         this.evaluationService
-            .getStudentAnswers(
-                this.studentId,
-                this.unityId,
-                this.classroomId,
-                dimensionId,
-            )
-            .subscribe(({ data }: { data: any }) => {
-                this.scales = data.escalasPsicologicas.map(
-                    ({
-                        indicadoresPsicologicos,
-                        nombre: name,
-                        promedioEscala: mean,
-                    }: {
-                        indicadoresPsicologicos: any[];
-                        nombre: string;
-                        promedioEscala: number;
-                    }) => ({
-                        name,
-                        mean,
-                        indicators: indicadoresPsicologicos.map(
-                            ({
-                                nombreIndicador: name,
-                                promedioIndicador: mean,
-                            }) => ({
-                                name,
-                                mean,
-                            })
-                        ),
-                    })
-                );
+            .getStudentAnswers(this.evaluationId, this.selectedDimension)
+            .subscribe((response) => {
+                if (response.succeeded) {
+                    console.log(response.data);
+                    const rr = response.data.reduce(
+                        (
+                            a,
+                            {
+                                scale,
+                                scaleMean,
+                                indicator: name,
+                                indicatorMean: mean,
+                            }
+                        ) => {
+                            if (scale in a) {
+                                a[scale]?.indicators.push({ name, mean });
+                            } else {
+                                a[scale] = {
+                                    mean: scaleMean,
+                                    indicators: [{ name, mean }],
+                                };
+                            }
+                            return a;
+                        },
+                        {}
+                    );
+
+                    this.scales = Object.keys(rr).map((key) => ({
+                        name: key,
+                        ...rr[key],
+                    }));
+                }
             });
     }
 }
