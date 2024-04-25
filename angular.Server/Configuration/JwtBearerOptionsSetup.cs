@@ -24,7 +24,7 @@ namespace angular.Server.Configuration
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_options.SecretKey))
+                    Encoding.UTF8.GetBytes(_options.SecretKey!))
             };
         }
     }

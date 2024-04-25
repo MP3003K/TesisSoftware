@@ -7,7 +7,7 @@ namespace Entities
     {
         [Key]
         public int IdEstudiante { get; private set; }
-        public string Nombres { get; private set; }
+        public string? Nombres { get; private set; }
         public  int Promedio { get; private set; }
         public  int rango_1 { get; private set; }
         public  int rango_2 { get; private set; }
