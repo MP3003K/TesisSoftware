@@ -65,10 +65,11 @@ export class ClassroomsComponent implements OnInit {
     items: string = 'list';
     estadoEvalucionPsicologicaAula: string = 'N';
 
-    activarEditarEstudiantes: boolean = false;
 
     @ViewChild('autocompleteInput') autocompleteInput: ElementRef<HTMLInputElement>;
     inputValue: string = '';
+
+    estado: boolean = false;
 
     // Constructor
     constructor(
@@ -84,6 +85,7 @@ export class ClassroomsComponent implements OnInit {
         this.obtenerListadeUnidades();
         this.obtenerListadeAulas();
         this.applyFilter('');
+        console.log(this.estado);
     }
 
     // MétodosngOnInit() {
@@ -110,6 +112,7 @@ export class ClassroomsComponent implements OnInit {
     get sections() {
         return this.classrooms.filter((e) => e.grado == this.selectedDegree);
     }
+
     obtnerEstudiantesPorAulaYUnidad() {
         this.classroomsService
             .getStudentsByAulaYUnidad(this.selectedUnity, this.selectedSection)
@@ -280,10 +283,11 @@ export class ClassroomsComponent implements OnInit {
     editStudent(student) {
         if (!student)
             return;
+
         this.formEditarEstudiante.patchValue({
             id: student.EstudianteId,
             nombres: student.Nombres,
-            apellidoPaterno: student.apellidoPaterno,
+            apellidoPaterno: student.ApellidoPaterno,
             apellidoMaterno: student.ApellidoMaterno,
             dni: student.DNI,
         });
