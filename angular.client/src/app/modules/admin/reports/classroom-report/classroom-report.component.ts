@@ -32,6 +32,7 @@ export class ClassroomReportComponent {
     public selectedDimension!: number;
     public selectedDegree!: number;
     public selectedSection!: number;
+    public selectedClassroomEvaluationId!: number;
     public studentsClassroom: any[] = [];
 
     dimensions: any[] = [];
@@ -85,8 +86,8 @@ export class ClassroomReportComponent {
             .subscribe((response) => {
                 if (response.succeeded) {
                     const { id } = response.data;
-                    console.log(id);
                     if (id) {
+                        this.selectedClassroomEvaluationId = id;
                         this.evaluationService
                             .getClasroomAnswers(id)
                             .subscribe({
@@ -154,8 +155,7 @@ export class ClassroomReportComponent {
         console.log(index);
         this.router.navigate(['reports', index], {
             queryParams: {
-                classroomId: this.selectedSection,
-                unityId: this.selectedUnity,
+                classroomEvaluationId: this.selectedClassroomEvaluationId,
             },
         });
     }
