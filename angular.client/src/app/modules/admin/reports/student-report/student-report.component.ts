@@ -18,6 +18,8 @@ export class StudentReportComponent implements OnInit {
     reportTypes: string[] = ['HSE', 'FR'];
     selectedDimension = this.reportTypes[0];
     evaluationId = 302;
+    classroomEvaluationId = 0;
+    studentId = 0;
     constructor(
         private route: ActivatedRoute,
         private evaluationService: EvaluationService,
@@ -25,7 +27,15 @@ export class StudentReportComponent implements OnInit {
         private studentService: StudentService
     ) {}
     ngOnInit(): void {
-        this.getStudentReport();
+        const studentId = +this.route.snapshot.paramMap.get('id');
+        const { classroomEvaluationId } = this.route.snapshot.queryParams;
+        this.classroomEvaluationId = classroomEvaluationId;
+        this.studentId = studentId;
+        if (this.classroomEvaluationId && this.studentId) {
+            this.getStudentReport();
+        } else {
+            console.log('ERROR');
+        }
     }
 
     returnRoute() {
@@ -58,37 +68,52 @@ export class StudentReportComponent implements OnInit {
     }
     getStudentReport() {
         this.evaluationService
-            .getStudentAnswers(this.evaluationId, this.selectedDimension)
+            .getStudentEvaluation(this.classroomEvaluationId, this.studentId)
             .subscribe((response) => {
                 if (response.succeeded) {
-                    console.log(response.data);
-                    const rr = response.data.reduce(
-                        (
-                            a,
-                            {
-                                scale,
-                                scaleMean,
-                                indicator: name,
-                                indicatorMean: mean,
-                            }
-                        ) => {
-                            if (scale in a) {
-                                a[scale]?.indicators.push({ name, mean });
-                            } else {
-                                a[scale] = {
-                                    mean: scaleMean,
-                                    indicators: [{ name, mean }],
-                                };
-                            }
-                            return a;
-                        },
-                        {}
-                    );
+                    const { id } = response.data;
+                    if (id) {
+                        this.evaluationService
+                            .getStudentAnswers(id, this.selectedDimension)
+                            .subscribe((response) => {
+                                if (response.succeeded) {
+                                    const rr = response.data.reduce(
+                                        (
+                                            a,
+                                            {
+                                                scale,
+                                                scaleMean,
+                                                indicator: name,
+                                                indicatorMean: mean,
+                                            }
+                                        ) => {
+                                            if (scale in a) {
+                                                a[scale]?.indicators.push({
+                                                    name,
+                                                    mean,
+                                                });
+                                            } else {
+                                                a[scale] = {
+                                                    mean: scaleMean,
+                                                    indicators: [
+                                                        { name, mean },
+                                                    ],
+                                                };
+                                            }
+                                            return a;
+                                        },
+                                        {}
+                                    );
 
-                    this.scales = Object.keys(rr).map((key) => ({
-                        name: key,
-                        ...rr[key],
-                    }));
+                                    this.scales = Object.keys(rr).map(
+                                        (key) => ({
+                                            name: key,
+                                            ...rr[key],
+                                        })
+                                    );
+                                }
+                            });
+                    }
                 }
             });
     }

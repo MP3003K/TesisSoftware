@@ -46,6 +46,14 @@ export class EvaluationService {
             `${environment.baseURL}/respuestasPsicologicas/RespuestasEstudiante/${code}/${evaluationId}`
         );
     }
+    getStudentEvaluation(
+        classroomEvaluationId: number,
+        studentId: number
+    ): Observable<HttpResponse<any>> {
+        return this.http.get<HttpResponse<any>>(
+            `${environment.baseURL}/evaluation/${classroomEvaluationId}/students/${studentId}`
+        );
+    }
 
     getClassrooms() {
         return this.http.get<any>(`${environment.baseURL}/aula/all`);
