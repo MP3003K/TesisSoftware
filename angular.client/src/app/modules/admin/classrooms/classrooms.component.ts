@@ -54,9 +54,18 @@ export class ClassroomsComponent implements OnInit {
         apellidoMaterno: new FormControl('', [Validators.required]),
         dni: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{8}$')]),
     });
+    formEditarEstudiante = new FormGroup({
+        id: new FormControl('', [Validators.required]),
+        nombres: new FormControl('', [Validators.required]),
+        apellidoPaterno: new FormControl('', [Validators.required]),
+        apellidoMaterno: new FormControl('', [Validators.required]),
+        dni: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{8}$')]),
+    });
 
     items: string = 'list';
     estadoEvalucionPsicologicaAula: string = 'N';
+
+    activarEditarEstudiantes: boolean = false;
 
     @ViewChild('autocompleteInput') autocompleteInput: ElementRef<HTMLInputElement>;
     inputValue: string = '';
@@ -265,8 +274,20 @@ export class ClassroomsComponent implements OnInit {
         }
     }
 
-    deleteStudent() {
-
+    deleteStudent(student) {
+    }
+    // #region Editar Estudiante
+    editStudent(student) {
+        if (!student)
+            return;
+        this.formEditarEstudiante.patchValue({
+            id: student.EstudianteId,
+            nombres: student.Nombres,
+            apellidoPaterno: student.apellidoPaterno,
+            apellidoMaterno: student.ApellidoMaterno,
+            dni: student.DNI,
+        });
+        this.items = 'edit';
     }
 
     formatName(name: string): string {
