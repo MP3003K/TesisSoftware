@@ -8,12 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
 import { UserService } from 'app/core/user/user.service';
+import { StudentService } from './student.service';
 
 @Component({
-    selector: "app-evaluation",
+    selector: 'app-evaluation',
     templateUrl: './evaluation.component.html',
     standalone: true,
-    imports: [SharedModule, MatIconModule, MatCardModule, MatRadioModule]
+    imports: [SharedModule, MatIconModule, MatCardModule, MatRadioModule],
 })
 export class EvaluationComponent {
     endedTest = false;
@@ -32,8 +33,9 @@ export class EvaluationComponent {
         private _snackbar: MatSnackBar,
         public evaluationService: EvaluationService,
         private authService: AuthService,
-        private userService: UserService
-    ) { }
+        private userService: UserService,
+        private studentService: StudentService
+    ) {}
     updatePaginator() {
         this.paginator.pageNumber = 1;
         this.paginator.length = this.questions.length;
@@ -43,10 +45,15 @@ export class EvaluationComponent {
     }
 
     ngOnInit(): void {
+        this.studentService.getStudentEvaluations().subscribe((res) => {
+            console.log(res);
+        });
+    }
 
+    public getEvaluations() {
         this.evaluationService.getStudent().subscribe({
             next: ({ data }) => {
-                console.log()
+                console.log();
                 if (data?.evaPsiEstId) {
                     this.evaPsiEstId = data?.evaPsiEstId;
                     this.evaluationService
@@ -81,8 +88,6 @@ export class EvaluationComponent {
                 }
             },
         });
-
-
     }
 
     public goToLogin() {
@@ -167,8 +172,9 @@ export class EvaluationComponent {
             });
     }
     public getPValue() {
-        return `${(this.countCompletedAnswers() * 100) / this.paginator.length
-            }%`;
+        return `${
+            (this.countCompletedAnswers() * 100) / this.paginator.length
+        }%`;
     }
     validatePage() {
         return this.filterQuestions().every((e: any) => e.answer);

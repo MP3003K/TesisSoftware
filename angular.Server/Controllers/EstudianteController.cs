@@ -13,9 +13,35 @@ namespace Controllers
     [Route("[controller]")]
     public class EstudianteController(DapperContext context) : ControllerBase
     {
-        /// <summary>
-        /// Informacion Basica de un Estudiante
-        /// </summary>
+
+        [Authorize]
+        [HttpGet("evaluations")]
+        public async Task<ActionResult> GetStudentEvaluations()
+        {
+            try
+            {
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                using (var connection = context.CreateConnection())
+                {
+
+                    var evaluations = await connection.QueryAsync("OBTENER_EVALUACIONES", new
+                    {
+                        userId
+                    }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = evaluations.FirstOrDefault() });
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+
         [Authorize]
         [HttpGet]
         public async Task<ActionResult> InformacionEstudiante()
