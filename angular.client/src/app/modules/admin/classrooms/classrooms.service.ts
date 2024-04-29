@@ -72,4 +72,10 @@ export class ClassroomsService {
             }
         );
     }
+
+    getResultadosPsiAulaExcel(aulaId: number, unidadId: number) {
+        return this.http.get<any>(
+            `${environment.baseURL}/RespuestasPsicologicas/resultadosPsiAulaExcel/${aulaId}/${unidadId}`
+        );
+    }
 }

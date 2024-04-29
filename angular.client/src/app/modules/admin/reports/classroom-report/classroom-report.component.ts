@@ -13,6 +13,11 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ClassroomsService } from '../../classrooms/classrooms.service';
 import { MatButtonModule } from '@angular/material/button';
 
+// librerias para exportar a excel
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
+
 @Component({
     selector: 'app-classroom-report',
     templateUrl: './classroom-report.component.html',
@@ -48,7 +53,7 @@ export class ClassroomReportComponent {
         private router: Router,
         private excelService: ExcelService,
         private classroomsService: ClassroomsService
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.getUnities();
@@ -75,8 +80,6 @@ export class ClassroomReportComponent {
                 ),
             })
         );
-
-        console.log(scales);
         //this.scales = scales;
     }
 
@@ -93,7 +96,6 @@ export class ClassroomReportComponent {
                             .subscribe({
                                 next: (response) => {
                                     if (response.succeeded) {
-                                        console.log(response.data);
                                         this.studentsClassroom = response.data;
                                     }
                                 },
@@ -142,7 +144,6 @@ export class ClassroomReportComponent {
 
     getClasses() {
         this.evaluationService.getClassrooms().subscribe(({ data }) => {
-            console.log(data);
             this.classrooms = data;
         });
     }
@@ -152,7 +153,6 @@ export class ClassroomReportComponent {
     }
 
     redirectStudent(index: number) {
-        console.log(index);
         this.router.navigate(['reports', index], {
             queryParams: {
                 classroomEvaluationId: this.selectedClassroomEvaluationId,
@@ -181,9 +181,6 @@ export class ClassroomReportComponent {
         this.scales = [];
     }
 
-    generateExcel() {
-        //this.excelService.downloadReport();
-    }
     openStudentRegistrationModal(classroomId: number): void {
         const dialogRef = this.dialog.open(StudentRegistrationComponent, {
             data: { classroomId }, // Pasa el classroomId como dato al modal
@@ -194,4 +191,136 @@ export class ClassroomReportComponent {
             console.log('El modal se cerró', result);
         });
     }
+
+
+
+    //#region DescargarExcel
+    readonly PLANTILLAS = {
+        HSE_1Y2: 'assets/plantillas/plantilla_resultados_hse_1y2.xlsx',
+        HSE_3Y5: 'assets/plantillas/plantilla_resultados_hse_3,4y5.xlsx'
+    };
+
+    readonly RANGOS_GRADO = {
+        1: { inicio: 1, fin: 66 },
+        3: { inicio: 67, fin: 134 }
+    };
+
+
+    getRangoGrado(_tipo_test_psi: number) {
+        if (_tipo_test_psi === 1) {
+            return this.RANGOS_GRADO[1];
+        } else if (_tipo_test_psi === 2) {
+            return this.RANGOS_GRADO[3];
+        } else {
+            return null;
+        }
+    }
+
+    getPlantilla(_tipo_test_psi: number) {
+        if (_tipo_test_psi === 1) {
+            return this.PLANTILLAS.HSE_1Y2;
+        } else if (_tipo_test_psi === 2) {
+            return this.PLANTILLAS.HSE_3Y5;
+        } else {
+            return null;
+        }
+    }
+
+    async exportarExcel_resultadosPsicologicosAula() {
+
+        let tipo_test_psi = [1, 2].includes(Number(this.selectedDegree)) ? 1 : ([3, 4, 5].includes(Number(this.selectedDegree)) ? 2 : 0);
+
+        if (tipo_test_psi === 0)
+            return;
+
+        const resultadosPsiAulaExcel = await this.getResultadosPsiAulaExcel(this.selectedSection, this.selectedUnity, tipo_test_psi);
+
+        if (!resultadosPsiAulaExcel)
+            return;
+
+        try {
+            const plantilla = this.getPlantilla(tipo_test_psi);
+            const response = await fetch(plantilla);
+            const buffer = await response.arrayBuffer();
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(buffer);
+            const worksheet = workbook.getWorksheet('BASE DE RESPUESTAS');
+
+            resultadosPsiAulaExcel.forEach((resultado, index) => {
+                const { inicio, fin } = this.getRangoGrado(tipo_test_psi);
+
+                worksheet.getCell(5, index + 2 + 5).value = resultado.NombreCompleto;
+
+                for (let i = inicio; i <= fin; i++) {
+                    const respuesta = resultado.respuestas[`r${i}`];
+                    if (respuesta !== undefined) {
+                        worksheet.getCell(6 + i - inicio, index + 2 + 5).value = respuesta;
+                    }
+                }
+            });
+
+            const bufferExcel = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([bufferExcel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const nombreArchivo = this.crearNombreArchivo();
+            saveAs(blob, nombreArchivo);
+        } catch (error) {
+            console.error('Error al exportar los resultados:', error);
+        }
+    }
+
+    crearNombreArchivo() {
+        const fecha = new Date();
+        return `evaluacion_hse_1a_${fecha.getDate()}-${fecha.getMonth() + 1}-${fecha.getFullYear()}.xlsx`;
+    }
+
+    mapearRespuestas(respuestaNumerica) {
+        const mapeoRespuestas = {
+            0: 'Se dejó en blanco',
+            1: 'Totalmente en desacuerdo',
+            2: 'En desacuerdo',
+            3: 'De acuerdo',
+            4: 'Totalmente de acuerdo'
+        };
+        return mapeoRespuestas[Number(respuestaNumerica)] || 'Respuesta no válida';
+    }
+
+    async getResultadosPsiAulaExcel(_aulaId: number, _unidadId: number, _tipoTestPsi: number) {
+        if (!_aulaId || !_unidadId) {
+            console.warn('El aula o la unidad no son válidos. No se puede obtener los resultados.');
+            return;
+        }
+
+        let resultadosPsiAulaExcel = null;
+
+        try {
+            const response = await this.classroomsService.getResultadosPsiAulaExcel(_aulaId, _unidadId).toPromise();
+            if (response.succeeded) {
+                resultadosPsiAulaExcel = response.data.map(estudiante => {
+                    const respuestas = {};
+                    const { inicio, fin } = this.getRangoGrado(_tipoTestPsi);
+                    for (let i = inicio; i <= fin; i++) {
+                        const claveRespuesta = `r${i}`;
+                        const respuestaNumerica = estudiante[claveRespuesta];
+                        if (respuestaNumerica != null) {
+                            respuestas[claveRespuesta] = this.mapearRespuestas(respuestaNumerica);
+                        } else {
+                            respuestas[claveRespuesta] = 'Se dejó en blanco';
+                        }
+                    }
+
+                    return {
+                        EvaPsiEstId: estudiante.EvaPsiEstId,
+                        NombreCompleto: estudiante.NombreCompleto,
+                        respuestas: respuestas
+                    };
+                });
+                return resultadosPsiAulaExcel;
+            }
+            return null;
+        } catch (error) {
+            console.warn('Error al obtener los resultados:', error);
+        }
+    }
+    //#endregion
+
 }

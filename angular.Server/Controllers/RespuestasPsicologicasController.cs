@@ -176,5 +176,22 @@ namespace Controllers
             }
 
         }
+        [HttpGet("resultadosPsiAulaExcel/{aulaId:int}/{unidadId:int}")]
+        public async Task<ActionResult> ResultadosPsicologicosAulaExcel(int aulaId, int unidadId)
+        {
+            try
+            {
+
+                using (var connection = context.CreateConnection())
+                {
+                    var response = await connection.QueryAsync("OBTENER_RESULTADOS_AULA_EXCEL", new { v_aulaId = aulaId, v_unidadId = unidadId }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = response.ToList() });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
