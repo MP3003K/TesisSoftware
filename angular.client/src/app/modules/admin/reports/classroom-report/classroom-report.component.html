@@ -1,4 +1,5 @@
 <div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+    <!-- #region Cabecera de la pagina -->
     <div
         class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
         <div class="flex-1 min-w-0">
@@ -29,11 +30,13 @@
             </div>
         </div>
     </div>
-
-    <!-- Main -->
+    <!-- #endregion-->
+    <!-- #region Cuerpo de la pagina -->
     <div class="flex-auto p-6 sm:p-10">
         <div class="flex flex-col gap-4">
+            <!-- #region Botones para realizar el filtrado -->
             <div class="flex flex-col items-start">
+                <!-- Botones para selccionar el aula y unidad-->
                 <div class="grid grid-cols-3 gap-4 w-full">
                     <mat-form-field>
                         <mat-label>Unidad</mat-label>
@@ -63,7 +66,7 @@
                     </mat-form-field>
                 </div>
                 <div class="flex gap-4 items-center">
-                    <!-- Botones para el filtrado -->
+                    <!-- Botones para seleccionar el Test -->
                     <mat-button-toggle-group name="fontStyle" aria-label="Font Style" (change)="onToggleChange()"
                         [(ngModel)]="selectedDimension">
                         <mat-button-toggle [value]="1">HSE</mat-button-toggle>
@@ -81,44 +84,42 @@
                         <mat-icon svgIcon="heroicons_outline:document"></mat-icon>
                         Excel
                     </button>
-
                 </div>
             </div>
-
-            <div class="scale_container flex flex-col divide-y">
-                @for(scale of scales; track scale){
-                <details class="px-4 bg-white shadow">
-                    <summary class="py-2 cursor-pointer flex items-center justify-between">
-                        <span>{{ scale.name }}</span>
-                        <span [className]="
-                                getMeanClasses(scale.mean) +
-                                ' text-xs text-white px-4 py-2 rounded'
-                            ">{{ scale.mean | number : ".2-2" }}</span>
-                    </summary>
-                    <div class="py-2">
-                        <ul class="flex flex-col p-4 gap-4">
-                            @for(indicator of scale.indicators; track
-                            indicator){
-                            <li class="p-2 flex gap-2 items-center">
-                                <span> {{ indicator.name }}</span>
-                                <div [className]="
-                                        getMeanClasses(indicator.mean) +
-                                        ' px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center'
-                                    ">
-                                    {{ indicator.mean | number : ".2-2" }}
-                                </div>
-                            </li>
-                            }
-                        </ul>
+            <!-- #endregion -->
+            <!-- #region Tabla de resultados -->
+            @if(!selectedUnity || !selectedDegree || !selectedSection || !selectedDimension){
+            <div class="mx-auto bg-blue-100 border-blue-500 rounded-xl shadow-md overflow-hidden m-4">
+                <div class="md:flex">
+                    <div class="p-8">
+                        <div class="uppercase tracking-wide text-lg text-blue-500 font-semibold">Información</div>
+                        <p class="mt-2 text-gray-700 font-bold text-lg">
+                            Seleccione
+                            {{
+                            (!selectedUnity ? 'una unidad, ' : '') +
+                            (!selectedDegree ? 'un grado, ' : '') +
+                            (!selectedSection ? 'una sección, ' : '') +
+                            (!selectedDimension ? 'una dimensión psicológica' : '')
+                            }}.
+                        </p>
                     </div>
-                </details>
-                } @empty {
-                <div class="text-center py-4 font-light text-gray-300">
-                    {{ dataInfo }}
                 </div>
-                }
             </div>
-            @if(studentsClassroom.length > 0){
+            }
+            @else if (studentsClassroom.length == 0 && this.selectedClassroomEvaluationId) {
+            <div
+                class="max-w-md mx-auto bg-orange-100 border-orange-500 rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4">
+                <div class="md:flex">
+                    <div class="p-8">
+                        <div class="uppercase tracking-wide text-sm text-orange-500 font-semibold">Información</div>
+                        <p class="mt-2 text-gray-500 font-bold">
+                            Nadie ha realizado un test psicologico.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            }
+            @else if(studentsClassroom.length > 0){
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table>
                     <thead>
@@ -155,7 +156,10 @@
                     </tbody>
                 </table>
             </div>
+            <!-- #endregion -->
             }
+
         </div>
     </div>
+    <!-- #endregion -->
 </div>

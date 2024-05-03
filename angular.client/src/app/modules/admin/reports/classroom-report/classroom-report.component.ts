@@ -51,7 +51,6 @@ export class ClassroomReportComponent {
         public dialog: MatDialog,
         private _snackbar: MatSnackBar,
         private router: Router,
-        private excelService: ExcelService,
         private classroomsService: ClassroomsService
     ) { }
 
@@ -196,49 +195,34 @@ export class ClassroomReportComponent {
 
     //#region DescargarExcel
     readonly PLANTILLAS = {
-        HSE_1Y2: 'assets/plantillas/plantilla_resultados_hse_1y2.xlsx',
-        HSE_3Y5: 'assets/plantillas/plantilla_resultados_hse_3,4y5.xlsx'
+        1: 'assets/plantillas/plantilla_resultados_hse_1y2.xlsx',
+        2: 'assets/plantillas/plantilla_resultados_hse_3,4y5.xlsx'
     };
 
     readonly RANGOS_GRADO = {
         1: { inicio: 1, fin: 66 },
-        3: { inicio: 67, fin: 134 }
+        2: { inicio: 67, fin: 134 }
     };
 
-
     getRangoGrado(_tipo_test_psi: number) {
-        if (_tipo_test_psi === 1) {
-            return this.RANGOS_GRADO[1];
-        } else if (_tipo_test_psi === 2) {
-            return this.RANGOS_GRADO[3];
-        } else {
-            return null;
-        }
+        return this.RANGOS_GRADO[_tipo_test_psi] || null;
     }
 
     getPlantilla(_tipo_test_psi: number) {
-        if (_tipo_test_psi === 1) {
-            return this.PLANTILLAS.HSE_1Y2;
-        } else if (_tipo_test_psi === 2) {
-            return this.PLANTILLAS.HSE_3Y5;
-        } else {
-            return null;
-        }
+        return this.PLANTILLAS[_tipo_test_psi] || null;
     }
 
     async exportarExcel_resultadosPsicologicosAula() {
-
-        let tipo_test_psi = [1, 2].includes(Number(this.selectedDegree)) ? 1 : ([3, 4, 5].includes(Number(this.selectedDegree)) ? 2 : 0);
-
-        if (tipo_test_psi === 0)
-            return;
-
-        const resultadosPsiAulaExcel = await this.getResultadosPsiAulaExcel(this.selectedSection, this.selectedUnity, tipo_test_psi);
-
-        if (!resultadosPsiAulaExcel)
-            return;
-
         try {
+            const selectedDegreeNumber = Number(this.selectedDegree);
+            let tipo_test_psi = [1, 2].includes(selectedDegreeNumber) ? 1 : ([3, 4, 5].includes(selectedDegreeNumber) ? 2 : 0);
+
+            if (tipo_test_psi === 0) return;
+
+            const resultadosPsiAulaExcel = await this.getResultadosPsiAulaExcel(this.selectedSection, this.selectedUnity, tipo_test_psi);
+
+            if (!resultadosPsiAulaExcel) return;
+
             const plantilla = this.getPlantilla(tipo_test_psi);
             const response = await fetch(plantilla);
             const buffer = await response.arrayBuffer();
@@ -264,9 +248,10 @@ export class ClassroomReportComponent {
             const nombreArchivo = this.crearNombreArchivo();
             saveAs(blob, nombreArchivo);
         } catch (error) {
-            console.error('Error al exportar los resultados:', error);
+            console.error(error);
         }
     }
+
 
     crearNombreArchivo() {
         const fecha = new Date();
