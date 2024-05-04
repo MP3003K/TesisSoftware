@@ -126,6 +126,7 @@
                         <tr>
                             <th scope="col">Nombre Completo</th>
                             <th scope="col">Indicador</th>
+                            <th scope="col">Estado evalución</th>
                             <th scope="col" class="text-center">Opcion</th>
                         </tr>
                     </thead>
@@ -145,6 +146,19 @@
                                 </div>
                                 }
                             </td>
+                            <!-- Estado Estudiante -->
+
+                            <td class=" inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+                                [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': student.estadoEvaluacionEstudiante === 'F',
+                                                    'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-50': student.estadoEvaluacionEstudiante === 'N',
+                                                    'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.estadoEvaluacionEstudiante === 'P'}">
+                                <span class="leading-relaxed whitespace-nowrap">
+                                    {{student.estadoEvaluacionEstudiante === 'F' ? 'Terminado' :
+                                    student.estadoEvaluacionEstudiante === 'N' ? 'No iniciado' :
+                                    student.estadoEvaluacionEstudiante === 'P' ? 'En proceso' : ''}}
+                                </span>
+                            </td>
+
                             <td class="text-center">
                                 <button [disabled]="student.mean == 0" mat-icon-button
                                     (click)="redirectStudent(student.id)">

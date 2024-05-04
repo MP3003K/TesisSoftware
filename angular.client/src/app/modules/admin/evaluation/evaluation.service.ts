@@ -14,9 +14,9 @@ export class EvaluationService {
         private http: HttpClient,
         private authService: AuthService,
         private userService: UserService
-    ) {}
+    ) { }
 
-    ngOnInit(): void {}
+    ngOnInit(): void { }
 
     getTechs(): Observable<any> {
         return this.http.get<any>(`${environment.baseURL}/unidad/all`);
@@ -34,7 +34,7 @@ export class EvaluationService {
 
     getClasroomAnswers(evaluationId: number): Observable<HttpResponse<any>> {
         return this.http.get<HttpResponse<any>>(
-            `${environment.baseURL}/RespuestasPsicologicas/RespuestasEstudianteAula/${evaluationId}`
+            `${environment.baseURL}/Classroom/getRespuestasEstudianteAula/${evaluationId}`
         );
     }
 
