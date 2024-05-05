@@ -54,12 +54,22 @@ export class ClassroomsComponent implements OnInit {
         apellidoMaterno: new FormControl('', [Validators.required]),
         dni: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{8}$')]),
     });
+    formEditarEstudiante = new FormGroup({
+        id: new FormControl('', [Validators.required]),
+        nombres: new FormControl('', [Validators.required]),
+        apellidoPaterno: new FormControl('', [Validators.required]),
+        apellidoMaterno: new FormControl('', [Validators.required]),
+        dni: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{8}$')]),
+    });
 
     items: string = 'list';
     estadoEvalucionPsicologicaAula: string = 'N';
 
+
     @ViewChild('autocompleteInput') autocompleteInput: ElementRef<HTMLInputElement>;
     inputValue: string = '';
+
+    estado: boolean = false;
 
     // Constructor
     constructor(
@@ -75,6 +85,7 @@ export class ClassroomsComponent implements OnInit {
         this.obtenerListadeUnidades();
         this.obtenerListadeAulas();
         this.applyFilter('');
+        console.log(this.estado);
     }
 
     // MétodosngOnInit() {
@@ -101,6 +112,7 @@ export class ClassroomsComponent implements OnInit {
     get sections() {
         return this.classrooms.filter((e) => e.grado == this.selectedDegree);
     }
+
     obtnerEstudiantesPorAulaYUnidad() {
         this.classroomsService
             .getStudentsByAulaYUnidad(this.selectedUnity, this.selectedSection)
@@ -265,8 +277,21 @@ export class ClassroomsComponent implements OnInit {
         }
     }
 
-    deleteStudent() {
+    deleteStudent(student) {
+    }
+    // #region Editar Estudiante
+    editStudent(student) {
+        if (!student)
+            return;
 
+        this.formEditarEstudiante.patchValue({
+            id: student.EstudianteId,
+            nombres: student.Nombres,
+            apellidoPaterno: student.ApellidoPaterno,
+            apellidoMaterno: student.ApellidoMaterno,
+            dni: student.DNI,
+        });
+        this.items = 'edit';
     }
 
     formatName(name: string): string {

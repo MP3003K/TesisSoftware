@@ -1,4 +1,3 @@
-<!-- #region Hola -->
 <div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
     <div
         class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
@@ -61,7 +60,6 @@
                             }
                         </mat-select>
                     </mat-form-field>
-
                     <mat-form-field>
                         <mat-label>Sección</mat-label>
                         <mat-select [disabled]="!selectedDegree" [(ngModel)]="selectedSection">
@@ -86,25 +84,31 @@
                     <div class="overflow-x-auto space-x-4">
                         <mat-button-toggle-group [(ngModel)]="items" aria-label="Font Style">
                             <!-- Botón para Listar Estudiantes -->
-                            <mat-button-toggle value="list"
-                                [disabled]="!selectedSection || !selectedUnity">Listar</mat-button-toggle>
+                            <mat-button-toggle value="list" [disabled]="!selectedSection || !selectedUnity">
+                                Listar
+                            </mat-button-toggle>
                             <!-- Botón para Asignar Estudiantes -->
-                            <mat-button-toggle value="assign" [disabled]="!selectedSection || !selectedUnity">Asignar
-                                Estudiantes</mat-button-toggle>
+                            <mat-button-toggle value="assign" [disabled]="!selectedSection || !selectedUnity">
+                                Asignar Estudiantes
+                            </mat-button-toggle>
                             <!-- Botón para Registrar Estudiantes -->
-                            <mat-button-toggle value="register"
-                                [disabled]="!selectedSection || !selectedUnity">Registrar
-                                Estudiantes</mat-button-toggle>
+                            <mat-button-toggle value="register" [disabled]="!selectedSection || !selectedUnity">
+                                Registrar Estudiante
+                            </mat-button-toggle>
+                            <!-- Botón para Editar Estudiante -->
+                            @if (items === 'edit') {
+                            <mat-button-toggle value="edit" [disabled]="!selectedSection || !selectedUnity">
+                                Editar Estudiante
+                            </mat-button-toggle>
+                            }
                         </mat-button-toggle-group>
                     </div>
                     <div>
                         @switch(items){ @case("list"){
+                        <!-- #region Listar estudiantes -->
                         <div class="flex flex-col gap-4">
                             @if(true){ @if(classroomStudents.length > 0){
-
-
-
-                            <!-- Campo de entrada para la búsqueda -->
+                            <!-- #region Buscador -->
                             <div
                                 class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
                                 <mat-form-field class="w-full mt-4 md:mt-0 md:mx-2" [subscriptSizing]="'dynamic'">
@@ -118,8 +122,8 @@
                                     {{ getEstadoPruebaPsicologicaAula(estadoEvalucionPsicologicaAula).text }}
                                 </button>
                             </div>
-                            <!-- Tabla de estudiantes -->
-                            <!-- Detalles de los estudiantes -->
+                            <!-- #endregion -->
+                            <!-- #region Tabla Estudiante -->
                             <div
                                 class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                 <div class="text-lg font-medium tracking-tight leading-6 truncate">Detalles de los
@@ -166,7 +170,10 @@
                                         <ng-container matColumnDef="Opciones" class="hidden sm:table-cell">
                                             <th mat-header-cell *matHeaderCellDef>Opciones</th>
                                             <td mat-cell *matCellDef="let student">
-                                                <button mat-icon-button (click)="deleteStudent()">
+                                                <button mat-icon-button (click)="editStudent(student)">
+                                                    <mat-icon>edit</mat-icon>
+                                                </button>
+                                                <button mat-icon-button (click)="deleteStudent(student)">
                                                     <mat-icon>delete</mat-icon>
                                                 </button>
                                             </td>
@@ -181,6 +188,7 @@
                                     </table>
                                 </div>
                             </div>
+                            <!-- #endregion-->
                             }@else {
                             <div class="flex items-center justify-center h-50 border rounded">
                                 <p class="text-center">
@@ -192,57 +200,72 @@
 
                             }
                         </div>
+                        <!-- #endregion -->
                         } @case("assign"){
-                        <div class="flex flex-col gap-2">
-                            <div class="flex flex-wrap gap-2">
-                                @for (student of selectedStudents; track
-                                student; let i = $index) {
-                                <mat-chip-row (removed)="remove(i)">
-                                    {{ student.nombre }}
-                                    <button matChipRemove [attr.aria-label]="
+                        <!-- #region Asignar estudiante -->
+                        <div
+                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                            <div class="text-lg font-medium tracking-tight leading-6 truncate"> Asignar estudiante
+                            </div>
+                            <div class="flex flex-col flex-auto mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex flex-wrap gap-2">
+                                        @for (student of selectedStudents; track
+                                        student; let i = $index) {
+                                        <mat-chip-row (removed)="remove(i)">
+                                            {{ student.nombre }}
+                                            <button matChipRemove [attr.aria-label]="
                                             'remove ' + student.nombre
                                         ">
-                                        <mat-icon [svgIcon]="'remove'" />
+                                                <mat-icon [svgIcon]="'remove'" />
+                                            </button>
+                                        </mat-chip-row>
+                                        }
+                                    </div>
+                                    <mat-form-field class="flex flex-col mt-2">
+                                        <input matInput #autocompleteInput [ngModel]="inputValue"
+                                            (ngModelChange)="onInputChange($event)" [matAutocomplete]="auto"
+                                            placeholder="Ingresar nombre del estudiante o DNI" />
+                                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)"
+                                            [displayWith]="displayFn">
+                                            @for (student of filteredSearchedStudents;
+                                            track student) {
+                                            <mat-option [value]="student">
+                                                {{ student.nombre }} ({{ student.dni }})
+                                            </mat-option>
+                                            }
+                                        </mat-autocomplete>
+                                    </mat-form-field>
+                                </div>
+                                <div>
+                                    <button type="submit" mat-raised-button color="primary"
+                                        [disabled]="selectedStudents.length == 0"
+                                        (click)="obtnerEstudiantesPorAulaYUnidad()">
+                                        Asignar
                                     </button>
-                                </mat-chip-row>
-                                }
+                                </div>
                             </div>
-                            <mat-form-field class="flex flex-col">
-                                <input matInput #autocompleteInput [ngModel]="inputValue"
-                                    (ngModelChange)="onInputChange($event)" [matAutocomplete]="auto" />
-                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)"
-                                    [displayWith]="displayFn">
-                                    @for (student of filteredSearchedStudents;
-                                    track student) {
-                                    <mat-option [value]="student">
-                                        {{ student.nombre }} ({{ student.dni }})
-                                    </mat-option>
-                                    }
-                                    <mat-option> Crear Estudiante </mat-option>
-                                </mat-autocomplete>
-                            </mat-form-field>
                         </div>
-
-                        <div>
-                            <button mat-button [disabled]="selectedStudents.length == 0">
-                                Asignar
-                            </button>
-                        </div>
+                        <!-- #endregion-->
                         } @case("register"){
-                        <!-- Agregar componente de registro aqui -->
-                        <div class="flex-auto py-1 sm:py-3">
-                            <div class="flex flex-col gap-4">
-                                <div class="flex flex-col items-start">
-                                    <div class="w-full">
-                                        <form [formGroup]="
+                        <!-- #region Registrar estudiante -->
+                        <div
+                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                            <div class="text-lg font-medium tracking-tight leading-6 truncate"> Registrar estudiante
+                            </div>
+                            <div class="flex flex-col flex-auto mt-2">
+                                <div class="flex-auto py-1 sm:py-3">
+                                    <div class="flex flex-col gap-4">
+                                        <div class="flex flex-col items-start">
+                                            <div class="w-full">
+                                                <form [formGroup]="
                                                 formRegistrarEstudiante
-                                            " (ngSubmit)="registerStudent()"
-                                            class="flex flex-col p-8 bg-card rounded-2xl shadow overflow-hidden">
-                                            <mat-form-field class="flex-auto">
-                                                <mat-label>Nombres</mat-label>
-                                                <input type="text" matInput formControlName="nombres"
-                                                    placeholder="Ingrese su nombre" />
-                                                <mat-error *ngIf="
+                                            " (ngSubmit)="registerStudent()" class="flex flex-col p-2">
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>Nombres</mat-label>
+                                                        <input type="text" matInput formControlName="nombres"
+                                                            placeholder="Ingrese su nombre" />
+                                                        <mat-error *ngIf="
                                                         formRegistrarEstudiante.get(
                                                             'nombres'
                                                         ).invalid &&
@@ -250,14 +273,14 @@
                                                             'nombres'
                                                         ).touched
                                                     ">
-                                                    Falta ingresar nombre
-                                                </mat-error>
-                                            </mat-form-field>
-                                            <mat-form-field class="flex-auto">
-                                                <mat-label>Apellido Paterno</mat-label>
-                                                <input type="text" matInput formControlName="apellidoPaterno" required
-                                                    placeholder="Ingrese su apellido paterno" />
-                                                <mat-error *ngIf="
+                                                            Falta ingresar nombre
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>Apellido Paterno</mat-label>
+                                                        <input type="text" matInput formControlName="apellidoPaterno"
+                                                            required placeholder="Ingrese su apellido paterno" />
+                                                        <mat-error *ngIf="
                                                         formRegistrarEstudiante.get(
                                                             'apellidoPaterno'
                                                         ).invalid &&
@@ -265,15 +288,15 @@
                                                             'apellidoPaterno'
                                                         ).touched
                                                     ">
-                                                    Falta ingresar apellido
-                                                    paterno
-                                                </mat-error>
-                                            </mat-form-field>
-                                            <mat-form-field class="flex-auto">
-                                                <mat-label>Apellido Materno</mat-label>
-                                                <input type="text" matInput formControlName="apellidoMaterno"
-                                                    placeholder="Ingrese su apellido materno" />
-                                                <mat-error *ngIf="
+                                                            Falta ingresar apellido
+                                                            paterno
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>Apellido Materno</mat-label>
+                                                        <input type="text" matInput formControlName="apellidoMaterno"
+                                                            placeholder="Ingrese su apellido materno" />
+                                                        <mat-error *ngIf="
                                                         formRegistrarEstudiante.get(
                                                             'apellidoMaterno'
                                                         ).invalid &&
@@ -281,15 +304,15 @@
                                                             'apellidoMaterno'
                                                         ).touched
                                                     ">
-                                                    Falta ingresar apellido
-                                                    materno
-                                                </mat-error>
-                                            </mat-form-field>
-                                            <mat-form-field class="flex-auto">
-                                                <mat-label>DNI</mat-label>
-                                                <input type="number" matInput formControlName="dni"
-                                                    placeholder="Ingrese su DNI" />
-                                                <mat-error *ngIf="
+                                                            Falta ingresar apellido
+                                                            materno
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>DNI</mat-label>
+                                                        <input type="number" matInput formControlName="dni"
+                                                            placeholder="Ingrese su DNI" />
+                                                        <mat-error *ngIf="
                                                         formRegistrarEstudiante.get(
                                                             'dni'
                                                         ).invalid &&
@@ -297,23 +320,119 @@
                                                             'dni'
                                                         ).touched
                                                     ">
-                                                    El DNI tiene que tener 8
-                                                    dígitos
-                                                </mat-error>
-                                            </mat-form-field>
-                                            <div class="flex justify-end mt-4">
-                                                <button type="submit" mat-raised-button color="primary" [disabled]="
+                                                            El DNI tiene que tener 8
+                                                            dígitos
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                    <div class="flex justify-end mt-4">
+                                                        <button type="submit" mat-raised-button color="primary"
+                                                            [disabled]="
                                                         formRegistrarEstudiante.invalid
                                                     ">
-                                                    Registrar
-                                                </button>
+                                                            Registrar
+                                                        </button>
+                                                    </div>
+                                                </form>
                                             </div>
-                                        </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+                        <!-- #endregion-->
+                        } @case("edit"){
+                        <!-- #region Editar estudiante -->
+                        <div
+                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                            <div class="text-lg font-medium tracking-tight leading-6 truncate">Editar estudiante</div>
+                            <div class="flex flex-col flex-auto mt-2">
+                                <div class="flex-auto py-1 sm:py-3">
+                                    <div class="flex flex-col gap-4">
+                                        <div class="flex flex-col items-start">
+                                            <div class="w-full">
+                                                <form [formGroup]="
+                                                                        formEditarEstudiante
+                                                                    " (ngSubmit)="registerStudent()"
+                                                    class="flex flex-col p-2">
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>Nombres</mat-label>
+                                                        <input type="text" matInput formControlName="nombres"
+                                                            placeholder="Ingrese su nombre" />
+                                                        <mat-error *ngIf="
+                                                                                formEditarEstudiante.get(
+                                                                                    'nombres'
+                                                                                ).invalid &&
+                                                                                formEditarEstudiante.get(
+                                                                                    'nombres'
+                                                                                ).touched
+                                                                            ">
+                                                            Falta ingresar nombre
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>Apellido Paterno</mat-label>
+                                                        <input type="text" matInput formControlName="apellidoPaterno"
+                                                            required placeholder="Ingrese su apellido paterno" />
+                                                        <mat-error *ngIf="
+                                                                                formEditarEstudiante.get(
+                                                                                    'apellidoPaterno'
+                                                                                ).invalid &&
+                                                                                formEditarEstudiante.get(
+                                                                                    'apellidoPaterno'
+                                                                                ).touched
+                                                                            ">
+                                                            Falta ingresar apellido
+                                                            paterno
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>Apellido Materno</mat-label>
+                                                        <input type="text" matInput formControlName="apellidoMaterno"
+                                                            placeholder="Ingrese su apellido materno" />
+                                                        <mat-error *ngIf="
+                                                                                formEditarEstudiante.get(
+                                                                                    'apellidoMaterno'
+                                                                                ).invalid &&
+                                                                                formEditarEstudiante.get(
+                                                                                    'apellidoMaterno'
+                                                                                ).touched
+                                                                            ">
+                                                            Falta ingresar apellido
+                                                            materno
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>DNI</mat-label>
+                                                        <input type="number" matInput formControlName="dni"
+                                                            placeholder="Ingrese su DNI" />
+                                                        <mat-error *ngIf="
+                                                                                formEditarEstudiante.get(
+                                                                                    'dni'
+                                                                                ).invalid &&
+                                                                                formEditarEstudiante.get(
+                                                                                    'dni'
+                                                                                ).touched
+                                                                            ">
+                                                            El DNI tiene que tener 8
+                                                            dígitos
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                    <div class="flex justify-end mt-4">
+                                                        <button type="submit" mat-raised-button color="primary"
+                                                            [disabled]="
+                                                                                formEditarEstudiante.invalid
+                                                                            ">
+                                                            Registrar
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- #endregion-->
                         }}
                     </div>
                 </div>

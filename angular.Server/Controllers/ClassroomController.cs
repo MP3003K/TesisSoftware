@@ -93,7 +93,32 @@ namespace Controllers
             {
                 return BadRequest(ex.Message);
             }
+
+
+
         }
 
+        /// <summary>
+        /// Obtener los estudiantes de una Aula en una Unidad
+        /// </summary>
+        [HttpGet("getRespuestasEstudianteAula/{evaPsiAulaId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RespuestasEstudianteAula(int evaPsiAulaId)
+        {
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    var students = await connection.QueryAsync("LISTAR_RESPUESTAS_ESTUDIANTES_AULA2", new { evaluationId = evaPsiAulaId }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = students.ToList() });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

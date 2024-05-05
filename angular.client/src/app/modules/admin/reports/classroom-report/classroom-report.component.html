@@ -1,56 +1,42 @@
-<div
-    class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
-    cdkScrollable
->
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+    <!-- #region Cabecera de la pagina -->
     <div
-        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
-    >
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
         <div class="flex-1 min-w-0">
             <div>
                 <div class="hidden sm:flex flex-wrap items-center font-medium">
                     <div>
-                        <a class="whitespace-nowrap text-primary-500"
-                            >Dashboard</a
-                        >
+                        <a class="whitespace-nowrap text-primary-500">Dashboard</a>
                     </div>
 
                     <div class="flex items-center ml-1 whitespace-nowrap">
-                        <mat-icon
-                            class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-right'"
-                        ></mat-icon>
-                        <span class="ml-1 text-secondary"
-                            >Reporte Evaluación Psicológica</span
-                        >
+                        <mat-icon class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+                        <span class="ml-1 text-secondary">Reporte Evaluación Psicológica</span>
                     </div>
                 </div>
                 <div class="flex sm:hidden">
-                    <a
-                        class="inline-flex items-center -ml-1.5 text-secondary font-medium"
-                        [routerLink]="'./..'"
-                    >
-                        <mat-icon
-                            class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-left'"
-                        ></mat-icon>
+                    <a class="inline-flex items-center -ml-1.5 text-secondary font-medium" [routerLink]="'./..'">
+                        <mat-icon class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
                         <span class="ml-1">Back</span>
                     </a>
                 </div>
             </div>
             <div class="mt-2">
-                <h2
-                    class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
-                >
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
                     Reporte Aula
                 </h2>
             </div>
         </div>
     </div>
-
-    <!-- Main -->
+    <!-- #endregion-->
+    <!-- #region Cuerpo de la pagina -->
     <div class="flex-auto p-6 sm:p-10">
         <div class="flex flex-col gap-4">
+            <!-- #region Botones para realizar el filtrado -->
             <div class="flex flex-col items-start">
+                <!-- Botones para selccionar el aula y unidad-->
                 <div class="grid grid-cols-3 gap-4 w-full">
                     <mat-form-field>
                         <mat-label>Unidad</mat-label>
@@ -64,99 +50,83 @@
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Grado</mat-label>
-                        <mat-select [(ngModel)]="selectedDegree">
-                            @for(degree of academicDegrees; track degree){
-                            <mat-option [value]="degree">
+                        <mat-select [(ngModel)]="selectedDegree" (selectionChange)="selectedSection = null">
+                            <mat-option *ngFor="let degree of academicDegrees" [value]="degree">
                                 {{ degree }}
                             </mat-option>
-                            }
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Sección</mat-label>
-                        <mat-select
-                            [disabled]="!selectedDegree"
-                            [(ngModel)]="selectedSection"
-                        >
-                            @for(section of sections; track section){
-                            <mat-option [value]="section.id">
+                        <mat-select [disabled]="!selectedDegree" [(ngModel)]="selectedSection">
+                            <mat-option *ngFor="let section of sections" [value]="section.id">
                                 {{ section.seccion }}
                             </mat-option>
-                            }
                         </mat-select>
                     </mat-form-field>
                 </div>
                 <div class="flex gap-4 items-center">
-                    <mat-button-toggle-group
-                        name="fontStyle"
-                        aria-label="Font Style"
-                        (change)="onToggleChange()"
-                        [(ngModel)]="selectedDimension"
-                    >
+                    <!-- Botones para seleccionar el Test -->
+                    <mat-button-toggle-group name="fontStyle" aria-label="Font Style" (change)="onToggleChange()"
+                        [(ngModel)]="selectedDimension">
                         <mat-button-toggle [value]="1">HSE</mat-button-toggle>
                         <mat-button-toggle [value]="2">FR</mat-button-toggle>
                     </mat-button-toggle-group>
-                    <button mat-fab extended (click)="filterAll()">
+
+                    <!-- Botones para acciones -->
+                    <button mat-fab extended (click)="filterAll()"
+                        [disabled]="!selectedUnity || !selectedDegree || !selectedSection || !selectedDimension">
                         <mat-icon svgIcon="filter_alt"></mat-icon>
                         Filtrar
                     </button>
-                    <button mat-fab extended (click)="generateExcel()">
-                        <mat-icon
-                            svgIcon="heroicons_outline:document"
-                        ></mat-icon>
+                    <button mat-fab extended (click)="exportarExcel_resultadosPsicologicosAula()"
+                        [disabled]="!selectedUnity || !selectedDegree || !selectedSection || !selectedDimension || !(studentsClassroom && studentsClassroom.length)">
+                        <mat-icon svgIcon="heroicons_outline:document"></mat-icon>
                         Excel
                     </button>
-                
                 </div>
             </div>
-
-            <div class="scale_container flex flex-col divide-y">
-                @for(scale of scales; track scale){
-                <details class="px-4 bg-white shadow">
-                    <summary
-                        class="py-2 cursor-pointer flex items-center justify-between"
-                    >
-                        <span>{{ scale.name }}</span>
-                        <span
-                            [className]="
-                                getMeanClasses(scale.mean) +
-                                ' text-xs text-white px-4 py-2 rounded'
-                            "
-                            >{{ scale.mean | number : ".2-2" }}</span
-                        >
-                    </summary>
-                    <div class="py-2">
-                        <ul class="flex flex-col p-4 gap-4">
-                            @for(indicator of scale.indicators; track
-                            indicator){
-                            <li class="p-2 flex gap-2 items-center">
-                                <span> {{ indicator.name }}</span>
-                                <div
-                                    [className]="
-                                        getMeanClasses(indicator.mean) +
-                                        ' px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center'
-                                    "
-                                >
-                                    {{ indicator.mean | number : ".2-2" }}
-                                </div>
-                            </li>
-                            }
-                        </ul>
+            <!-- #endregion -->
+            <!-- #region Tabla de resultados -->
+            @if(!selectedUnity || !selectedDegree || !selectedSection || !selectedDimension){
+            <div class="mx-auto bg-blue-100 border-blue-500 rounded-xl shadow-md overflow-hidden m-4">
+                <div class="md:flex">
+                    <div class="p-8">
+                        <div class="uppercase tracking-wide text-lg text-blue-500 font-semibold">Información</div>
+                        <p class="mt-2 text-gray-700 font-bold text-lg">
+                            Seleccione
+                            {{
+                            (!selectedUnity ? 'una unidad, ' : '') +
+                            (!selectedDegree ? 'un grado, ' : '') +
+                            (!selectedSection ? 'una sección, ' : '') +
+                            (!selectedDimension ? 'una dimensión psicológica' : '')
+                            }}.
+                        </p>
                     </div>
-                </details>
-                } @empty {
-                <div class="text-center py-4 font-light text-gray-300">
-                    {{ dataInfo }}
                 </div>
-                }
             </div>
-            @if(studentsClassroom.length > 0){
+            }
+            @else if (studentsClassroom.length == 0 && this.selectedClassroomEvaluationId) {
+            <div
+                class="max-w-md mx-auto bg-orange-100 border-orange-500 rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4">
+                <div class="md:flex">
+                    <div class="p-8">
+                        <div class="uppercase tracking-wide text-sm text-orange-500 font-semibold">Información</div>
+                        <p class="mt-2 text-gray-500 font-bold">
+                            Nadie ha realizado un test psicologico.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            }
+            @else if(studentsClassroom.length > 0){
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table>
                     <thead>
                         <tr>
                             <th scope="col">Nombre Completo</th>
                             <th scope="col">Indicador</th>
+                            <th scope="col">Estado evalución</th>
                             <th scope="col" class="text-center">Opcion</th>
                         </tr>
                     </thead>
@@ -168,22 +138,30 @@
                             <td>
                                 @if(student.promedio == 0){ No realizado }
                                 @else{
-                                <div
-                                    [className]="
+                                <div [className]="
                                         getMeanClasses(student.promedio) +
                                         ' w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center'
-                                    "
-                                >
+                                    ">
                                     {{ student.promedio | number : ".2-2" }}
                                 </div>
                                 }
                             </td>
+                            <!-- Estado Estudiante -->
+
+                            <td class=" inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+                                [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': student.estadoEvaluacionEstudiante === 'F',
+                                                    'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-50': student.estadoEvaluacionEstudiante === 'N',
+                                                    'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.estadoEvaluacionEstudiante === 'P'}">
+                                <span class="leading-relaxed whitespace-nowrap">
+                                    {{student.estadoEvaluacionEstudiante === 'F' ? 'Terminado' :
+                                    student.estadoEvaluacionEstudiante === 'N' ? 'No iniciado' :
+                                    student.estadoEvaluacionEstudiante === 'P' ? 'En proceso' : ''}}
+                                </span>
+                            </td>
+
                             <td class="text-center">
-                                <button
-                                    [disabled]="student.mean == 0"
-                                    mat-icon-button
-                                    (click)="redirectStudent(student.id)"
-                                >
+                                <button [disabled]="student.mean == 0" mat-icon-button
+                                    (click)="redirectStudent(student.id)">
                                     <mat-icon>visibility</mat-icon>
                                 </button>
                             </td>
@@ -192,7 +170,10 @@
                     </tbody>
                 </table>
             </div>
+            <!-- #endregion -->
             }
+
         </div>
     </div>
+    <!-- #endregion -->
 </div>
