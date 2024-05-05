@@ -20,15 +20,17 @@ export class StudentReportComponent implements OnInit {
     evaluationId = 302;
     classroomEvaluationId = 0;
     studentId = 0;
+    filtros: string = '';
     constructor(
         private route: ActivatedRoute,
         private evaluationService: EvaluationService,
         private router: Router,
         private studentService: StudentService
-    ) {}
+    ) { }
     ngOnInit(): void {
         const studentId = +this.route.snapshot.paramMap.get('id');
-        const { classroomEvaluationId } = this.route.snapshot.queryParams;
+        const { classroomEvaluationId, filtros } = this.route.snapshot.queryParams;
+        this.filtros = filtros;
         this.classroomEvaluationId = classroomEvaluationId;
         this.studentId = studentId;
         if (this.classroomEvaluationId && this.studentId) {
@@ -39,7 +41,11 @@ export class StudentReportComponent implements OnInit {
     }
 
     returnRoute() {
-        this.router.navigate(['/dashboards/reports']);
+        this.router.navigate(['/reports'], {
+            queryParams: {
+                filtros: this.filtros
+            },
+        });
     }
     getStudentInfo() {
         const studentInfo = {

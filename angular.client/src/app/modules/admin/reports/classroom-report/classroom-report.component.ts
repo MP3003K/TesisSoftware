@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluationService } from '../../evaluation/evaluation.service';
 import { StudentService } from '../student.service';
 import { ExcelService } from '../excel.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { StudentRegistrationComponent } from '../student-registration/student-registration.component';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from 'app/shared/shared.module';
@@ -51,13 +51,28 @@ export class ClassroomReportComponent {
         public dialog: MatDialog,
         private _snackbar: MatSnackBar,
         private router: Router,
+        private route: ActivatedRoute,
         private classroomsService: ClassroomsService
     ) { }
 
     ngOnInit(): void {
         this.getUnities();
         this.getClasses();
+        this.agregarValoresInicialesFiltros();
     }
+    agregarValoresInicialesFiltros() {
+        const filtros = this.route.snapshot.queryParams.filtros;
+        const valores = filtros.split(',');
+
+        this.selectedUnity = Number(valores[0]);
+        this.selectedDegree = valores[1];
+        this.selectedDimension = Number(valores[3]);
+        this.selectedSection = Number(valores[2]);
+
+        if (this.selectedUnity && this.selectedDegree && this.selectedSection && this.selectedDimension)
+            this.filterAll();
+    }
+
     getTest() {
         const scales = [].map(
             ({
@@ -152,9 +167,11 @@ export class ClassroomReportComponent {
     }
 
     redirectStudent(index: number) {
+        let filtrosActuales: string = this.selectedUnity + ',' + this.selectedDegree + ',' + this.selectedSection + ',' + this.selectedDimension;
         this.router.navigate(['reports', index], {
             queryParams: {
                 classroomEvaluationId: this.selectedClassroomEvaluationId,
+                filtros: filtrosActuales
             },
         });
     }
