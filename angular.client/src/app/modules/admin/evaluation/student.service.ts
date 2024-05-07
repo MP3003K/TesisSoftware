@@ -12,10 +12,7 @@ export class StudentService {
 
     getStudentEvaluations(): Observable<HttpResponse<any>> {
         return this.http.get<HttpResponse<any>>(
-            `${environment.baseURL}/Estudiante/evaluations`,
-            {
-                params: {},
-            }
+            `${environment.baseURL}/Estudiante/evaluations`
         );
     }
 }

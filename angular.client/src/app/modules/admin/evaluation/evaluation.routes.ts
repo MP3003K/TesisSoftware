@@ -1,9 +1,14 @@
-import { Routes } from "@angular/router";
-import { EvaluationComponent } from "./evaluation.component";
+import { Routes } from '@angular/router';
+import { QuestionaryComponent } from './components/questionary/questionary.component';
+import { QuestionaryListComponent } from './components/questionary-list/questionary-list.component';
 
 export default [
     {
         path: '',
-        component: EvaluationComponent,
+        component: QuestionaryListComponent,
+    },
+    {
+        path: ':id',
+        component: QuestionaryComponent,
     },
 ] as Routes;

@@ -15,7 +15,7 @@ namespace webapi.Controllers
         /// Lista de preguntas psicologicas de una evaluacion psicologica (Test Psicologico)
         /// </summary>
         [HttpGet("{evaluationId:int}")]
-        public async Task<ActionResult> ListaDePreguntasPsicologicas(int evaluationId, int limit, int start)
+        public async Task<ActionResult> ListaDePreguntasPsicologicas(int evaluationId, int? limit = null, int? start = null)
         {
             try
             {

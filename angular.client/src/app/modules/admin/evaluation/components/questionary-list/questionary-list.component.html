@@ -1,0 +1,97 @@
+<div
+    class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
+    cdkScrollable
+    #parentSection
+>
+    <!-- Header -->
+    <div
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
+    >
+        <div class="flex-1 min-w-0">
+            <!-- Breadcrumbs -->
+            <div>
+                <div class="hidden sm:flex flex-wrap items-center font-medium">
+                    <div>
+                        <a class="whitespace-nowrap text-primary-500"
+                            >Dashboard</a
+                        >
+                    </div>
+
+                    <div class="flex items-center ml-1 whitespace-nowrap">
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-right'"
+                        ></mat-icon>
+                        <span class="ml-1 text-secondary"
+                            >Evaluación Psicológica</span
+                        >
+                    </div>
+                </div>
+                <div class="flex sm:hidden">
+                    <a
+                        class="inline-flex items-center -ml-1.5 text-secondary font-medium"
+                        [routerLink]="'./..'"
+                    >
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-left'"
+                        ></mat-icon>
+                        <span class="ml-1">Regresar</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Title -->
+            <div class="mt-2">
+                <h2
+                    class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
+                >
+                    Evaluaciones
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-auto p-6 sm:p-10">
+        <div class="grid grid-cols-4 gap-4">
+            @for(questionary of questionnaires; track questionary){
+            <mat-card>
+                <mat-card-content>
+                    <div>
+                        Inicio:
+                        {{ questionary.fechaInicio | date : "dd/MM/yyyy" }}
+                    </div>
+                    <div>
+                        Fin: {{ questionary.fechaFin | date : "dd/MM/yyyy" }}
+                    </div>
+                    <div>
+                        Estado:
+                        <span
+                            class="px-2 py-1 text-white rounded shadow text-xs"
+                            [ngClass]="
+                                questionary.estado == 'N'
+                                    ? 'bg-red-600'
+                                    : 'bg-green-600'
+                            "
+                        >
+                            {{
+                                questionary.estado == "N"
+                                    ? "Inconclusa"
+                                    : "Completada"
+                            }}
+                        </span>
+                    </div>
+                    <div>Id:</div>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button
+                        mat-button
+                        (click)="goToQuestionary(questionary.id)"
+                    >
+                        Realizar
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+            }
+        </div>
+    </div>
+</div>

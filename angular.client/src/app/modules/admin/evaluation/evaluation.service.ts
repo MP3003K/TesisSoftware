@@ -14,9 +14,9 @@ export class EvaluationService {
         private http: HttpClient,
         private authService: AuthService,
         private userService: UserService
-    ) { }
+    ) {}
 
-    ngOnInit(): void { }
+    ngOnInit(): void {}
 
     getTechs(): Observable<any> {
         return this.http.get<any>(`${environment.baseURL}/unidad/all`);
@@ -65,29 +65,10 @@ export class EvaluationService {
         );
     }
 
-    getQuestionsApi(studentId: number): Observable<any> {
-        return this.http
-            .get<any>(
-                `${environment.baseURL}/preguntasPsicologicas/${studentId}/1/66`
-            )
-            .pipe(
-                map(({ data }: { data: any[] }) => {
-                    const parsedData = data.map((item, index) => {
-                        const {
-                            pregunta: name,
-                            respuestasPsicologicas: { 0: answer },
-                            id,
-                        } = item;
-                        return {
-                            id,
-                            index: index + 1,
-                            name,
-                            answer: answer?.respuesta ?? '',
-                        };
-                    });
-                    return parsedData;
-                })
-            );
+    getQuestions(studentId: number): Observable<HttpResponse<any>> {
+        return this.http.get<HttpResponse<any>>(
+            `${environment.baseURL}/preguntasPsicologicas/${studentId}`
+        );
     }
 
     getStudent() {

@@ -1,22 +1,19 @@
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { EvaluationService } from './evaluation.service';
-import { AuthService } from 'app/core/auth/auth.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SharedModule } from 'app/shared/shared.module';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
-import { UserService } from 'app/core/user/user.service';
-import { StudentService } from './student.service';
+import { EvaluationService } from '../../evaluation.service';
 
 @Component({
-    selector: 'app-evaluation',
-    templateUrl: './evaluation.component.html',
+    selector: 'app-questionary',
+    templateUrl: './questionary.component.html',
     standalone: true,
     imports: [SharedModule, MatIconModule, MatCardModule, MatRadioModule],
 })
-export class EvaluationComponent {
+export class QuestionaryComponent {
     endedTest = false;
     evaPsiEstId!: number;
     public questions: any = [];
@@ -32,9 +29,7 @@ export class EvaluationComponent {
         private router: Router,
         private _snackbar: MatSnackBar,
         public evaluationService: EvaluationService,
-        private authService: AuthService,
-        private userService: UserService,
-        private studentService: StudentService
+        private route: ActivatedRoute
     ) {}
     updatePaginator() {
         this.paginator.pageNumber = 1;
@@ -45,38 +40,25 @@ export class EvaluationComponent {
     }
 
     ngOnInit(): void {
-        this.studentService.getStudentEvaluations().subscribe((res) => {
-            console.log(res);
-        });
+        const { id } = this.route.snapshot.params;
+        if (!isNaN(parseInt(id))) {
+            console.log(id);
+            this.getEvaluations(id)
+        } else {
+            this.router.navigate(['..']);
+        }
     }
 
-    public getEvaluations() {
-        this.evaluationService.getStudent().subscribe({
-            next: ({ data }) => {
-                console.log();
-                if (data?.evaPsiEstId) {
-                    this.evaPsiEstId = data?.evaPsiEstId;
-                    this.evaluationService
-                        .getQuestionsApi(data?.evaPsiEstId)
-                        .subscribe({
-                            next: (res) => {
-                                this.questions = res;
-                                this.updatePaginator();
-                            },
-                            error: (err) => {
-                                if (err.status == 400) {
-                                    this.endedTest = true;
-                                    this._snackbar.open(
-                                        'No hay test disponibles para este usuario',
-                                        '',
-                                        {
-                                            duration: 3000,
-                                        }
-                                    );
-                                }
-                            },
-                        });
-                } else {
+    public getEvaluations(id: number) {
+        this.evaluationService.getQuestions(id).subscribe({
+            next: (response) => {
+                
+                console.log(response);
+                // this.questions = response;
+                // this.updatePaginator();
+            },
+            error: (err) => {
+                if (err.status == 400) {
                     this.endedTest = true;
                     this._snackbar.open(
                         'No hay test disponibles para este usuario',

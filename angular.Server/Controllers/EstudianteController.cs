@@ -9,6 +9,17 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers
 {
+
+    public class EvaluationStudent {
+        public int Id { get; set; }
+        public DateTime FechaInicio { get; set; }
+        public DateTime FechaFin { get; set; }
+        public int EstudianteId { get; set; }
+        public int EvaluacionAulaId { get; set; }
+        public string? Estado { get; set; }
+
+    }
+
     [ApiController]
     [Route("[controller]")]
     public class EstudianteController(DapperContext context) : ControllerBase
@@ -25,11 +36,11 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
 
-                    var evaluations = await connection.QueryAsync("OBTENER_EVALUACIONES", new
+                    var evaluations = await connection.QueryAsync<EvaluationStudent>("OBTENER_EVALUACIONES", new
                     {
                         userId
                     }, commandType: CommandType.StoredProcedure);
-                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = evaluations.FirstOrDefault() });
+                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = evaluations.ToList() });
 
                 }
 
