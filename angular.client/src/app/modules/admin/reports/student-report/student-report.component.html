@@ -41,7 +41,7 @@
                     </mat-button-toggle>
                     }
                 </mat-button-toggle-group>
-                <button mat-button (click)="returnRoute()">Regresar</button>
+                <button mat-button class="ms-3" (click)="returnRoute()">Regresar</button>
             </div>
         </div>
     </div>
@@ -54,20 +54,23 @@
             @for(scale of scales; track scale){
             <details class="px-4 bg-white shadow">
                 <summary class="py-2 cursor-pointer flex items-center justify-between">
-                    <span>{{ scale.name }}</span>
-                    <span [className]="
-                            getMeanClasses(scale.mean) +
-                            ' text-xs text-white px-4 py-2 rounded'
-                        ">{{ scale.mean | number : ".2-2" }}</span>
+                    <span class="font-bold bg-text"
+                        [ngClass]="selectedDimension === 'HSE' ? 'text-green-700' : 'text-orange-400'">{{ scale.name
+                        }}</span>
+                    <span [className]="getMeanClasses(scale.mean) +
+                                                            'text-xs  px-4 py-2 rounded'
+                                                        ">
+                        {{getConceptoDeResultadosPsi(scale.mean)}} ({{ scale.mean | number :
+                        ".1-1" }})
+                    </span>
                 </summary>
                 <div class="py-2">
                     <ul class="flex flex-col p-4 gap-4">
                         <li *ngFor="let indicator of scale.indicators" class="p-2 flex gap-2 items-center">
                             <span> {{ indicator.name }}</span>
-                            <div [className]="
-                                    getMeanClasses(scale.mean) +
-                                    ' px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center'
-                                ">
+                            <div [className]="getMeanClasses(indicator.mean) +
+                                                            ' px-2 py-2 rounded text-base flex items-center justify-center text-center'
+                                                        ">
                                 {{getConceptoDeResultadosPsi(indicator.mean)}} ({{ indicator.mean | number :
                                 ".1-1" }}) </div>
                         </li>
