@@ -135,29 +135,31 @@
                         = $index){
                         <tr>
                             <th scope="row">{{ student.nombre }}</th>
-                            <td>
-                                @if(student.promedio == 0){ No realizado }
-                                @else{
-                                <div [className]="
-                                        getMeanClasses(student.promedio) +
-                                        ' w-6 h-6 px-4 py-2 rounded text-xs text-white flex items-center justify-center text-center'
-                                    ">
-                                    {{ student.promedio | number : ".2-2" }}
-                                </div>
-                                }
-                            </td>
                             <!-- Estado Estudiante -->
-
-                            <td class=" inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+                            <td class="inline-flex items-center justify-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
                                 [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': student.estadoEvaluacionEstudiante === 'F',
-                                                    'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-50': student.estadoEvaluacionEstudiante === 'N',
-                                                    'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.estadoEvaluacionEstudiante === 'P'}">
+                                                                        'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-50': student.estadoEvaluacionEstudiante === 'N',
+                                                                        'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.estadoEvaluacionEstudiante === 'P'}">
                                 <span class="leading-relaxed whitespace-nowrap">
                                     {{student.estadoEvaluacionEstudiante === 'F' ? 'Terminado' :
                                     student.estadoEvaluacionEstudiante === 'N' ? 'No iniciado' :
                                     student.estadoEvaluacionEstudiante === 'P' ? 'En proceso' : ''}}
                                 </span>
                             </td>
+                            <!-- Promedio del estudiante -->
+                            <td>
+                                @if(student.promedio == 0){ No realizado }
+                                @else{
+                                <div [className]="
+                            getMeanClasses(student.promedio) +
+                            ' px-2 py-2 rounded text-base flex items-center justify-center text-center'
+                        ">
+                                    {{getConceptoDeResultadosPsi(student.promedio)}} ({{ student.promedio | number :
+                                    ".1-1" }})
+                                </div>
+                                }
+                            </td>
+
 
                             <td class="text-center">
                                 <button [disabled]="student.mean == 0" mat-icon-button

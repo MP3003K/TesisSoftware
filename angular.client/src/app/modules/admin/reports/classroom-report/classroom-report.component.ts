@@ -62,15 +62,17 @@ export class ClassroomReportComponent {
     }
     agregarValoresInicialesFiltros() {
         const filtros = this.route.snapshot.queryParams.filtros;
-        const valores = filtros.split(',');
+        if (filtros && filtros.length > 0) {
+            const valores = filtros.split(',');
 
-        this.selectedUnity = Number(valores[0]);
-        this.selectedDegree = valores[1];
-        this.selectedDimension = Number(valores[3]);
-        this.selectedSection = Number(valores[2]);
+            this.selectedUnity = Number(valores[0]);
+            this.selectedDegree = valores[1];
+            this.selectedDimension = Number(valores[3]);
+            this.selectedSection = Number(valores[2]);
 
-        if (this.selectedUnity && this.selectedDegree && this.selectedSection && this.selectedDimension)
-            this.filterAll();
+            if (this.selectedUnity && this.selectedDegree && this.selectedSection && this.selectedDimension)
+                this.filterAll();
+        }
     }
 
     getTest() {
@@ -177,22 +179,52 @@ export class ClassroomReportComponent {
     }
 
     getMeanClasses(mean: number) {
-        if (mean >= 1 && mean <= 2) {
+        if (mean >= 0 && mean <= 1) {
             return this.selectedDimension == 1
-                ? 'bg-[#b6d7a8]'
-                : 'bg-[#00b050]';
-        } else if (mean >= 2.1 && mean <= 3.9) {
+                ? 'bg-[#b6d7a8] text-black'
+                : 'bg-[#00b050] text-white';
+        } else if (mean > 1 && mean <= 3) {
             return this.selectedDimension == 1
                 ? 'bg-[#70ad47] text-black'
                 : 'bg-[#ffff00] text-black';
-        } else if (mean >= 4 && mean <= 5) {
+        } else if (mean >= 3 && mean <= 4) {
             return this.selectedDimension == 1
-                ? 'bg-[#548135]'
-                : 'bg-[#ff0000]';
+                ? 'bg-[#548135] text-white'
+                : 'bg-[#ff0000] text-white';
         } else {
             return 'bg-black';
         }
     }
+
+    dimensiones_conceptos = {
+        1: {
+            rango1: 'En inicio',
+            rango2: 'En proceso',
+            rango3: 'Satisfactorio',
+            fueraRango: 'Fuera de rango'
+        },
+        2: {
+            rango1: 'Bajo Riesgo',
+            rango2: 'Riesgo Moderado',
+            rango3: 'Alto Riesgo',
+            fueraRango: 'Fuera de rango'
+        }
+    };
+
+    getConceptoDeResultadosPsi(promedio: number): string {
+        const dimension = this.dimensiones_conceptos[this.selectedDimension];
+
+        if (promedio >= 0 && promedio <= 1) {
+            return dimension.rango1;
+        } else if (promedio > 1 && promedio < 3) {
+            return dimension.rango2;
+        } else if (promedio >= 3 && promedio <= 4) {
+            return dimension.rango3;
+        } else {
+            return dimension.fueraRango;
+        }
+    }
+
     onToggleChange() {
         this.scales = [];
     }
