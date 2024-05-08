@@ -1,48 +1,31 @@
-<div
-    class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
-    cdkScrollable
->
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
     <!-- Header -->
     <div
-        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
-    >
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
         <div class="flex-1 min-w-0">
             <!-- Breadcrumbs -->
             <div>
                 <div class="hidden sm:flex flex-wrap items-center font-medium">
                     <div>
-                        <a class="whitespace-nowrap text-primary-500"
-                            >Dashboard</a
-                        >
+                        <a class="whitespace-nowrap text-primary-500">Dashboard</a>
                     </div>
                     <div class="flex items-center ml-1 whitespace-nowrap">
-                        <mat-icon
-                            class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-right'"
-                        ></mat-icon>
-                        <span class="ml-1 text-secondary"
-                            >Reporte Evaluación Psicológica</span
-                        >
+                        <mat-icon class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+                        <span class="ml-1 text-secondary">Reporte Evaluación Psicológica</span>
                     </div>
                 </div>
                 <div class="flex sm:hidden">
-                    <a
-                        class="inline-flex items-center -ml-1.5 text-secondary font-medium"
-                        [routerLink]="'./..'"
-                    >
-                        <mat-icon
-                            class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-left'"
-                        ></mat-icon>
+                    <a class="inline-flex items-center -ml-1.5 text-secondary font-medium" [routerLink]="'./..'">
+                        <mat-icon class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
                         <span class="ml-1">Back</span>
                     </a>
                 </div>
             </div>
             <!-- Title -->
             <div class="mt-2">
-                <h2
-                    class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
-                >
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
                     Reporte Estudiante
                 </h2>
             </div>
@@ -51,17 +34,14 @@
 
         <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
             <div class="p-2 flex items-center justify-between">
-                <mat-button-toggle-group
-                    (change)="getStudentReport()"
-                    [(ngModel)]="selectedDimension"
-                >
+                <mat-button-toggle-group (change)="getStudentReport()" [(ngModel)]="selectedDimension">
                     @for(typ of reportTypes; track typ){
                     <mat-button-toggle [value]="typ">
                         {{ typ }}
                     </mat-button-toggle>
                     }
                 </mat-button-toggle-group>
-                <button mat-button (click)="returnRoute()">Regresar</button>
+                <button mat-button class="ms-3" (click)="returnRoute()">Regresar</button>
             </div>
         </div>
     </div>
@@ -73,33 +53,26 @@
         <div>
             @for(scale of scales; track scale){
             <details class="px-4 bg-white shadow">
-                <summary
-                    class="py-2 cursor-pointer flex items-center justify-between"
-                >
-                    <span>{{ scale.name }}</span>
-                    <span
-                        [className]="
-                            getMeanClasses(scale.mean) +
-                            ' text-xs text-white px-4 py-2 rounded'
-                        "
-                        >{{ scale.mean | number : ".2-2" }}</span
-                    >
+                <summary class="py-2 cursor-pointer flex items-center justify-between">
+                    <span class="font-bold bg-text"
+                        [ngClass]="selectedDimension === 'HSE' ? 'text-green-700' : 'text-orange-400'">{{ scale.name
+                        }}</span>
+                    <span [className]="getMeanClasses(scale.mean) +
+                                                            'text-xs  px-4 py-2 rounded'
+                                                        ">
+                        {{getConceptoDeResultadosPsi(scale.mean)}} ({{ scale.mean | number :
+                        ".1-1" }})
+                    </span>
                 </summary>
                 <div class="py-2">
                     <ul class="flex flex-col p-4 gap-4">
-                        <li
-                            *ngFor="let indicator of scale.indicators"
-                            class="p-2 flex gap-2 items-center"
-                        >
+                        <li *ngFor="let indicator of scale.indicators" class="p-2 flex gap-2 items-center">
                             <span> {{ indicator.name }}</span>
-                            <div
-                                [className]="
-                                    getMeanClasses(scale.mean) +
-                                    ' px-4 py-2 rounded text-xs text-white w-8 h-8 font-bold flex items-center justify-center'
-                                "
-                            >
-                                {{ indicator.mean | number : ".2-2" }}
-                            </div>
+                            <div [className]="getMeanClasses(indicator.mean) +
+                                                            ' px-2 py-2 rounded text-base flex items-center justify-center text-center'
+                                                        ">
+                                {{getConceptoDeResultadosPsi(indicator.mean)}} ({{ indicator.mean | number :
+                                ".1-1" }}) </div>
                         </li>
                     </ul>
                 </div>
