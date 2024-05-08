@@ -6,6 +6,13 @@ using System.Data;
 
 namespace webapi.Controllers
 {
+    public class Question {
+        public int Id { get; set; }
+        public required string Text { get; set; }
+        public string? Answer { get; set; }
+        public int Order { get; set; }
+    }
+
     [ApiController]
     [Route("[controller]")]
     public class PreguntasPsicologicasController(DapperContext context): ControllerBase
@@ -22,7 +29,7 @@ namespace webapi.Controllers
                 using (var connection = context.CreateConnection())
                 {
 
-                    var questions = await connection.QueryAsync("LISTAR_PREGUNTAS", new { evaluationId, limit, start }, commandType: CommandType.StoredProcedure);
+                    var questions = await connection.QueryAsync<Question>("LISTAR_PREGUNTAS", new { evaluationId, limit, start }, commandType: CommandType.StoredProcedure);
                     return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = questions.ToList() });
 
                 }

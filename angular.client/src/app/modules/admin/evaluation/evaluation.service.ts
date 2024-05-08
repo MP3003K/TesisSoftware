@@ -75,19 +75,20 @@ export class EvaluationService {
         return this.http.get<any>(`${environment.baseURL}/estudiante`);
     }
 
-    updateQuestion(answer: string, answerId: number, evaluationId: number) {
+    updateQuestion(answer: string, questionId: number, evaluationId: number) {
         return this.http.post<any>(
             `${environment.baseURL}/respuestasPsicologicas`,
             {
-                respuesta: answer,
-                preguntaPsicologicaId: answerId,
-                evaPsiEstId: evaluationId,
+                answer,
+                questionId,
+                evaluationId,
             }
         );
     }
-    updateTestState(evaluationId: number, state: string) {
-        return this.http.get<any>(
-            `${environment.baseURL}/respuestasPsicologicas/ActualizarEstadoEvaPsiEst/${evaluationId}/${state}`
+    updateTestState(evaluationId: number) {
+        return this.http.put<any>(
+            `${environment.baseURL}/respuestasPsicologicas/ActualizarEstadoEvaPsiEst/${evaluationId}`,
+            {}
         );
     }
 }

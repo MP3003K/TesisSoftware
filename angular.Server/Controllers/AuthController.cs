@@ -118,6 +118,7 @@ namespace Controllers
             }
 
         }
+        [Authorize]
 
         [HttpGet("Navigation")]
         public async Task<ActionResult> GetNavigation()

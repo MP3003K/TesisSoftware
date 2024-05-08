@@ -6,12 +6,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
 import { EvaluationService } from '../../evaluation.service';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'app-questionary',
     templateUrl: './questionary.component.html',
     standalone: true,
-    imports: [SharedModule, MatIconModule, MatCardModule, MatRadioModule],
+    imports: [
+        SharedModule,
+        MatIconModule,
+        MatCardModule,
+        MatRadioModule,
+        MatButtonModule,
+    ],
 })
 export class QuestionaryComponent {
     endedTest = false;
@@ -42,20 +49,20 @@ export class QuestionaryComponent {
     ngOnInit(): void {
         const { id } = this.route.snapshot.params;
         if (!isNaN(parseInt(id))) {
-            console.log(id);
-            this.getEvaluations(id)
+            this.evaPsiEstId = +id;
+            this.getEvaluations();
         } else {
             this.router.navigate(['..']);
         }
     }
 
-    public getEvaluations(id: number) {
-        this.evaluationService.getQuestions(id).subscribe({
+    public getEvaluations() {
+        this.evaluationService.getQuestions(this.evaPsiEstId).subscribe({
             next: (response) => {
-                
-                console.log(response);
-                // this.questions = response;
-                // this.updatePaginator();
+                if (response.succeeded) {
+                    this.questions = response.data;
+                    this.updatePaginator();
+                }
             },
             error: (err) => {
                 if (err.status == 400) {
@@ -147,7 +154,7 @@ export class QuestionaryComponent {
         console.log(this.questions);
 
         this.evaluationService
-            .updateTestState(this.evaPsiEstId, 'F')
+            .updateTestState(this.evaPsiEstId)
             .subscribe((res) => {
                 console.log(res);
                 this.endedTest = true;

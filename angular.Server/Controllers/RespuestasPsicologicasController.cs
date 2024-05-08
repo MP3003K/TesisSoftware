@@ -121,7 +121,7 @@ namespace Controllers
 
                 using (var connection = context.CreateConnection())
                 {
-                    await connection.QueryAsync("CREATE_ANSWER", answer, commandType: CommandType.StoredProcedure);
+                    await connection.QueryAsync("COMPLETAR_RESPUESTA", answer, commandType: CommandType.StoredProcedure);
                     return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = null });
                 }
             }
