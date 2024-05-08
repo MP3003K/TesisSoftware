@@ -80,16 +80,17 @@
                             }}
                         </span>
                     </div>
-                    <div>Id:</div>
                 </mat-card-content>
+                @if( questionary.estado == "N" ){
+
                 <mat-card-actions>
                     <button
                         mat-button
                         (click)="goToQuestionary(questionary.id)"
                     >
                         Realizar
-                    </button>
-                </mat-card-actions>
+                    </button> </mat-card-actions
+                >}
             </mat-card>
             }
         </div>
