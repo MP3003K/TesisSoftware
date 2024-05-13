@@ -1,9 +1,7 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluationService } from '../../evaluation/evaluation.service';
-import { StudentService } from '../student.service';
-import { ExcelService } from '../excel.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudentRegistrationComponent } from '../student-registration/student-registration.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,10 +12,21 @@ import { ClassroomsService } from '../../classrooms/classrooms.service';
 import { MatButtonModule } from '@angular/material/button';
 
 // librerias para exportar a excel
-import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 
+// librerias para el ordenamiento de la tabla
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Subscription } from 'rxjs';
+
+export interface Student {
+    nombre: string;
+    estadoEvaluacionEstudiante: string;
+    promedio: number;
+    id: number;
+}
 @Component({
     selector: 'app-classroom-report',
     templateUrl: './classroom-report.component.html',
@@ -29,16 +38,17 @@ import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
         MatSelectModule,
         MatButtonToggleModule,
         MatButtonModule,
+        MatTableModule,
+        MatSortModule,
     ],
 })
-export class ClassroomReportComponent {
+export class ClassroomReportComponent implements AfterViewInit {
     public dataInfo: string = 'Seleccione un formulario';
     public selectedUnity!: number;
     public selectedDimension!: number;
     public selectedDegree!: number;
     public selectedSection!: number;
     public selectedClassroomEvaluationId!: number;
-    public studentsClassroom: any[] = [];
 
     dimensions: any[] = [];
     unities: any[] = [];
@@ -46,20 +56,27 @@ export class ClassroomReportComponent {
     classrooms: any[] = [];
     answers: any;
 
+
     constructor(
         private evaluationService: EvaluationService,
         public dialog: MatDialog,
         private _snackbar: MatSnackBar,
         private router: Router,
         private route: ActivatedRoute,
-        private classroomsService: ClassroomsService
+        private classroomsService: ClassroomsService,
+        private _liveAnnouncer: LiveAnnouncer
     ) { }
+
 
     ngOnInit(): void {
         this.getUnities();
         this.getClasses();
         this.agregarValoresInicialesFiltros();
     }
+
+
+    // #region Filtros
+
     agregarValoresInicialesFiltros() {
         const filtros = this.route.snapshot.queryParams.filtros;
         if (filtros && filtros.length > 0) {
@@ -98,6 +115,18 @@ export class ClassroomReportComponent {
         );
         //this.scales = scales;
     }
+    getEstudiantesPorEstado(estado: string): number {
+        return this.dataSource.data.filter(estudiante => estudiante.estadoEvaluacionEstudiante === estado).length;
+    }
+    // #endregion
+    // #region Obtener datos de los estudiantes
+    displayedColumns: string[] = ['nombre', 'estadoEvaluacionEstudiante', 'promedio', 'opciones']; dataSource = new MatTableDataSource<Student>([]);
+
+    @ViewChild('estudiantesTable', { read: MatSort }) estudiantesTableMatSort: MatSort;
+
+    ngAfterViewInit() {
+        this.dataSource.sort = this.estudiantesTableMatSort;
+    }
 
     filterAll() {
         this.classroomsService
@@ -112,7 +141,7 @@ export class ClassroomReportComponent {
                             .subscribe({
                                 next: (response) => {
                                     if (response.succeeded) {
-                                        this.studentsClassroom = response.data;
+                                        this.dataSource.data = response.data;
                                     }
                                 },
                                 error: ({ status }) => {
@@ -137,6 +166,29 @@ export class ClassroomReportComponent {
                     }
                 }
             });
+    }
+    ordenamientoTabla(sort: Sort) {
+        const data = this.dataSource.data.slice(); // Crea una copia de los datos
+
+        if (!sort.active || sort.direction === '') {
+            this.dataSource.data = data;
+            return;
+        }
+
+        this.dataSource.data = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'nombre': return this.compare(a.nombre, b.nombre, isAsc);
+                case 'estadoEvaluacionEstudiante': return this.compare(a.estadoEvaluacionEstudiante, b.estadoEvaluacionEstudiante, isAsc);
+                case 'promedio': return this.compare(a.promedio, b.promedio, isAsc);
+                case 'id': return this.compare(a.id, b.id, isAsc);
+                default: return 0;
+            }
+        });
+    }
+
+    compare(a: number | string, b: number | string, isAsc: boolean) {
+        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
     }
 
     get sections() {
@@ -356,5 +408,4 @@ export class ClassroomReportComponent {
         }
     }
     //#endregion
-
 }
