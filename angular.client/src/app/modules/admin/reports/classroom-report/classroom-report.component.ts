@@ -292,7 +292,7 @@ export class ClassroomReportComponent implements AfterViewInit {
         });
     }
 
-
+    // #endregion
 
     //#region DescargarExcel
     readonly PLANTILLAS = {
@@ -315,7 +315,7 @@ export class ClassroomReportComponent implements AfterViewInit {
 
     async exportarExcel_resultadosPsicologicosAula() {
         try {
-            const selectedDegreeNumber = Number(this.selectedDegree);
+            let selectedDegreeNumber = Number(this.selectedDegree);
             let tipo_test_psi = [1, 2].includes(selectedDegreeNumber) ? 1 : ([3, 4, 5].includes(selectedDegreeNumber) ? 2 : 0);
 
             if (tipo_test_psi === 0) return;
@@ -330,6 +330,12 @@ export class ClassroomReportComponent implements AfterViewInit {
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(buffer);
             const worksheet = workbook.getWorksheet('BASE DE RESPUESTAS');
+
+            const worksheetIndice = workbook.getWorksheet('Índice');
+
+            worksheetIndice.getCell('C7').value = this.toRoman(this.unities.find(u => u.id === this.selectedUnity).nUnidad);
+            worksheetIndice.getCell('C9').value = this.toDegree(this.selectedDegree);
+            worksheetIndice.getCell('C11').value = this.classrooms.find(c => c.id === this.selectedSection).seccion;
 
             resultadosPsiAulaExcel.forEach((resultado, index) => {
                 const { inicio, fin } = this.getRangoGrado(tipo_test_psi);
@@ -350,7 +356,23 @@ export class ClassroomReportComponent implements AfterViewInit {
             saveAs(blob, nombreArchivo);
         } catch (error) {
             console.error(error);
+
         }
+    }
+    toRoman(num) {
+        const roman = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
+        const decimal = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+        let romanNum = '';
+        for (let i = 0; i < decimal.length; i++) {
+            while (decimal[i] <= num) {
+                romanNum += roman[i];
+                num -= decimal[i];
+            }
+        }
+        return romanNum;
+    }
+    toDegree(num) {
+        return `${num}°`;
     }
 
 
