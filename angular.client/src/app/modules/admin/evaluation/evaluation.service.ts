@@ -75,6 +75,13 @@ export class EvaluationService {
         return this.http.get<any>(`${environment.baseURL}/estudiante`);
     }
 
+    bulkInsertAnswers(answers: any[]): Observable<HttpResponse<any>> {
+        return this.http.post<HttpResponse<any>>(
+            `${environment.baseURL}/respuestasPsicologicas/bulk`,
+            answers
+        );
+    }
+
     updateQuestion(answer: string, questionId: number, evaluationId: number) {
         return this.http.post<any>(
             `${environment.baseURL}/respuestasPsicologicas`,

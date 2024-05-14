@@ -72,7 +72,7 @@
                         ></div>
                     </div>
                     <span class="text-[8px]"
-                        >{{ countCompletedAnswers() }} de
+                        >{{ countCompletedAnswers }} de
                         {{ paginator.length }}</span
                     >
                 </div>
@@ -142,20 +142,18 @@
                     >
                         Anterior
                     </button>
+                    @if( paginator.pageNumber != paginator.pages ){
+                    <button mat-flat-button (click)="getNextItem()">
+                        Siguiente
+                    </button>
+                    }
                     <button
                         mat-flat-button
                         color="primary"
-                        (click)="
-                            paginator.pageNumber == paginator.pages
-                                ? submitForm()
-                                : getNextItem()
-                        "
+                        [disabled]="questions.length != countCompletedAnswers"
+                        (click)="submitForm()"
                     >
-                        {{
-                            paginator.pageNumber == paginator.pages
-                                ? "Enviar"
-                                : "Siguiente"
-                        }}
+                        Enviar
                     </button>
                 </div>
             </div>

@@ -1,14 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { environment } from 'environments/environment';
 import { Observable, ReplaySubject, tap } from 'rxjs';
 
-@Injectable({providedIn: 'root'})
-export class NavigationService
-{
+@Injectable({ providedIn: 'root' })
+export class NavigationService {
     private _httpClient = inject(HttpClient);
-    private _navigation: ReplaySubject<Navigation> = new ReplaySubject<Navigation>(1);
+    private _navigation: ReplaySubject<Navigation> =
+        new ReplaySubject<Navigation>(1);
+    constructor(private router: Router) {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -17,8 +19,7 @@ export class NavigationService
     /**
      * Getter for navigation
      */
-    get navigation$(): Observable<Navigation>
-    {
+    get navigation$(): Observable<Navigation> {
         return this._navigation.asObservable();
     }
 
@@ -29,13 +30,13 @@ export class NavigationService
     /**
      * Get all navigation data
      */
-    get(): Observable<Navigation>
-    {
-        return this._httpClient.get<Navigation>(`${environment.baseURL}/auth/navigation`).pipe(
-            tap((navigation) =>
-            {
-                this._navigation.next(navigation);
-            }),
-        );
+    get(): Observable<Navigation> {
+        return this._httpClient
+            .get<Navigation>(`${environment.baseURL}/auth/navigation`)
+            .pipe(
+                tap((navigation) => {
+                    this._navigation.next(navigation);
+                })
+            );
     }
 }

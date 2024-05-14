@@ -17,6 +17,9 @@ namespace Controllers
         public string? Email { get; set; }
         public string? Avatar { get; set; }
         public string? Status { get; set; }
+        public string? Role { get; set; }
+        public string? Redirect { get; set; }
+
     }
     public class Access
     {

@@ -110,11 +110,11 @@ export class QuestionaryComponent {
     ];
 
     public radioChange(value: string, questionId: number) {
-        this.evaluationService
-            .updateQuestion(value, questionId, this.evaPsiEstId)
-            .subscribe((res) => {
-                this.db.saveQuestions(this.questions, this.evaPsiEstId);
-            });
+        // this.evaluationService
+        //     .updateQuestion(value, questionId, this.evaPsiEstId)
+        //     .subscribe((res) => {
+        //         this.db.saveQuestions(this.questions, this.evaPsiEstId);
+        //     });
     }
 
     public filterQuestions() {
@@ -123,16 +123,14 @@ export class QuestionaryComponent {
         const lastItemIndex = firstItemIndex + pageSize;
         return this.questions.slice(firstItemIndex, lastItemIndex);
     }
-    public countCompletedAnswers() {
-        const completedAnswersCount = this.questions.reduce(
-            (a: number, b: any) => {
-                if (b.answer) return a + 1;
-                return a;
-            },
-            0
-        );
-        return completedAnswersCount;
+
+    get countCompletedAnswers() {
+        return this.questions.reduce((a: number, b: any) => {
+            if (b.answer) return a + 1;
+            return a;
+        }, 0);
     }
+
     getPreviousItem() {
         this.paginator.pageNumber -= 1;
     }
@@ -142,7 +140,6 @@ export class QuestionaryComponent {
             this._snackbar.open('Datos Faltantes', '', { duration: 1000 });
             return;
         }
-        //this.evaluationService.updateQuestion('1', 1, 1);
         this.paginator.pageNumber += 1;
         this.scrollToTop();
     }
@@ -155,19 +152,27 @@ export class QuestionaryComponent {
         });
     }
     submitForm() {
-        console.log(this.questions);
-
+        const parsedAnswers = this.questions.map(
+            ({ id: preg, answer: res }) => ({
+                preg,
+                res,
+            })
+        );
         this.evaluationService
-            .updateTestState(this.evaPsiEstId)
-            .subscribe((res) => {
-                console.log(res);
-                this.endedTest = true;
+            .bulkInsertAnswers(parsedAnswers)
+            .subscribe((response) => {
+                if (response.succeeded) {
+                    this.evaluationService
+                        .updateTestState(this.evaPsiEstId)
+                        .subscribe((res) => {
+                            console.log(res);
+                            this.endedTest = true;
+                        });
+                }
             });
     }
     public getPValue() {
-        return `${
-            (this.countCompletedAnswers() * 100) / this.paginator.length
-        }%`;
+        return `${(this.countCompletedAnswers * 100) / this.paginator.length}%`;
     }
     validatePage() {
         return this.filterQuestions().every((e: any) => e.answer);

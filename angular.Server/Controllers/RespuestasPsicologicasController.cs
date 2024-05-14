@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Context;
 using System.Data;
 using Dapper;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace Controllers
 {
@@ -29,10 +32,31 @@ namespace Controllers
         public double? IndicatorMean { get; set; }
     }
 
+
+    public class BulkInsertAnswer
+    {
+        public int Preg { get; set; }
+        public string Res { get; set; }
+    }
+
     [ApiController]
     [Route("[controller]")]
     public class RespuestasPsicologicasController(DapperContext context) : ControllerBase
     {
+
+        [Authorize]
+        [HttpPost("Bulk")]
+        public async Task<ActionResult> BulkInsertAnswers([FromBody] List<BulkInsertAnswer> answers)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            using (var connection = context.CreateConnection())
+            {
+                await connection.QueryAsync("InsertOrUpdateRespuestasPsicologicasEstudiante", new { respuestasPsicologicasJson = JsonSerializer.Serialize(answers), v_usuarioId = userId }, commandType: CommandType.StoredProcedure);
+                return Ok(new Response<dynamic> { Message = "Insertado Correctamente", Succeeded = true, Data = answers });
+            }
+        }
+
         [HttpGet("RespuestasAula/all")]
         public async Task<ActionResult> RespuestasPsicologicas()
         {
