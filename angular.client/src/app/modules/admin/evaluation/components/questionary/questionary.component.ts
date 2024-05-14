@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
 import { EvaluationService } from '../../evaluation.service';
 import { MatButtonModule } from '@angular/material/button';
+import { DatabaseService } from './database.service';
 
 @Component({
     selector: 'app-questionary',
@@ -36,7 +37,8 @@ export class QuestionaryComponent {
         private router: Router,
         private _snackbar: MatSnackBar,
         public evaluationService: EvaluationService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private db: DatabaseService
     ) {}
     updatePaginator() {
         this.paginator.pageNumber = 1;
@@ -47,6 +49,7 @@ export class QuestionaryComponent {
     }
 
     ngOnInit(): void {
+        this.db.start();
         const { id } = this.route.snapshot.params;
         if (!isNaN(parseInt(id))) {
             this.evaPsiEstId = +id;
@@ -61,6 +64,7 @@ export class QuestionaryComponent {
             next: (response) => {
                 if (response.succeeded) {
                     this.questions = response.data;
+                    this.db.saveQuestions(this.questions, this.evaPsiEstId);
                     this.updatePaginator();
                 }
             },
@@ -109,7 +113,7 @@ export class QuestionaryComponent {
         this.evaluationService
             .updateQuestion(value, questionId, this.evaPsiEstId)
             .subscribe((res) => {
-                console.log(res);
+                this.db.saveQuestions(this.questions, this.evaPsiEstId);
             });
     }
 

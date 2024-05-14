@@ -45,7 +45,9 @@ else
     app.MapFallbackToFile("index.html");
 
 }
+
 app.UseCors();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
