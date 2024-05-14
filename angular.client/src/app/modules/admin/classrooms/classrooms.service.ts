@@ -78,4 +78,21 @@ export class ClassroomsService {
             `${environment.baseURL}/RespuestasPsicologicas/resultadosPsiAulaExcel/${aulaId}/${unidadId}`
         );
     }
+
+    crearNUnidadOAnio(crear_anio: number, params: any) {
+        return this.http.post<any>(
+            `${environment.baseURL}/Classroom/crearNUnidadOAnio/${crear_anio}`, params
+        );
+    }
+    actualizarEstudiante(params: any) {
+        return this.http.put<any>(
+            `${environment.baseURL}/Classroom/ActualizarEstudiante`, params
+        );
+    }
+
+    updateEstadoEvaPsiAula(unidadId: number, aulaId: number, iniciarEvalucion: number, params: any) {
+        return this.http.post<any>(
+            `${environment.baseURL}/Classroom/updateEstadoEvaPsiAula/${unidadId}/${aulaId}/${iniciarEvalucion}`, params
+        );
+    }
 }

@@ -1,9 +1,11 @@
-﻿using System.Data;
-using Context;
-using Dapper;
+﻿using DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Context;
+using System.Data;
+using Dapper;
 using Application.Wrappers;
-
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers
 {
@@ -19,6 +21,7 @@ namespace Controllers
         public int EscuelaId { get; set; }
         public bool Estado { get; set; }
     }
+
 
     [ApiController]
     [Route("[controller]")]
@@ -103,6 +106,7 @@ namespace Controllers
         /// </summary>
         [HttpGet("getRespuestasEstudianteAula/{evaPsiAulaId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+
         public async Task<IActionResult> RespuestasEstudianteAula(int evaPsiAulaId)
         {
             try
@@ -120,5 +124,90 @@ namespace Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        [HttpPost("crearNUnidadOAnio/{crear_anio:int}")]
+        public async Task<ActionResult> PROC_CREAR_UNIDAD(int crear_anio)
+        {
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    var classrooms = await connection.QueryAsync("PROC_CREAR_UNIDAD", new { v_crear_anio = crear_anio }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = classrooms.ToList() });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+
+        [HttpPut("ActualizarEstudiante")]
+        public async Task<ActionResult> PROC_EDITAR_ESTUDIANTE([FromBody] ActualizarEstudianteDto person)
+        {
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    await connection.QueryAsync("PROC_EDITAR_ESTUDIANTE", new
+                    {
+                        v_idEstudiante = person.Id,
+                        v_nombres = person.Nombres,
+                        v_apellidoPaterno = person.ApellidoPaterno,
+                        v_apellidoMaterno = person.ApellidoMaterno,
+                        v_DNI = person.DNI
+                    }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = person });
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpPost("updateEstadoEvaPsiAula/{unidadId:int}/{aulaId:int}/{iniciarEvalucion:int}")]
+        public async Task<ActionResult> PROC_CAMBIAR_ESTADO_EVALUCION_PSICOLOGICA(int unidadId, int aulaId, int iniciarEvalucion)
+        {
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    var classrooms = await connection.QueryAsync("PROC_CAMBIAR_ESTADO_EVALUCION_PSICOLOGICA", new
+                    {
+                        v_unidadId = unidadId,
+                        v_aulaId = aulaId,
+                        v_iniciarEvalucion = iniciarEvalucion,
+                    }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = classrooms.ToList() });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public class ActualizarEstudianteDto
+        {
+            public int Id { get; set; }
+            public string Nombres { get; set; } = string.Empty;
+            public string ApellidoPaterno { get; set; } = string.Empty;
+            public string ApellidoMaterno { get; set; } = string.Empty;
+            public int DNI { get; set; }
+        }
     }
+
+
 }

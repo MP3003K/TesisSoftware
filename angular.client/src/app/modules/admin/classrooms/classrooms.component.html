@@ -45,8 +45,11 @@
                             </mat-option>
                             }
 
-                            <mat-option (click)="openCreateUnitModal()">
+                            <mat-option (click)="openCreateUnitModal('Unidad')">
                                 Crear Unidad
+                            </mat-option>
+                            <mat-option (click)="openCreateUnitModal('Año')">
+                                Crear Año
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -118,7 +121,8 @@
                                         placeholder="Buscar estudiante" #query>
                                 </mat-form-field>
                                 <button mat-button
-                                    [class]="getEstadoPruebaPsicologicaAula(estadoEvalucionPsicologicaAula).class">
+                                    [class]="getEstadoPruebaPsicologicaAula(estadoEvalucionPsicologicaAula).class"
+                                    (click)="openUpdateEstadoEvaPsiAulaModal()">
                                     {{ getEstadoPruebaPsicologicaAula(estadoEvalucionPsicologicaAula).text }}
                                 </button>
                             </div>
@@ -154,9 +158,9 @@
                                             <td mat-cell *matCellDef="let student">
                                                 <span
                                                     class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
-                                                    [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': student.EstadoEstudiante === 'F',
+                                                    [ngClass]="{'bg-orange-200 text-orange-800 dark:bg-orange-600 dark:text-orange-50': student.EstadoEstudiante === 'P',
                                                                 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-50': student.EstadoEstudiante === 'N',
-                                                                'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.EstadoEstudiante === 'P'}">
+                                                                'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': student.EstadoEstudiante === 'F'}">
                                                     <span class="leading-relaxed whitespace-nowrap">
                                                         {{student.EstadoEstudiante === 'F' ? 'Terminado' :
                                                         student.EstadoEstudiante === 'N' ? 'No iniciado' :
@@ -170,7 +174,7 @@
                                         <ng-container matColumnDef="Opciones" class="hidden sm:table-cell">
                                             <th mat-header-cell *matHeaderCellDef>Opciones</th>
                                             <td mat-cell *matCellDef="let student">
-                                                <button mat-icon-button (click)="editStudent(student)">
+                                                <button mat-icon-button (click)="formEditStudent(student)">
                                                     <mat-icon>edit</mat-icon>
                                                 </button>
                                                 <button mat-icon-button (click)="deleteStudent(student)">
@@ -352,7 +356,7 @@
                                             <div class="w-full">
                                                 <form [formGroup]="
                                                                         formEditarEstudiante
-                                                                    " (ngSubmit)="registerStudent()"
+                                                                    " (ngSubmit)="editEstudiante()"
                                                     class="flex flex-col p-2">
                                                     <mat-form-field class="flex-auto mb-2">
                                                         <mat-label>Nombres</mat-label>
@@ -419,10 +423,8 @@
                                                     </mat-form-field>
                                                     <div class="flex justify-end mt-4">
                                                         <button type="submit" mat-raised-button color="primary"
-                                                            [disabled]="
-                                                                                formEditarEstudiante.invalid
-                                                                            ">
-                                                            Registrar
+                                                            [disabled]="formEditarEstudiante.invalid">
+                                                            Editar
                                                         </button>
                                                     </div>
                                                 </form>

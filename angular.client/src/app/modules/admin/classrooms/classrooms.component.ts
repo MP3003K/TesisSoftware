@@ -119,10 +119,31 @@ export class ClassroomsComponent implements OnInit {
             .subscribe((response) => {
                 if (response.succeeded) {
                     this.classroomStudents = response.data;
-                    this.estadoEvalucionPsicologicaAula = this.classroomStudents[1].EstadoAula ?? 'N';
+                    this.estadoEvalucionPsicologicaAula = this.classroomStudents[0].EstadoAula ?? 'N';
                     console.log(this.estadoEvalucionPsicologicaAula);
                 }
             });
+    }
+
+    cambiarEstadoEvaluacionPsicologicaAula() {
+        let estado = this.estadoEvalucionPsicologicaAula;
+        console.log(estado);
+        console.log('Hola')
+        if (estado == 'F')
+            return;
+
+        if (['N', 'P'].includes(estado)) {
+            let opcion = estado === 'N' ? 1 : 0; // 1: Iniciar, 0: Finalizar
+            console.log('selectedUnity: ', this.selectedUnity, 'selectedSection: ', this.selectedSection, 'opcion: ');
+            this.classroomsService.updateEstadoEvaPsiAula(this.selectedUnity, this.selectedSection, opcion, '').subscribe(
+                () => {
+                    this.obtnerEstudiantesPorAulaYUnidad();
+                },
+                error => {
+                    console.log(error);
+                }
+            );
+        }
     }
 
     createStudent() {
@@ -150,11 +171,11 @@ export class ClassroomsComponent implements OnInit {
         let classStyle = 'text-white w-auto';
         switch (status) {
             case 'F':
-                return { text: 'Evaluación finalizada', class: `${classStyle} bg-red-500` };
+                return { text: 'Evaluación Terminado', class: `${classStyle} bg-green-500` };
             case 'N':
-                return { text: 'Evaluación pendiente', class: `${classStyle} bg-gray-500` };
+                return { text: 'Evaluación No iniciado', class: `${classStyle} bg-gray-500` };
             case 'P':
-                return { text: 'Evaluación activa', class: `${classStyle} bg-green-500` };
+                return { text: 'Evaluación En proceso', class: `${classStyle} bg-orange-500` };
             default:
                 return { text: '', class: '' };
         }
@@ -224,16 +245,37 @@ export class ClassroomsComponent implements OnInit {
             })
             .subscribe((response) => {
                 if (response.succeeded) {
-                    console.log(response.data);
+                    this.formRegistrarEstudiante.reset();
                     this.items = 'list';
                     this.obtnerEstudiantesPorAulaYUnidad();
                 }
             });
     }
 
-    openCreateUnitModal(): void {
+    openUpdateEstadoEvaPsiAulaModal(): void {
         const dialogRef = this.confirmationService.open({
-            title: '¿Deseas Crear Unidad?',
+            title: '¿Deseas cambiar el estado del test psicologico?',
+            message: 'Una vez aceptado no se podra revertir los cambios',
+            dismissible: true,
+            actions: {
+                cancel: {
+                    label: 'Cancelar',
+                },
+                confirm: {
+                    label: 'Actualizar',
+                },
+            },
+            icon: { color: 'info', name: 'info', show: true },
+        });
+        dialogRef.afterClosed().subscribe((res) => {
+            if (res === 'confirmed') {
+                this.cambiarEstadoEvaluacionPsicologicaAula();
+            }
+        });
+    }
+    openCreateUnitModal(tipo: string): void {
+        const dialogRef = this.confirmationService.open({
+            title: '¿Deseas Crear ' + tipo + '?',
             message: null,
             dismissible: true,
             actions: {
@@ -248,7 +290,23 @@ export class ClassroomsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((res) => {
             if (res === 'confirmed') {
-                console.log('TODO: Crear Unidad');
+                console.log("hola");
+                const tipoMap = {
+                    'Unidad': 0,
+                    'Año': 1
+                };
+
+                if (tipo in tipoMap) {
+                    console.log(tipoMap[tipo])
+                    this.classroomsService.crearNUnidadOAnio(tipoMap[tipo], '')
+                        .subscribe(
+                            response => {
+                                console.log('Respuesta del servidor: ', response);
+                                this.obtenerListadeUnidades();
+                            },
+                            error => console.error('Error al realizar la solicitud: ', error)
+                        );
+                }
             }
         });
     }
@@ -280,7 +338,7 @@ export class ClassroomsComponent implements OnInit {
     deleteStudent(student) {
     }
     // #region Editar Estudiante
-    editStudent(student) {
+    formEditStudent(student) {
         if (!student)
             return;
 
@@ -292,6 +350,21 @@ export class ClassroomsComponent implements OnInit {
             dni: student.DNI,
         });
         this.items = 'edit';
+    }
+
+    editEstudiante() {
+        this.classroomsService.actualizarEstudiante(this.formEditarEstudiante.value).subscribe(
+            response => {
+                if (response.succeeded) {
+                    this.obtnerEstudiantesPorAulaYUnidad();
+                    this.formEditarEstudiante.reset();
+                    this.items = 'list';
+                }
+            },
+            error => {
+                console.error('Error al realizar la solicitud: ', error);
+            }
+        );
     }
 
     formatName(name: string): string {
