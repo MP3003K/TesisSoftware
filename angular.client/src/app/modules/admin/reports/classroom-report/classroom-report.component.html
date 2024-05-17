@@ -143,15 +143,18 @@
                         <!-- Estado Evaluacion Estudiante Column -->
                         <ng-container matColumnDef="estadoEvaluacionEstudiante">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado Evaluacion</th>
-                            <td mat-cell *matCellDef="let element" class="font-bold text-base" [ngClass]="{
-                                    'text-red-800': element.estadoEvaluacionEstudiante === 'F',
-                                    'text-gray-800': element.estadoEvaluacionEstudiante === 'N',
-                                    'text-green-700': element.estadoEvaluacionEstudiante === 'P'
-                                }">
-                                <span class="leading-relaxed whitespace-nowrap">
-                                    {{element.estadoEvaluacionEstudiante === 'F' ? 'Terminado' :
-                                    element.estadoEvaluacionEstudiante === 'N' ? 'No iniciado' :
-                                    element.estadoEvaluacionEstudiante === 'P' ? 'En proceso' : ''}}
+                            <td mat-cell *matCellDef="let element">
+                                <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+                                    [ngClass]="{
+                                        'bg-orange-200 text-orange-800 dark:bg-orange-600 dark:text-orange-50': element.estadoEvaluacionEstudiante === 'P',
+                                        'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-50': element.estadoEvaluacionEstudiante === 'N',
+                                        'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': element.estadoEvaluacionEstudiante === 'F'
+                                    }">
+                                    <span class="leading-relaxed whitespace-nowrap">
+                                        {{element.estadoEvaluacionEstudiante === 'F' ? 'Terminado' :
+                                        element.estadoEvaluacionEstudiante === 'N' ? 'No iniciado' :
+                                        element.estadoEvaluacionEstudiante === 'P' ? 'En proceso' : ''}}
+                                    </span>
                                 </span>
                             </td>
                         </ng-container>

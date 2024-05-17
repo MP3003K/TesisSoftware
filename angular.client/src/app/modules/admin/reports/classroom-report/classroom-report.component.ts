@@ -137,7 +137,7 @@ export class ClassroomReportComponent implements AfterViewInit {
                     if (id) {
                         this.selectedClassroomEvaluationId = id;
                         this.evaluationService
-                            .getClasroomAnswers(id)
+                            .getClasroomAnswers(id, this.selectedDimension)
                             .subscribe({
                                 next: (response) => {
                                     if (response.succeeded) {

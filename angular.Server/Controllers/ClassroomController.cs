@@ -104,17 +104,17 @@ namespace Controllers
         /// <summary>
         /// Obtener los estudiantes de una Aula en una Unidad
         /// </summary>
-        [HttpGet("getRespuestasEstudianteAula/{evaPsiAulaId:int}")]
+        [HttpGet("getRespuestasEstudianteAula/{evaPsiAulaId:int}/{dimension:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
 
-        public async Task<IActionResult> RespuestasEstudianteAula(int evaPsiAulaId)
+        public async Task<IActionResult> RespuestasEstudianteAula(int evaPsiAulaId, int dimension)
         {
             try
             {
                 using (var connection = context.CreateConnection())
                 {
 
-                    var students = await connection.QueryAsync("LISTAR_RESPUESTAS_ESTUDIANTES_AULA2", new { evaluationId = evaPsiAulaId }, commandType: CommandType.StoredProcedure);
+                    var students = await connection.QueryAsync("LISTAR_RESPUESTAS_ESTUDIANTES_AULA2", new { evaluationId = evaPsiAulaId, tipoDimension = dimension }, commandType: CommandType.StoredProcedure);
                     return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = students.ToList() });
 
                 }

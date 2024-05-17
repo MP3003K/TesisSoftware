@@ -58,7 +58,7 @@
                         [ngClass]="selectedDimension === 'HSE' ? 'text-green-700' : 'text-orange-400'">{{ scale.name
                         }}</span>
                     <span [className]="getMeanClasses(scale.mean) +
-                                                            'text-xs  px-4 py-2 rounded'
+                                                            ' px-2 py-2 rounded text-base flex items-center justify-center text-center'
                                                         ">
                         {{getConceptoDeResultadosPsi(scale.mean)}} ({{ scale.mean | number :
                         ".1-1" }})

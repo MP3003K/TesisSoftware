@@ -23,12 +23,22 @@
         class="relative flex flex-0 items-center w-full h-16 sm:h-20 px-4 md:px-6 z-49 shadow dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden">
         <ng-container *ngIf="!isScreenSmall">
             <!-- Logo -->
-            <div class="flex items-center mx-2 lg:mr-8">
+            <!-- <div class="flex items-center mx-2 lg:mr-8">
                 <div class="hidden lg:flex">
                     <img class="dark:hidden w-24" src="assets/images/logo/logo-app.png">
                     <img class="hidden dark:flex w-24" src="assets/images/logo/logo-app.png">
                 </div>
                 <img class="flex lg:hidden w-8" src="assets/images/logo/logo-app.png">
+            </div> -->
+            <div class="flex items-center mx-2 lg:mr-8">
+                <div class="hidden lg:flex">
+                    <img class="dark:hidden w-20 max-w-full max-h-20 h-auto scale-75"
+                        src="assets/images/logo/logo-app.png">
+                    <img class="hidden dark:flex w-20 max-w-full max-h-20 h-auto scale-75"
+                        src="assets/images/logo/logo-app.png">
+                </div>
+                <img class="flex lg:hidden w-6 max-w-full max-h-6 h-auto scale-75"
+                    src="assets/images/logo/logo-app.png">
             </div>
             <!-- Horizontal navigation -->
             <fuse-horizontal-navigation class="mr-2" [name]="'mainNavigation'"

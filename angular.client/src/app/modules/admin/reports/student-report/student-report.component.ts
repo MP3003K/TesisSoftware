@@ -64,7 +64,7 @@ export class StudentReportComponent implements OnInit {
                 : 'bg-[#00b050] text-white';
         } else if (mean > 1 && mean <= 3) {
             return dimensionId == 1
-                ? 'bg-[#70ad47] text-black'
+                ? 'bg-[#70ad47] text-white'
                 : 'bg-[#ffff00] text-black';
         } else if (mean >= 3 && mean <= 4) {
             return dimensionId == 1
