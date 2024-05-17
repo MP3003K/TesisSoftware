@@ -201,14 +201,19 @@ namespace Controllers
 
 
         [HttpPost("students")]
-        public async Task<ActionResult> AsignarEstudianteAula([FromBody] StudentClassroomDto studentClassroomDto)
+        public async Task<ActionResult> AsignarEstudianteAula([FromBody] StudentClassroomDto dto)
         {
             try
             {
                 using (var connection = context.CreateConnection())
                 {
 
-                    await connection.QueryAsync("proc_asignar_estudiante_a_aula", studentClassroomDto, commandType: CommandType.StoredProcedure);
+                    await connection.QueryAsync("proc_asignar_estudiante_a_aula", new {
+                        v_aulaId = dto.ClassroomId,
+                        v_estudianteId = dto.StudentId,
+                        v_unidadId = dto.UnityId,
+                        v_añadir = 1
+                    }, commandType: CommandType.StoredProcedure);
                     return Ok(new Response<dynamic> { Message = "Asignado Correctamente", Succeeded = true, Data = null });
 
                 }
@@ -221,10 +226,9 @@ namespace Controllers
 
         public class StudentClassroomDto
         {
-            public int V_aulaId { get; set; }
-            public int V_estudianteId { get; set; }
-            public int V_unidadId { get; set; }
-            public int V_añadir { get; set; }
+            public int ClassroomId { get; set; }
+            public int StudentId { get; set; }
+            public int UnityId { get; set; }
         }
 
         public class ActualizarEstudianteDto

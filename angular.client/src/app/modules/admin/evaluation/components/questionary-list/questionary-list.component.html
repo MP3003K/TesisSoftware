@@ -70,18 +70,22 @@
                             [ngClass]="
                                 questionary.estado == 'N'
                                     ? 'bg-red-600'
+                                    : questionary.estado == 'P'
+                                    ? 'bg-yellow-600'
                                     : 'bg-green-600'
                             "
                         >
                             {{
                                 questionary.estado == "N"
                                     ? "Inconclusa"
+                                    : questionary.estado == "P"
+                                    ? 'Proceso'
                                     : "Completada"
                             }}
                         </span>
                     </div>
                 </mat-card-content>
-                @if( questionary.estado == "N" ){
+                @if( questionary.estado == "N" || questionary.estado == "P"){
 
                 <mat-card-actions>
                     <button
@@ -91,6 +95,14 @@
                         Realizar
                     </button> </mat-card-actions
                 >}
+            </mat-card>
+            } @empty {
+            <mat-card class="col-span-4">
+                <mat-card-content>
+                    <div class="text-center">
+                        No hay cuestionarios disponibles
+                    </div>
+                </mat-card-content>
             </mat-card>
             }
         </div>
