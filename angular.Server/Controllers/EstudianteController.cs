@@ -32,7 +32,7 @@ namespace Controllers
             try
             {
                 int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
+                Console.WriteLine(userId);
                 using (var connection = context.CreateConnection())
                 {
 
