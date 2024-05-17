@@ -168,14 +168,14 @@ export class ClassroomsComponent implements OnInit {
         });
     }
     getEstadoPruebaPsicologicaAula(status: string): { text: string, class: string } {
-        let classStyle = 'text-white w-auto';
+        let classStyle = 'w-auto font-bold';
         switch (status) {
             case 'F':
-                return { text: 'Evaluación Terminado', class: `${classStyle} bg-green-500` };
+                return { text: 'Evaluación Terminado', class: `${classStyle} bg-green-200 text-green-800` };
             case 'N':
-                return { text: 'Evaluación No iniciado', class: `${classStyle} bg-gray-500` };
+                return { text: 'Evaluación No iniciado', class: `${classStyle} bg-gray-200 text-gray-800 ` };
             case 'P':
-                return { text: 'Evaluación En proceso', class: `${classStyle} bg-orange-500` };
+                return { text: 'Evaluación En proceso', class: `${classStyle} bg-orange-200 text-orange-800 ` };
             default:
                 return { text: '', class: '' };
         }
@@ -252,7 +252,10 @@ export class ClassroomsComponent implements OnInit {
             });
     }
 
-    openUpdateEstadoEvaPsiAulaModal(): void {
+    openUpdateEstadoEvaPsiAulaModal(estado: string): void {
+        if (estado == 'Evaluación Terminado')
+            return;
+
         const dialogRef = this.confirmationService.open({
             title: '¿Deseas cambiar el estado del test psicologico?',
             message: 'Una vez aceptado no se podra revertir los cambios',

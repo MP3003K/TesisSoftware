@@ -332,10 +332,12 @@ export class ClassroomReportComponent implements AfterViewInit {
             const worksheet = workbook.getWorksheet('BASE DE RESPUESTAS');
 
             const worksheetIndice = workbook.getWorksheet('Índice');
-
-            worksheetIndice.getCell('C7').value = this.toRoman(this.unities.find(u => u.id === this.selectedUnity).nUnidad);
-            worksheetIndice.getCell('C9').value = this.toDegree(this.selectedDegree);
-            worksheetIndice.getCell('C11').value = this.classrooms.find(c => c.id === this.selectedSection).seccion;
+            let unidad = this.toRoman(this.unities.find(u => u.id === this.selectedUnity).nUnidad);
+            let grado = this.toDegree(this.selectedDegree);
+            let seccion = this.classrooms.find(c => c.id === this.selectedSection).seccion;
+            worksheetIndice.getCell('C7').value = unidad;
+            worksheetIndice.getCell('C9').value = grado;
+            worksheetIndice.getCell('C11').value = seccion;
 
             resultadosPsiAulaExcel.forEach((resultado, index) => {
                 const { inicio, fin } = this.getRangoGrado(tipo_test_psi);
@@ -352,11 +354,10 @@ export class ClassroomReportComponent implements AfterViewInit {
 
             const bufferExcel = await workbook.xlsx.writeBuffer();
             const blob = new Blob([bufferExcel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const nombreArchivo = this.crearNombreArchivo();
+            const nombreArchivo = 'eva_' + grado + seccion + '_' + 'U' + unidad;
             saveAs(blob, nombreArchivo);
         } catch (error) {
             console.error(error);
-
         }
     }
     toRoman(num) {
@@ -373,12 +374,6 @@ export class ClassroomReportComponent implements AfterViewInit {
     }
     toDegree(num) {
         return `${num}°`;
-    }
-
-
-    crearNombreArchivo() {
-        const fecha = new Date();
-        return `evaluacion_hse_1a_${fecha.getDate()}-${fecha.getMonth() + 1}-${fecha.getFullYear()}.xlsx`;
     }
 
     mapearRespuestas(respuestaNumerica) {
