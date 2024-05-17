@@ -139,6 +139,11 @@
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
                             <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
                         </ng-container>
+                            <!-- DNI Column -->
+                            <ng-container matColumnDef="DNI">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>DNI</th>
+                                <td mat-cell *matCellDef="let element"> {{element.DNI}} </td>
+                            </ng-container>
 
                         <!-- Estado Evaluacion Estudiante Column -->
                         <ng-container matColumnDef="estadoEvaluacionEstudiante">

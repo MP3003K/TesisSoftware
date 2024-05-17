@@ -120,7 +120,7 @@ export class ClassroomReportComponent implements AfterViewInit {
     }
     // #endregion
     // #region Obtener datos de los estudiantes
-    displayedColumns: string[] = ['nombre', 'estadoEvaluacionEstudiante', 'promedio', 'opciones']; dataSource = new MatTableDataSource<Student>([]);
+    displayedColumns: string[] = ['nombre', 'DNI', 'estadoEvaluacionEstudiante', 'promedio', 'opciones']; dataSource = new MatTableDataSource<Student>([]);
 
     @ViewChild('estudiantesTable', { read: MatSort }) estudiantesTableMatSort: MatSort;
 

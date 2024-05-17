@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace Controllers
 {
 
-    public class EvaluationStudent {
+    public class EvaluationStudent
+    {
         public int Id { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
@@ -32,7 +33,6 @@ namespace Controllers
             try
             {
                 int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                Console.WriteLine(userId);
                 using (var connection = context.CreateConnection())
                 {
 
