@@ -88,24 +88,20 @@ export class QuestionaryComponent {
     }
     itemOptions: any[] = [
         {
-            name: 'Nunca',
+            name: 'Totalmente En Desacuerdo',
             value: '1',
         },
         {
-            name: 'Casi Nunca',
+            name: 'En Desacuerdo',
             value: '2',
         },
         {
-            name: 'A veces',
+            name: 'De Acuerdo',
             value: '3',
         },
         {
-            name: 'Casi Siempre',
+            name: 'Totalmente De Acuerdo',
             value: '4',
-        },
-        {
-            name: 'Siempre',
-            value: '5',
         },
     ];
 
