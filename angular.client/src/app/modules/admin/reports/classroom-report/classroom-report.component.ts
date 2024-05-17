@@ -129,11 +129,13 @@ export class ClassroomReportComponent implements AfterViewInit {
     }
 
     filterAll() {
+        this.dataSource.data = [];
         this.classroomsService
             .getEvaluation(this.selectedUnity, this.selectedSection)
             .subscribe((response) => {
                 if (response.succeeded) {
                     const { id } = response.data;
+                    console.log(id);
                     if (id) {
                         this.selectedClassroomEvaluationId = id;
                         this.evaluationService

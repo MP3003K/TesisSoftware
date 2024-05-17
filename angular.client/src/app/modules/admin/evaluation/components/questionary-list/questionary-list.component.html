@@ -39,24 +39,24 @@
             <mat-card>
                 <mat-card-content>
                     <div>
-                        Inicio:
+                        <b>Inicio: </b>
                         {{ questionary.fechaInicio | date : "dd/MM/yyyy" }}
                     </div>
                     <div>
-                        Fin: {{ questionary.fechaFin | date : "dd/MM/yyyy" }}
+                        <b>Fin: </b>{{ questionary.fechaFin | date : "dd/MM/yyyy" }}
                     </div>
                     <div>
-                        Estado:
-                        <span class="px-2 py-1 text-white rounded shadow text-xs" [ngClass]="
+                        <b>Estado: </b>
+                        <span class="px-2 py-1 rounded shadow text-base font-bold" [ngClass]="
                                 questionary.estado == 'N'
-                                    ? 'bg-red-600'
+                                    ? 'bg-gray-200 text-gray-800'
                                     : questionary.estado == 'P'
-                                    ? 'bg-yellow-600'
-                                    : 'bg-green-600'
+                                    ? 'bg-orange-200 text-orange-800'
+                                    : 'bg-green-200 text-green-800'
                             ">
                             {{
                             questionary.estado == "N"
-                            ? "Inconclusa"
+                            ? "Sin Comenzar"
                             : questionary.estado == "P"
                             ? 'En Proceso'
                             : "Completada"
@@ -67,9 +67,10 @@
                 @if( questionary.estado == "N" || questionary.estado == "P"){
 
                 <mat-card-actions>
-                    <button mat-button (click)="goToQuestionary(questionary.id)">
+                    <button mat-fab extended (click)="goToQuestionary(questionary.id)" class="mt-2">
                         Realizar
-                    </button> </mat-card-actions>}
+                    </button>
+                </mat-card-actions>}
             </mat-card>
             } @empty {
             <mat-card class="col-span-4">

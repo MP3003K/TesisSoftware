@@ -91,7 +91,7 @@ export class ClassroomsComponent implements OnInit {
         private personaService: PersonaService,
         private studentService: StudentService,
         private snack: MatSnackBar
-    ) {}
+    ) { }
 
     // Métodos de ciclo de vida
     ngOnInit() {
@@ -143,6 +143,7 @@ export class ClassroomsComponent implements OnInit {
     }
 
     obtnerEstudiantesPorAulaYUnidad() {
+        this.classroomStudents = [];
         this.classroomsService
             .getStudentsByAulaYUnidad(this.selectedUnity, this.selectedSection)
             .subscribe((response) => {
@@ -388,7 +389,7 @@ export class ClassroomsComponent implements OnInit {
         }
     }
 
-    deleteStudent(student) {}
+    deleteStudent(student) { }
     // #region Editar Estudiante
     formEditStudent(student) {
         if (!student) return;
