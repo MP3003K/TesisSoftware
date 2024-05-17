@@ -1,6 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import {
+    MatAutocompleteModule,
+    MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +41,11 @@ import { StudentService } from './student.service';
 export class ClassroomsComponent implements OnInit {
     // Propiedades
     unidades: any = [];
-    displayedColumns: string[] = ['numero', 'NombreCompleto', 'EstadoEstudiante'];
+    displayedColumns: string[] = [
+        'numero',
+        'NombreCompleto',
+        'EstadoEstudiante',
+    ];
     selectedStudents = [];
     searchedStudents = [];
     classroomStudents = [];
@@ -52,21 +59,27 @@ export class ClassroomsComponent implements OnInit {
         nombres: new FormControl('', [Validators.required]),
         apellidoPaterno: new FormControl('', [Validators.required]),
         apellidoMaterno: new FormControl('', [Validators.required]),
-        dni: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{8}$')]),
+        dni: new FormControl('', [
+            Validators.required,
+            Validators.pattern('^[0-9]{8}$'),
+        ]),
     });
     formEditarEstudiante = new FormGroup({
         id: new FormControl('', [Validators.required]),
         nombres: new FormControl('', [Validators.required]),
         apellidoPaterno: new FormControl('', [Validators.required]),
         apellidoMaterno: new FormControl('', [Validators.required]),
-        dni: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{8}$')]),
+        dni: new FormControl('', [
+            Validators.required,
+            Validators.pattern('^[0-9]{8}$'),
+        ]),
     });
 
     items: string = 'list';
     estadoEvalucionPsicologicaAula: string = 'N';
 
-
-    @ViewChild('autocompleteInput') autocompleteInput: ElementRef<HTMLInputElement>;
+    @ViewChild('autocompleteInput')
+    autocompleteInput: ElementRef<HTMLInputElement>;
     inputValue: string = '';
 
     estado: boolean = false;
@@ -78,7 +91,7 @@ export class ClassroomsComponent implements OnInit {
         private personaService: PersonaService,
         private studentService: StudentService,
         private snack: MatSnackBar
-    ) { }
+    ) {}
 
     // Métodos de ciclo de vida
     ngOnInit() {
@@ -112,6 +125,13 @@ export class ClassroomsComponent implements OnInit {
     get sections() {
         return this.classrooms.filter((e) => e.grado == this.selectedDegree);
     }
+    asignarEstudiante() {
+        console.log(
+            this.selectedStudents.map((e) => e.id),
+            this.selectedUnity,
+            this.selectedSection
+        );
+    }
 
     obtnerEstudiantesPorAulaYUnidad() {
         this.classroomsService
@@ -119,8 +139,9 @@ export class ClassroomsComponent implements OnInit {
             .subscribe((response) => {
                 if (response.succeeded) {
                     this.classroomStudents = response.data;
-                    this.estadoEvalucionPsicologicaAula = this.classroomStudents[0].EstadoAula ?? 'N';
-                    console.log(this.estadoEvalucionPsicologicaAula);
+                    const [firstStudent] = this.classroomStudents;
+                    this.estadoEvalucionPsicologicaAula =
+                        firstStudent?.EstadoAula ?? 'N';
                 }
             });
     }
@@ -128,21 +149,33 @@ export class ClassroomsComponent implements OnInit {
     cambiarEstadoEvaluacionPsicologicaAula() {
         let estado = this.estadoEvalucionPsicologicaAula;
         console.log(estado);
-        console.log('Hola')
-        if (estado == 'F')
-            return;
+        console.log('Hola');
+        if (estado == 'F') return;
 
         if (['N', 'P'].includes(estado)) {
             let opcion = estado === 'N' ? 1 : 0; // 1: Iniciar, 0: Finalizar
-            console.log('selectedUnity: ', this.selectedUnity, 'selectedSection: ', this.selectedSection, 'opcion: ');
-            this.classroomsService.updateEstadoEvaPsiAula(this.selectedUnity, this.selectedSection, opcion, '').subscribe(
-                () => {
-                    this.obtnerEstudiantesPorAulaYUnidad();
-                },
-                error => {
-                    console.log(error);
-                }
+            console.log(
+                'selectedUnity: ',
+                this.selectedUnity,
+                'selectedSection: ',
+                this.selectedSection,
+                'opcion: '
             );
+            this.classroomsService
+                .updateEstadoEvaPsiAula(
+                    this.selectedUnity,
+                    this.selectedSection,
+                    opcion,
+                    ''
+                )
+                .subscribe(
+                    () => {
+                        this.obtnerEstudiantesPorAulaYUnidad();
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
         }
     }
 
@@ -167,15 +200,27 @@ export class ClassroomsComponent implements OnInit {
             }
         });
     }
-    getEstadoPruebaPsicologicaAula(status: string): { text: string, class: string } {
+    getEstadoPruebaPsicologicaAula(status: string): {
+        text: string;
+        class: string;
+    } {
         let classStyle = 'text-white w-auto';
         switch (status) {
             case 'F':
-                return { text: 'Evaluación Terminado', class: `${classStyle} bg-green-500` };
+                return {
+                    text: 'Evaluación Terminado',
+                    class: `${classStyle} bg-green-500`,
+                };
             case 'N':
-                return { text: 'Evaluación No iniciado', class: `${classStyle} bg-gray-500` };
+                return {
+                    text: 'Evaluación No iniciado',
+                    class: `${classStyle} bg-gray-500`,
+                };
             case 'P':
-                return { text: 'Evaluación En proceso', class: `${classStyle} bg-orange-500` };
+                return {
+                    text: 'Evaluación En proceso',
+                    class: `${classStyle} bg-orange-500`,
+                };
             default:
                 return { text: '', class: '' };
         }
@@ -290,21 +335,29 @@ export class ClassroomsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((res) => {
             if (res === 'confirmed') {
-                console.log("hola");
+                console.log('hola');
                 const tipoMap = {
-                    'Unidad': 0,
-                    'Año': 1
+                    Unidad: 0,
+                    Año: 1,
                 };
 
                 if (tipo in tipoMap) {
-                    console.log(tipoMap[tipo])
-                    this.classroomsService.crearNUnidadOAnio(tipoMap[tipo], '')
+                    console.log(tipoMap[tipo]);
+                    this.classroomsService
+                        .crearNUnidadOAnio(tipoMap[tipo], '')
                         .subscribe(
-                            response => {
-                                console.log('Respuesta del servidor: ', response);
+                            (response) => {
+                                console.log(
+                                    'Respuesta del servidor: ',
+                                    response
+                                );
                                 this.obtenerListadeUnidades();
                             },
-                            error => console.error('Error al realizar la solicitud: ', error)
+                            (error) =>
+                                console.error(
+                                    'Error al realizar la solicitud: ',
+                                    error
+                                )
                         );
                 }
             }
@@ -329,18 +382,16 @@ export class ClassroomsComponent implements OnInit {
             this.filteredStudents = this.classroomStudents;
         } else {
             let searchTextLower = searchText.toLowerCase();
-            this.filteredStudents = this.classroomStudents.filter(student =>
+            this.filteredStudents = this.classroomStudents.filter((student) =>
                 student.NombreCompleto.toLowerCase().includes(searchTextLower)
             );
         }
     }
 
-    deleteStudent(student) {
-    }
+    deleteStudent(student) {}
     // #region Editar Estudiante
     formEditStudent(student) {
-        if (!student)
-            return;
+        if (!student) return;
 
         this.formEditarEstudiante.patchValue({
             id: student.EstudianteId,
@@ -353,22 +404,28 @@ export class ClassroomsComponent implements OnInit {
     }
 
     editEstudiante() {
-        this.classroomsService.actualizarEstudiante(this.formEditarEstudiante.value).subscribe(
-            response => {
-                if (response.succeeded) {
-                    this.obtnerEstudiantesPorAulaYUnidad();
-                    this.formEditarEstudiante.reset();
-                    this.items = 'list';
+        this.classroomsService
+            .actualizarEstudiante(this.formEditarEstudiante.value)
+            .subscribe(
+                (response) => {
+                    if (response.succeeded) {
+                        this.obtnerEstudiantesPorAulaYUnidad();
+                        this.formEditarEstudiante.reset();
+                        this.items = 'list';
+                    }
+                },
+                (error) => {
+                    console.error('Error al realizar la solicitud: ', error);
                 }
-            },
-            error => {
-                console.error('Error al realizar la solicitud: ', error);
-            }
-        );
+            );
     }
 
     formatName(name: string): string {
-        return name.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.substring(1)).join(' ');
+        return name
+            .toLowerCase()
+            .split(' ')
+            .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+            .join(' ');
     }
 
     showDNI: boolean = true;

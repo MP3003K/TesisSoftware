@@ -199,6 +199,34 @@ namespace Controllers
             }
         }
 
+
+        [HttpPost("students")]
+        public async Task<ActionResult> AsignarEstudianteAula([FromBody] StudentClassroomDto studentClassroomDto)
+        {
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    await connection.QueryAsync("proc_asignar_estudiante_a_aula", studentClassroomDto, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = "Asignado Correctamente", Succeeded = true, Data = null });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public class StudentClassroomDto
+        {
+            public int V_aulaId { get; set; }
+            public int V_estudianteId { get; set; }
+            public int V_unidadId { get; set; }
+            public int V_añadir { get; set; }
+        }
+
         public class ActualizarEstudianteDto
         {
             public int Id { get; set; }
