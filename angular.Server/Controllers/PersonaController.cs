@@ -28,13 +28,13 @@ namespace Controllers
     {
 
         [HttpGet()]
-        public ActionResult ObtenerPersonaPorConsulta(string query)
+        public ActionResult ObtenerPersonaPorConsulta(string query, int? classroomId, int? unityId)
         {
             try
             {
                 using (var connection = context.CreateConnection())
                 {
-                    List<QueryPerson> people = connection.Query<QueryPerson>("OBTENER_PERSONA_POR_CONSULTA", new { query }, commandType: CommandType.StoredProcedure).ToList();
+                    List<QueryPerson> people = connection.Query<QueryPerson>("OBTENER_PERSONA_POR_CONSULTA", new { query, classroomId, unityId }, commandType: CommandType.StoredProcedure).ToList();
                     return Ok(new Response<List<QueryPerson>> { Message = null, Succeeded = true, Data = people });
                 }
             }

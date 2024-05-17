@@ -98,7 +98,6 @@ export class ClassroomsComponent implements OnInit {
         this.obtenerListadeUnidades();
         this.obtenerListadeAulas();
         this.applyFilter('');
-        console.log(this.estado);
     }
 
     // MétodosngOnInit() {
@@ -126,11 +125,21 @@ export class ClassroomsComponent implements OnInit {
         return this.classrooms.filter((e) => e.grado == this.selectedDegree);
     }
     asignarEstudiante() {
-        console.log(
-            this.selectedStudents.map((e) => e.id),
-            this.selectedUnity,
-            this.selectedSection
-        );
+        const [studentId] = this.selectedStudents.map((e) => e.id);
+        this.classroomsService
+            .asignarEstudianteAula(
+                studentId,
+                this.selectedSection,
+                this.selectedUnity
+            )
+            .subscribe((response) => {
+                if (response.succeeded) {
+                    this.selectedStudents = [];
+                    this.searchedStudents = [];
+                    this.obtnerEstudiantesPorAulaYUnidad();
+                    this.items = 'list';
+                }
+            });
     }
 
     obtnerEstudiantesPorAulaYUnidad() {
@@ -368,7 +377,7 @@ export class ClassroomsComponent implements OnInit {
         const query = val?.nombre?.trim() ?? val?.trim();
         if (query) {
             this.personaService
-                .getStudentsByQuery(query)
+                .getStudentsByQuery(query, this.selectedUnity, this.selectedSection)
                 .subscribe(({ data }) => {
                     this.searchedStudents = data;
                 });

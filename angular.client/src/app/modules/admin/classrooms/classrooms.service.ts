@@ -41,6 +41,22 @@ export interface AulaApiResponse {
 })
 export class ClassroomsService {
     http = inject(HttpClient);
+
+    asignarEstudianteAula(
+        studentId: number,
+        classroomId: number,
+        unityId: number
+    ): Observable<HttpResponse<any>> {
+        return this.http.post<HttpResponse<any>>(
+            `${environment.baseURL}/classroom/students`,
+            {
+                studentId,
+                classroomId,
+                unityId,
+            }
+        );
+    }
+
     getUnidadesAll(): Observable<HttpResponse<any>> {
         return this.http.get<HttpResponse<any>>(
             `${environment.baseURL}/classroom/unidades/all`
@@ -81,18 +97,26 @@ export class ClassroomsService {
 
     crearNUnidadOAnio(crear_anio: number, params: any) {
         return this.http.post<any>(
-            `${environment.baseURL}/Classroom/crearNUnidadOAnio/${crear_anio}`, params
+            `${environment.baseURL}/Classroom/crearNUnidadOAnio/${crear_anio}`,
+            params
         );
     }
     actualizarEstudiante(params: any) {
         return this.http.put<any>(
-            `${environment.baseURL}/Classroom/ActualizarEstudiante`, params
+            `${environment.baseURL}/Classroom/ActualizarEstudiante`,
+            params
         );
     }
 
-    updateEstadoEvaPsiAula(unidadId: number, aulaId: number, iniciarEvalucion: number, params: any) {
+    updateEstadoEvaPsiAula(
+        unidadId: number,
+        aulaId: number,
+        iniciarEvalucion: number,
+        params: any
+    ) {
         return this.http.post<any>(
-            `${environment.baseURL}/Classroom/updateEstadoEvaPsiAula/${unidadId}/${aulaId}/${iniciarEvalucion}`, params
+            `${environment.baseURL}/Classroom/updateEstadoEvaPsiAula/${unidadId}/${aulaId}/${iniciarEvalucion}`,
+            params
         );
     }
 }
