@@ -91,7 +91,7 @@ export class ClassroomsComponent implements OnInit {
         private personaService: PersonaService,
         private studentService: StudentService,
         private snack: MatSnackBar
-    ) { }
+    ) {}
 
     // Métodos de ciclo de vida
     ngOnInit() {
@@ -210,15 +210,27 @@ export class ClassroomsComponent implements OnInit {
             }
         });
     }
-    getEstadoPruebaPsicologicaAula(status: string): { text: string, class: string } {
+    getEstadoPruebaPsicologicaAula(status: string): {
+        text: string;
+        class: string;
+    } {
         let classStyle = 'w-auto font-bold';
         switch (status) {
             case 'F':
-                return { text: 'Evaluación Terminado', class: `${classStyle} bg-green-200 text-green-800` };
+                return {
+                    text: 'Evaluación Terminado',
+                    class: `${classStyle} bg-green-200 text-green-800`,
+                };
             case 'N':
-                return { text: 'Evaluación No iniciado', class: `${classStyle} bg-gray-200 text-gray-800 ` };
+                return {
+                    text: 'Evaluación No iniciado',
+                    class: `${classStyle} bg-gray-200 text-gray-800 `,
+                };
             case 'P':
-                return { text: 'Evaluación En proceso', class: `${classStyle} bg-orange-200 text-orange-800 ` };
+                return {
+                    text: 'Evaluación En proceso',
+                    class: `${classStyle} bg-orange-200 text-orange-800 `,
+                };
             default:
                 return { text: '', class: '' };
         }
@@ -296,8 +308,7 @@ export class ClassroomsComponent implements OnInit {
     }
 
     openUpdateEstadoEvaPsiAulaModal(estado: string): void {
-        if (estado == 'Evaluación Terminado')
-            return;
+        if (estado == 'Evaluación Terminado') return;
 
         const dialogRef = this.confirmationService.open({
             title: '¿Deseas cambiar el estado del test psicologico?',
@@ -369,7 +380,11 @@ export class ClassroomsComponent implements OnInit {
         const query = val?.nombre?.trim() ?? val?.trim();
         if (query) {
             this.personaService
-                .getStudentsByQuery(query, this.selectedUnity, this.selectedSection)
+                .getStudentsByQuery(
+                    query,
+                    this.selectedSection,
+                    this.selectedUnity
+                )
                 .subscribe(({ data }) => {
                     this.searchedStudents = data;
                 });
@@ -389,7 +404,9 @@ export class ClassroomsComponent implements OnInit {
         }
     }
 
-    deleteStudent(student) { }
+    deleteStudent(id: number) {
+        console.log(id);
+    }
     // #region Editar Estudiante
     formEditStudent(student) {
         if (!student) return;

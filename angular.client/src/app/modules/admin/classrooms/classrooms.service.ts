@@ -56,6 +56,22 @@ export class ClassroomsService {
             }
         );
     }
+    eliminarEstudianteAula(
+        studentId: number,
+        classroomId: number,
+        unityId: number
+    ): Observable<HttpResponse<any>> {
+        return this.http.delete<HttpResponse<any>>(
+            `${environment.baseURL}/classroom/students`,
+            {
+                body: {
+                    studentId,
+                    classroomId,
+                    unityId,
+                },
+            }
+        );
+    }
 
     getUnidadesAll(): Observable<HttpResponse<any>> {
         return this.http.get<HttpResponse<any>>(

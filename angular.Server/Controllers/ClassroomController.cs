@@ -22,6 +22,22 @@ namespace Controllers
         public bool Estado { get; set; }
     }
 
+    public class StudentsClassroom
+    {
+        public string ApellidoMaterno { get; set; }
+        public string ApellidoPaterno { get; set; }
+        public string DNI { get; set; }
+        public string EstadoAula { get; set; }
+        public string EstadoEstudiante { get; set; }
+        public string EstudianteAulaId { get; set; }
+        public int EstudianteId { get; set; }
+        public int EvaluacionPsicologicaAulaId { get; set; }
+        public int EvaluacionPsicologicaEstudianteId { get; set; }
+        public string NombreCompleto { get; set; }
+        public string Nombres { get; set; }
+
+    }
+
 
     [ApiController]
     [Route("[controller]")]
@@ -87,7 +103,7 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
 
-                    var students = await connection.QueryAsync("LISTAR_ESTUDIANTES_POR_AULA_Y_UNIDAD", new { v_aulaid = aulaId, v_unidadId = unidadId }, commandType: CommandType.StoredProcedure);
+                    var students = await connection.QueryAsync<StudentsClassroom>("LISTAR_ESTUDIANTES_POR_AULA_Y_UNIDAD", new { v_aulaid = aulaId, v_unidadId = unidadId }, commandType: CommandType.StoredProcedure);
                     return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = students.ToList() });
 
                 }
@@ -208,11 +224,35 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
 
-                    await connection.QueryAsync("proc_asignar_estudiante_a_aula", new {
+                    await connection.QueryAsync("proc_asignar_estudiante_a_aula", new
+                    {
                         v_aulaId = dto.ClassroomId,
                         v_estudianteId = dto.StudentId,
                         v_unidadId = dto.UnityId,
                         v_añadir = 1
+                    }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Response<dynamic> { Message = "Asignado Correctamente", Succeeded = true, Data = null });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete("students")]
+        public async Task<ActionResult> EliminarEstudianteAula([FromBody] StudentClassroomDto dto)
+        {
+            try
+            {
+                using (var connection = context.CreateConnection())
+                {
+
+                    await connection.QueryAsync("proc_eliminar_estudiante_aula", new
+                    {
+                        v_aulaId = dto.ClassroomId,
+                        v_estudianteId = dto.StudentId,
+                        v_unidadId = dto.UnityId
                     }, commandType: CommandType.StoredProcedure);
                     return Ok(new Response<dynamic> { Message = "Asignado Correctamente", Succeeded = true, Data = null });
 
