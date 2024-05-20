@@ -399,13 +399,24 @@ export class ClassroomsComponent implements OnInit {
         } else {
             let searchTextLower = searchText.toLowerCase();
             this.filteredStudents = this.classroomStudents.filter((student) =>
-                student.NombreCompleto.toLowerCase().includes(searchTextLower)
+                student.nombreCompleto.toLowerCase().includes(searchTextLower)
             );
         }
     }
 
     deleteStudent(id: number) {
-        console.log(id);
+        this.classroomsService
+            .eliminarEstudianteAula(
+                id,
+                this.selectedSection,
+                this.selectedUnity
+            )
+            .subscribe((res) => {
+                console.log(res);
+                if (res.succeeded) {
+                    this.obtnerEstudiantesPorAulaYUnidad();
+                }
+            });
     }
     // #region Editar Estudiante
     formEditStudent(student) {

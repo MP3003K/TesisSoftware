@@ -248,13 +248,15 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
 
-                    await connection.QueryAsync("proc_eliminar_estudiante_aula", new
+                    await connection.QueryAsync("proc_asignar_estudiante_a_aula", new
                     {
                         v_aulaId = dto.ClassroomId,
                         v_estudianteId = dto.StudentId,
-                        v_unidadId = dto.UnityId
+                        v_unidadId = dto.UnityId,
+                        v_añadir = 0
+
                     }, commandType: CommandType.StoredProcedure);
-                    return Ok(new Response<dynamic> { Message = "Asignado Correctamente", Succeeded = true, Data = null });
+                    return Ok(new Response<dynamic> { Message = "Eliminado Correctamente", Succeeded = true, Data = null });
 
                 }
             }
