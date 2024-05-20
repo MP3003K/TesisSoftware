@@ -9,8 +9,19 @@ export class FilterTablePipe implements PipeTransform {
         const [filter] = args;
 
         return value.filter((e) =>
-            Object.values(e).some((e) =>
-                e.toString().toLowerCase().includes(filter.toLowerCase())
+            (Object.values(e) as string[]).some((e) =>
+                e
+                    .toString()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toLowerCase()
+                    .includes(
+                        filter
+                            .toString()
+                            .normalize('NFD')
+                            .replace(/[\u0300-\u036f]/g, '')
+                            .toLowerCase()
+                    )
             )
         );
     }

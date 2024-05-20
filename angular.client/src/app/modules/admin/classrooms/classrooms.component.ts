@@ -20,6 +20,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { PersonaService } from './persona.service';
 import { StudentService } from './student.service';
 import { FilterTablePipe } from './filter-table.pipe';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-classrooms',
@@ -99,6 +100,7 @@ export class ClassroomsComponent implements OnInit {
     ngOnInit() {
         this.obtenerListadeUnidades();
         this.obtenerListadeAulas();
+        this.applyFilter('');
     }
 
     // MétodosngOnInit() {
@@ -126,21 +128,23 @@ export class ClassroomsComponent implements OnInit {
         return this.classrooms.filter((e) => e.grado == this.selectedDegree);
     }
     asignarEstudiante() {
-        const [studentId] = this.selectedStudents.map((e) => e.id);
-        this.classroomsService
-            .asignarEstudianteAula(
-                studentId,
+        const observables = this.selectedStudents.map((e) =>
+            this.classroomsService.asignarEstudianteAula(
+                e.id,
                 this.selectedSection,
                 this.selectedUnity
             )
-            .subscribe((response) => {
-                if (response.succeeded) {
-                    this.selectedStudents = [];
-                    this.searchedStudents = [];
-                    this.obtnerEstudiantesPorAulaYUnidad();
-                    this.items = 'list';
-                }
-            });
+        );
+
+        forkJoin(observables).subscribe((responses) => {
+            if (responses.every((e) => e.succeeded)) {
+                console.log(responses);
+                this.selectedStudents = [];
+                this.searchedStudents = [];
+                this.obtnerEstudiantesPorAulaYUnidad();
+                this.items = 'list';
+            }
+        });
     }
 
     obtnerEstudiantesPorAulaYUnidad() {
@@ -391,6 +395,25 @@ export class ClassroomsComponent implements OnInit {
                 });
         } else {
             this.searchedStudents = [];
+        }
+    }
+
+    applyFilter(searchText: string) {
+        if (!searchText) {
+            this.filteredStudents = this.classroomStudents;
+        } else {
+            this.filteredStudents = this.classroomStudents.filter((student) =>
+                student.nombreCompleto
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toLowerCase()
+                    .includes(
+                        searchText
+                            .normalize('NFD')
+                            .replace(/[\u0300-\u036f]/g, '')
+                            .toLowerCase()
+                    )
+            );
         }
     }
 
