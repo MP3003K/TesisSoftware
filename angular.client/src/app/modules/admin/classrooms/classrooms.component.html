@@ -151,11 +151,9 @@
                         <div class="flex flex-col gap-4">
                             @if(true){ @if(classroomStudents.length > 0){
                             <!-- #region Buscador -->
-                            <div
-                                class="flex flex-col md:flex-row gap-4"
-                            >
+                            <div class="flex flex-col md:flex-row gap-4">
                                 <mat-form-field
-                                    class="w-full "
+                                    class="w-full"
                                     [subscriptSizing]="'dynamic'"
                                 >
                                     <mat-icon
@@ -168,7 +166,6 @@
                                     <input
                                         type="text"
                                         matInput
-                                        (input)="applyFilter(query.value)"
                                         placeholder="Buscar estudiante"
                                         #query
                                     />
@@ -220,10 +217,8 @@
                                         class="w-full overflow-y-visible"
                                         mat-table
                                         [dataSource]="
-                                            filteredStudents &&
-                                            filteredStudents.length > 0
-                                                ? filteredStudents
-                                                : classroomStudents
+                                            classroomStudents
+                                                | filterTable : query.value
                                         "
                                     >
                                         <!-- Nombre Completo -->
@@ -345,7 +340,9 @@
                                                 <button
                                                     mat-icon-button
                                                     (click)="
-                                                        deleteStudent(student.estudianteId)
+                                                        deleteStudent(
+                                                            student.estudianteId
+                                                        )
                                                     "
                                                 >
                                                     <mat-icon>delete</mat-icon>

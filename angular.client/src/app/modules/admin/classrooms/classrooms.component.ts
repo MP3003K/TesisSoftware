@@ -13,12 +13,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SharedModule } from 'app/shared/shared.module';
 import { ClassroomsService } from './classrooms.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { PersonaService } from './persona.service';
 import { StudentService } from './student.service';
+import { FilterTablePipe } from './filter-table.pipe';
 
 @Component({
     selector: 'app-classrooms',
@@ -36,10 +37,11 @@ import { StudentService } from './student.service';
         MatAutocompleteModule,
         MatChipsModule,
         MatIconModule,
+        FilterTablePipe,
     ],
 })
 export class ClassroomsComponent implements OnInit {
-    // Propiedades
+    dataSource = new MatTableDataSource();
     unidades: any = [];
     displayedColumns: string[] = [
         'numero',
@@ -97,7 +99,6 @@ export class ClassroomsComponent implements OnInit {
     ngOnInit() {
         this.obtenerListadeUnidades();
         this.obtenerListadeAulas();
-        this.applyFilter('');
     }
 
     // MétodosngOnInit() {
@@ -393,17 +394,6 @@ export class ClassroomsComponent implements OnInit {
         }
     }
 
-    applyFilter(searchText: string) {
-        if (!searchText) {
-            this.filteredStudents = this.classroomStudents;
-        } else {
-            let searchTextLower = searchText.toLowerCase();
-            this.filteredStudents = this.classroomStudents.filter((student) =>
-                student.nombreCompleto.toLowerCase().includes(searchTextLower)
-            );
-        }
-    }
-
     deleteStudent(id: number) {
         this.classroomsService
             .eliminarEstudianteAula(
@@ -414,6 +404,7 @@ export class ClassroomsComponent implements OnInit {
             .subscribe((res) => {
                 console.log(res);
                 if (res.succeeded) {
+                    this.filteredStudents = [];
                     this.obtnerEstudiantesPorAulaYUnidad();
                 }
             });
