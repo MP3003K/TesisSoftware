@@ -154,6 +154,7 @@ export class ClassroomsComponent implements OnInit {
                 if (response.succeeded) {
                     this.classroomStudents = response.data;
                     this.estadoEvalucionPsicologicaAula = this.classroomStudents[0]?.estadoAula ?? 'N';
+                    this.updateEstadoModificarAula();
                 }
             });
     }
@@ -202,32 +203,6 @@ export class ClassroomsComponent implements OnInit {
                 this.items = 'register';
             }
         });
-    }
-    getEstadoPruebaPsicologicaAula(status: string): {
-        text: string;
-        class: string;
-    } {
-        console.log('esto', status);
-        let classStyle = 'w-auto font-bold';
-        switch (status) {
-            case 'F':
-                return {
-                    text: 'Evaluación Terminado',
-                    class: `${classStyle} bg-green-200 text-green-800`,
-                };
-            case 'N':
-                return {
-                    text: 'Evaluación No iniciado',
-                    class: `${classStyle} bg-gray-200 text-gray-800 `,
-                };
-            case 'P':
-                return {
-                    text: 'Evaluación En proceso',
-                    class: `${classStyle} bg-orange-200 text-orange-800 `,
-                };
-            default:
-                return { text: '', class: '' };
-        }
     }
 
     remove(index: number): void {
@@ -341,7 +316,6 @@ export class ClassroomsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((res) => {
             if (res === 'confirmed') {
-                console.log('hola');
                 const tipoMap = {
                     Unidad: 0,
                     Año: 1,
@@ -466,4 +440,12 @@ export class ClassroomsComponent implements OnInit {
         this.showOptions = event.target.innerWidth > 640;
     }
     // #region Hola
+
+
+    modificarAula: boolean = false;
+    updateEstadoModificarAula() {
+        this.selectedUnity;
+        let estado = this.unidades.find(x => x.id == this.selectedUnity).estado;
+        this.modificarAula = estado;
+    }
 }

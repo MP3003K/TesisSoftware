@@ -89,14 +89,20 @@
                             <mat-button-toggle value="list" [disabled]="!selectedSection || !selectedUnity">
                                 Listar
                             </mat-button-toggle>
+
+                            @if(modificarAula){
                             <!-- Botón para Asignar Estudiantes -->
-                            <mat-button-toggle value="assign" [disabled]="!selectedSection || !selectedUnity">
+                            <mat-button-toggle value="assign"
+                                [disabled]="!selectedSection || !selectedUnity || !modificarAula">
                                 Asignar Estudiantes
                             </mat-button-toggle>
                             <!-- Botón para Registrar Estudiantes -->
-                            <mat-button-toggle value="register" [disabled]="!selectedSection || !selectedUnity">
+                            <mat-button-toggle value="register"
+                                [disabled]="!selectedSection || !selectedUnity || !modificarAula">
                                 Registrar Estudiante
                             </mat-button-toggle>
+                            }
+
                             <!-- Botón para Editar Estudiante -->
                             @if (items === 'edit') {
                             <mat-button-toggle value="edit" [disabled]="!selectedSection || !selectedUnity">
@@ -118,21 +124,21 @@
                                         "></mat-icon>
                                     <input type="text" matInput placeholder="Buscar estudiante" #query />
                                 </mat-form-field>
-                                <button class="flex-none" mat-button [class]="
-                                        getEstadoPruebaPsicologicaAula(
-                                            estadoEvalucionPsicologicaAula
-                                        ).class
-                                    " (click)="
-                                        openUpdateEstadoEvaPsiAulaModal(
-                                            getEstadoPruebaPsicologicaAula(
-                                                estadoEvalucionPsicologicaAula
-                                            ).text
-                                        )
-                                    ">
+                                <button class="flex-none w-auto font-bold" mat-button [ngClass]="{
+                                'bg-green-200 text-green-800': estadoEvalucionPsicologicaAula === 'F',
+                                'bg-gray-200 text-gray-800': estadoEvalucionPsicologicaAula === 'N',
+                                'bg-orange-200 text-orange-800': estadoEvalucionPsicologicaAula === 'P'
+                            }" (click)="openUpdateEstadoEvaPsiAulaModal(
+                                estadoEvalucionPsicologicaAula === 'F' ? 'Evaluación Terminado' :
+                                estadoEvalucionPsicologicaAula === 'N' ? 'Evaluación No iniciado' :
+                                estadoEvalucionPsicologicaAula === 'P' ? 'Evaluación En proceso' :
+                                ''
+                            )">
                                     {{
-                                    getEstadoPruebaPsicologicaAula(
-                                    estadoEvalucionPsicologicaAula
-                                    ).text
+                                    estadoEvalucionPsicologicaAula === 'F' ? 'Evaluación Terminado' :
+                                    estadoEvalucionPsicologicaAula === 'N' ? 'Evaluación No iniciado' :
+                                    estadoEvalucionPsicologicaAula === 'P' ? 'Evaluación En proceso' :
+                                    ''
                                     }}
                                 </button>
                             </div>
@@ -141,12 +147,12 @@
                             <div
                                 class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                 <div class="text-lg font-medium tracking-tight leading-6 truncate">
-                                    Detalles de los estudiantes
+                                    DETALLES DE LOS ESTUDIANTES
                                 </div>
                                 <div class="text-secondary font-medium flex row">
                                     <p>
                                         En total hay
-                                        {{ classroomStudents.length }}
+                                        <b>{{ classroomStudents.length }}</b>
                                         estudiantes.
                                     </p>
                                 </div>
@@ -222,21 +228,19 @@
                                                 Opciones
                                             </th>
                                             <td mat-cell *matCellDef="let student">
-                                                <button mat-icon-button (click)="
-                                                        formEditStudent(student)
-                                                    ">
-                                                    <mat-icon>edit</mat-icon>
-                                                </button>
-                                                <button mat-icon-button (click)="
-                                                        deleteStudent(
-                                                            student.estudianteId
-                                                        )
-                                                    ">
-                                                    <mat-icon>delete</mat-icon>
-                                                </button>
+                                                <ng-container *ngIf="modificarAula; else noOptions">
+                                                    <button (click)="formEditStudent(student)">
+                                                        <mat-icon>edit</mat-icon>
+                                                    </button>
+                                                    <button (click)="deleteStudent(student.estudianteId)">
+                                                        <mat-icon>delete</mat-icon>
+                                                    </button>
+                                                </ng-container>
+                                                <ng-template #noOptions>
+                                                    <span class="text-gray-500 italic">No tiene opciones</span>
+                                                </ng-template>
                                             </td>
                                         </ng-container>
-
                                         <tr mat-header-row *matHeaderRowDef="[
                                                 'NombreCompleto',
                                                 'DNI',

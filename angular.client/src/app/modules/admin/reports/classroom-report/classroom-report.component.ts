@@ -134,8 +134,7 @@ export class ClassroomReportComponent implements AfterViewInit {
             .getEvaluation(this.selectedUnity, this.selectedSection)
             .subscribe((response) => {
                 if (response.succeeded) {
-                    const { id } = response.data;
-                    console.log(id);
+                    let id = response.data?.id;
                     if (id) {
                         this.selectedClassroomEvaluationId = id;
                         this.evaluationService
