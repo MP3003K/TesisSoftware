@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ElementRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
     MatAutocompleteModule,
@@ -21,6 +21,10 @@ import { PersonaService } from './persona.service';
 import { StudentService } from './student.service';
 import { FilterTablePipe } from './filter-table.pipe';
 import { forkJoin } from 'rxjs';
+import { EditarEstudianteComponent } from './editar-estudiante/editar-estudiante.component';
+import { RegistrarEstudiantesComponent } from './registrar-estudiantes/registrar-estudiantes.component';
+import { AsignarEstudiantesComponent } from './asignar-estudiantes/asignar-estudiantes.component';
+import { Component, ViewChild, EventEmitter, Output } from '@angular/core';
 
 @Component({
     selector: 'app-classrooms',
@@ -39,6 +43,9 @@ import { forkJoin } from 'rxjs';
         MatChipsModule,
         MatIconModule,
         FilterTablePipe,
+        EditarEstudianteComponent,
+        RegistrarEstudiantesComponent,
+        AsignarEstudiantesComponent,
     ],
 })
 export class ClassroomsComponent implements OnInit {
@@ -59,16 +66,6 @@ export class ClassroomsComponent implements OnInit {
     searchText: string = '';
     filteredStudents: any[] = [];
     formRegistrarEstudiante = new FormGroup({
-        nombres: new FormControl('', [Validators.required]),
-        apellidoPaterno: new FormControl('', [Validators.required]),
-        apellidoMaterno: new FormControl('', [Validators.required]),
-        dni: new FormControl('', [
-            Validators.required,
-            Validators.pattern('^[0-9]{8}$'),
-        ]),
-    });
-    formEditarEstudiante = new FormGroup({
-        id: new FormControl('', [Validators.required]),
         nombres: new FormControl('', [Validators.required]),
         apellidoPaterno: new FormControl('', [Validators.required]),
         apellidoMaterno: new FormControl('', [Validators.required]),
@@ -394,44 +391,8 @@ export class ClassroomsComponent implements OnInit {
                 }
             });
     }
-    // #region Editar Estudiante
-    formEditStudent(student) {
-        if (!student) return;
 
-        this.formEditarEstudiante.patchValue({
-            id: student.EstudianteId,
-            nombres: student.Nombres,
-            apellidoPaterno: student.ApellidoPaterno,
-            apellidoMaterno: student.ApellidoMaterno,
-            dni: student.DNI,
-        });
-        this.items = 'edit';
-    }
 
-    editEstudiante() {
-        this.classroomsService
-            .actualizarEstudiante(this.formEditarEstudiante.value)
-            .subscribe(
-                (response) => {
-                    if (response.succeeded) {
-                        this.obtnerEstudiantesPorAulaYUnidad();
-                        this.formEditarEstudiante.reset();
-                        this.items = 'list';
-                    }
-                },
-                (error) => {
-                    console.error('Error al realizar la solicitud: ', error);
-                }
-            );
-    }
-
-    formatName(name: string): string {
-        return name
-            .toLowerCase()
-            .split(' ')
-            .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
-            .join(' ');
-    }
 
     showDNI: boolean = true;
     showOptions: boolean = true;
@@ -439,7 +400,6 @@ export class ClassroomsComponent implements OnInit {
         this.showDNI = event.target.innerWidth > 768;
         this.showOptions = event.target.innerWidth > 640;
     }
-    // #region Hola
 
 
     modificarAula: boolean = false;
@@ -448,4 +408,41 @@ export class ClassroomsComponent implements OnInit {
         let estado = this.unidades.find(x => x.id == this.selectedUnity).estado;
         this.modificarAula = estado;
     }
+
+
+    // #region Editar Estudiante
+    @ViewChild(EditarEstudianteComponent) editarEstudianteComponent: EditarEstudianteComponent;
+
+    @Output() editarEstudianteSuccessful = new EventEmitter<FormGroup>();
+
+    formEditarEstudiante = new FormGroup({
+        id: new FormControl('', [Validators.required]),
+        nombres: new FormControl('', [Validators.required]),
+        apellidoPaterno: new FormControl('', [Validators.required]),
+        apellidoMaterno: new FormControl('', [Validators.required]),
+        dni: new FormControl('', [
+            Validators.required,
+            Validators.pattern('^[0-9]{8}$'),
+        ]),
+    });
+
+    editarEstudianteComponente(student: any) {
+        if (!student) return;
+
+        this.formEditarEstudiante.patchValue({
+            id: student.estudianteId,
+            nombres: student.nombres,
+            apellidoPaterno: student.apellidoPaterno,
+            apellidoMaterno: student.apellidoMaterno,
+            dni: student.dni,
+        });
+        this.items = 'edit';
+    }
+    
+    onEditarEstudianteSuccessful(event: boolean) {
+        if (event == true)
+            this.obtnerEstudiantesPorAulaYUnidad();
+        this.items = 'list';
+    }
+    // #endregion
 }

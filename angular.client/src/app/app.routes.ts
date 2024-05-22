@@ -3,6 +3,7 @@ import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
+import { classroomsRoutes } from './modules/admin/classrooms/classrooms.routes';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -63,7 +64,7 @@ export const appRoutes: Route[] = [
             { path: 'home', loadChildren: () => import('app/modules/admin/home/home.routes') },
             { path: 'evaluation', loadChildren: () => import('app/modules/admin/evaluation/evaluation.routes') },
             { path: 'reports', loadChildren: () => import('app/modules/admin/reports/reports.routes') },
-            { path: 'classrooms', loadChildren: () => import('app/modules/admin/classrooms/classrooms.routes') },
+            { path: 'classrooms', loadChildren: () => classroomsRoutes },
             { path: 'questionaries', loadChildren: () => import('app/modules/admin/questionaries/questionaries.routes') },
 
             {
