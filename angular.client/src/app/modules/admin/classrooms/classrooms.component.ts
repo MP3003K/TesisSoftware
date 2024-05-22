@@ -94,7 +94,7 @@ export class ClassroomsComponent implements OnInit {
         private personaService: PersonaService,
         private studentService: StudentService,
         private snack: MatSnackBar
-    ) {}
+    ) { }
 
     // Métodos de ciclo de vida
     ngOnInit() {
@@ -138,7 +138,6 @@ export class ClassroomsComponent implements OnInit {
 
         forkJoin(observables).subscribe((responses) => {
             if (responses.every((e) => e.succeeded)) {
-                console.log(responses);
                 this.selectedStudents = [];
                 this.searchedStudents = [];
                 this.obtnerEstudiantesPorAulaYUnidad();
@@ -154,28 +153,17 @@ export class ClassroomsComponent implements OnInit {
             .subscribe((response) => {
                 if (response.succeeded) {
                     this.classroomStudents = response.data;
-                    const [firstStudent] = this.classroomStudents;
-                    this.estadoEvalucionPsicologicaAula =
-                        firstStudent?.EstadoAula ?? 'N';
+                    this.estadoEvalucionPsicologicaAula = this.classroomStudents[0]?.estadoAula ?? 'N';
                 }
             });
     }
 
     cambiarEstadoEvaluacionPsicologicaAula() {
         let estado = this.estadoEvalucionPsicologicaAula;
-        console.log(estado);
-        console.log('Hola');
         if (estado == 'F') return;
 
         if (['N', 'P'].includes(estado)) {
             let opcion = estado === 'N' ? 1 : 0; // 1: Iniciar, 0: Finalizar
-            console.log(
-                'selectedUnity: ',
-                this.selectedUnity,
-                'selectedSection: ',
-                this.selectedSection,
-                'opcion: '
-            );
             this.classroomsService
                 .updateEstadoEvaPsiAula(
                     this.selectedUnity,
@@ -219,6 +207,7 @@ export class ClassroomsComponent implements OnInit {
         text: string;
         class: string;
     } {
+        console.log('esto', status);
         let classStyle = 'w-auto font-bold';
         switch (status) {
             case 'F':
@@ -425,7 +414,6 @@ export class ClassroomsComponent implements OnInit {
                 this.selectedUnity
             )
             .subscribe((res) => {
-                console.log(res);
                 if (res.succeeded) {
                     this.filteredStudents = [];
                     this.obtnerEstudiantesPorAulaYUnidad();

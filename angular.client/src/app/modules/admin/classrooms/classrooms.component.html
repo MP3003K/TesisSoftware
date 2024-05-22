@@ -1,44 +1,29 @@
-<div
-    class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
-    cdkScrollable
->
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
     <div
-        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
-    >
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
         <div class="flex-1 min-w-0">
             <div>
                 <div class="hidden sm:flex flex-wrap items-center font-medium">
                     <div>
-                        <a class="whitespace-nowrap text-primary-500"
-                            >Dashboard</a
-                        >
+                        <a class="whitespace-nowrap text-primary-500">Dashboard</a>
                     </div>
 
                     <div class="flex items-center ml-1 whitespace-nowrap">
-                        <mat-icon
-                            class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-right'"
-                        ></mat-icon>
+                        <mat-icon class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
                         <span class="ml-1 text-secondary">Aulas</span>
                     </div>
                 </div>
                 <div class="flex sm:hidden">
-                    <a
-                        class="inline-flex items-center -ml-1.5 text-secondary font-medium"
-                        [routerLink]="'./..'"
-                    >
-                        <mat-icon
-                            class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-left'"
-                        ></mat-icon>
+                    <a class="inline-flex items-center -ml-1.5 text-secondary font-medium" [routerLink]="'./..'">
+                        <mat-icon class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
                         <span class="ml-1">Back</span>
                     </a>
                 </div>
             </div>
             <div class="mt-2">
-                <h2
-                    class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
-                >
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
                     Gestionar Aulas
                 </h2>
             </div>
@@ -70,10 +55,7 @@
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Grado</mat-label>
-                        <mat-select
-                            [(ngModel)]="selectedDegree"
-                            (selectionChange)="selectedSection = null"
-                        >
+                        <mat-select [(ngModel)]="selectedDegree" (selectionChange)="selectedSection = null">
                             @for(degree of distinctClassrooms; track degree){
                             <mat-option [value]="degree">
                                 {{ degree }}
@@ -83,10 +65,7 @@
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Sección</mat-label>
-                        <mat-select
-                            [disabled]="!selectedDegree"
-                            [(ngModel)]="selectedSection"
-                        >
+                        <mat-select [disabled]="!selectedDegree" [(ngModel)]="selectedSection">
                             @for(aula of sections; track aula){
                             <mat-option [value]="aula.id">
                                 {{ aula.seccion }}
@@ -95,12 +74,8 @@
                         </mat-select>
                     </mat-form-field>
                     <div>
-                        <button
-                            mat-fab
-                            extended
-                            [disabled]="!selectedSection || !selectedUnity"
-                            (click)="obtnerEstudiantesPorAulaYUnidad()"
-                        >
+                        <button mat-fab extended [disabled]="!selectedSection || !selectedUnity"
+                            (click)="obtnerEstudiantesPorAulaYUnidad()">
                             <mat-icon svgIcon="filter_alt"></mat-icon>
                             Filtrar
                         </button>
@@ -109,37 +84,22 @@
 
                 <div class="flex flex-col gap-4">
                     <div class="overflow-x-auto space-x-4">
-                        <mat-button-toggle-group
-                            [(ngModel)]="items"
-                            aria-label="Font Style"
-                        >
+                        <mat-button-toggle-group [(ngModel)]="items" aria-label="Font Style">
                             <!-- Botón para Listar Estudiantes -->
-                            <mat-button-toggle
-                                value="list"
-                                [disabled]="!selectedSection || !selectedUnity"
-                            >
+                            <mat-button-toggle value="list" [disabled]="!selectedSection || !selectedUnity">
                                 Listar
                             </mat-button-toggle>
                             <!-- Botón para Asignar Estudiantes -->
-                            <mat-button-toggle
-                                value="assign"
-                                [disabled]="!selectedSection || !selectedUnity"
-                            >
+                            <mat-button-toggle value="assign" [disabled]="!selectedSection || !selectedUnity">
                                 Asignar Estudiantes
                             </mat-button-toggle>
                             <!-- Botón para Registrar Estudiantes -->
-                            <mat-button-toggle
-                                value="register"
-                                [disabled]="!selectedSection || !selectedUnity"
-                            >
+                            <mat-button-toggle value="register" [disabled]="!selectedSection || !selectedUnity">
                                 Registrar Estudiante
                             </mat-button-toggle>
                             <!-- Botón para Editar Estudiante -->
                             @if (items === 'edit') {
-                            <mat-button-toggle
-                                value="edit"
-                                [disabled]="!selectedSection || !selectedUnity"
-                            >
+                            <mat-button-toggle value="edit" [disabled]="!selectedSection || !selectedUnity">
                                 Editar Estudiante
                             </mat-button-toggle>
                             }
@@ -152,60 +112,38 @@
                             @if(true){ @if(classroomStudents.length > 0){
                             <!-- #region Buscador -->
                             <div class="flex flex-col md:flex-row gap-4">
-                                <mat-form-field
-                                    class="w-full"
-                                    [subscriptSizing]="'dynamic'"
-                                >
-                                    <mat-icon
-                                        matPrefix
-                                        class="icon-size-5"
-                                        [svgIcon]="
+                                <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                                    <mat-icon matPrefix class="icon-size-5" [svgIcon]="
                                             'heroicons_solid:magnifying-glass'
-                                        "
-                                    ></mat-icon>
-                                    <input
-                                        type="text"
-                                        matInput
-                                        placeholder="Buscar estudiante"
-                                        #query
-                                    />
+                                        "></mat-icon>
+                                    <input type="text" matInput placeholder="Buscar estudiante" #query />
                                 </mat-form-field>
-                                <button
-                                    class="flex-none"
-                                    mat-button
-                                    [class]="
+                                <button class="flex-none" mat-button [class]="
                                         getEstadoPruebaPsicologicaAula(
                                             estadoEvalucionPsicologicaAula
                                         ).class
-                                    "
-                                    (click)="
+                                    " (click)="
                                         openUpdateEstadoEvaPsiAulaModal(
                                             getEstadoPruebaPsicologicaAula(
                                                 estadoEvalucionPsicologicaAula
                                             ).text
                                         )
-                                    "
-                                >
+                                    ">
                                     {{
-                                        getEstadoPruebaPsicologicaAula(
-                                            estadoEvalucionPsicologicaAula
-                                        ).text
+                                    getEstadoPruebaPsicologicaAula(
+                                    estadoEvalucionPsicologicaAula
+                                    ).text
                                     }}
                                 </button>
                             </div>
                             <!-- #endregion -->
                             <!-- #region Tabla Estudiante -->
                             <div
-                                class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
-                                <div
-                                    class="text-lg font-medium tracking-tight leading-6 truncate"
-                                >
+                                class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                     Detalles de los estudiantes
                                 </div>
-                                <div
-                                    class="text-secondary font-medium flex row"
-                                >
+                                <div class="text-secondary font-medium flex row">
                                     <p>
                                         En total hay
                                         {{ classroomStudents.length }}
@@ -213,73 +151,40 @@
                                     </p>
                                 </div>
                                 <div class="flex flex-col flex-auto mt-2">
-                                    <table
-                                        class="w-full overflow-y-visible"
-                                        mat-table
-                                        [dataSource]="
+                                    <table class="w-full overflow-y-visible" mat-table [dataSource]="
                                             classroomStudents
                                                 | filterTable : query.value
-                                        "
-                                    >
+                                        ">
                                         <!-- Nombre Completo -->
-                                        <ng-container
-                                            matColumnDef="NombreCompleto"
-                                            sticky
-                                        >
-                                            <th
-                                                mat-header-cell
-                                                *matHeaderCellDef
-                                            >
+                                        <ng-container matColumnDef="NombreCompleto" sticky>
+                                            <th mat-header-cell *matHeaderCellDef>
                                                 Nombre Completo
                                             </th>
-                                            <td
-                                                mat-cell
-                                                *matCellDef="let student"
-                                            >
+                                            <td mat-cell *matCellDef="let student">
                                                 {{
-                                                    formatName(
-                                                        student.nombreCompleto
-                                                    )
+                                                formatName(
+                                                student.nombreCompleto
+                                                )
                                                 }}
                                             </td>
                                         </ng-container>
 
                                         <!-- DNI -->
-                                        <ng-container
-                                            matColumnDef="DNI"
-                                            class="hidden md:table-cell"
-                                        >
-                                            <th
-                                                mat-header-cell
-                                                *matHeaderCellDef
-                                            >
+                                        <ng-container matColumnDef="DNI" class="hidden md:table-cell">
+                                            <th mat-header-cell *matHeaderCellDef>
                                                 DNI
                                             </th>
-                                            <td
-                                                mat-cell
-                                                *matCellDef="let student"
-                                            >
-                                                <span
-                                                    class="font-medium text-right"
-                                                    >{{ student.dni }}</span
-                                                >
+                                            <td mat-cell *matCellDef="let student">
+                                                <span class="font-medium text-right">{{ student.dni }}</span>
                                             </td>
                                         </ng-container>
 
                                         <!-- Estado Estudiante -->
-                                        <ng-container
-                                            matColumnDef="EstadoEstudiante"
-                                        >
-                                            <th
-                                                mat-header-cell
-                                                *matHeaderCellDef
-                                            >
+                                        <ng-container matColumnDef="EstadoEstudiante">
+                                            <th mat-header-cell *matHeaderCellDef>
                                                 Estado
                                             </th>
-                                            <td
-                                                mat-cell
-                                                *matCellDef="let student"
-                                            >
+                                            <td mat-cell *matCellDef="let student">
                                                 <span
                                                     class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
                                                     [ngClass]="{
@@ -292,22 +197,19 @@
                                                         'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50':
                                                             student.estadoEstudiante ===
                                                             'F'
-                                                    }"
-                                                >
-                                                    <span
-                                                        class="leading-relaxed whitespace-nowrap"
-                                                    >
+                                                    }">
+                                                    <span class="leading-relaxed whitespace-nowrap">
                                                         {{
-                                                            student.EstadoEstudiante ===
-                                                            "F"
-                                                                ? "Terminado"
-                                                                : student.estadoEstudiante ===
-                                                                  "N"
-                                                                ? "No iniciado"
-                                                                : student.estadoEstudiante ===
-                                                                  "P"
-                                                                ? "En proceso"
-                                                                : ""
+                                                        student.estadoEstudiante ===
+                                                        "F"
+                                                        ? "Terminado"
+                                                        : student.estadoEstudiante ===
+                                                        "N"
+                                                        ? "No iniciado"
+                                                        : student.estadoEstudiante ===
+                                                        "P"
+                                                        ? "En proceso"
+                                                        : ""
                                                         }}
                                                     </span>
                                                 </span>
@@ -315,53 +217,33 @@
                                         </ng-container>
 
                                         <!-- Opciones -->
-                                        <ng-container
-                                            matColumnDef="Opciones"
-                                            class="hidden sm:table-cell"
-                                        >
-                                            <th
-                                                mat-header-cell
-                                                *matHeaderCellDef
-                                            >
+                                        <ng-container matColumnDef="Opciones" class="hidden sm:table-cell">
+                                            <th mat-header-cell *matHeaderCellDef>
                                                 Opciones
                                             </th>
-                                            <td
-                                                mat-cell
-                                                *matCellDef="let student"
-                                            >
-                                                <button
-                                                    mat-icon-button
-                                                    (click)="
+                                            <td mat-cell *matCellDef="let student">
+                                                <button mat-icon-button (click)="
                                                         formEditStudent(student)
-                                                    "
-                                                >
+                                                    ">
                                                     <mat-icon>edit</mat-icon>
                                                 </button>
-                                                <button
-                                                    mat-icon-button
-                                                    (click)="
+                                                <button mat-icon-button (click)="
                                                         deleteStudent(
                                                             student.estudianteId
                                                         )
-                                                    "
-                                                >
+                                                    ">
                                                     <mat-icon>delete</mat-icon>
                                                 </button>
                                             </td>
                                         </ng-container>
 
-                                        <tr
-                                            mat-header-row
-                                            *matHeaderRowDef="[
+                                        <tr mat-header-row *matHeaderRowDef="[
                                                 'NombreCompleto',
                                                 'DNI',
                                                 'EstadoEstudiante',
                                                 'Opciones'
-                                            ]"
-                                        ></tr>
-                                        <tr
-                                            mat-row
-                                            *matRowDef="
+                                            ]"></tr>
+                                        <tr mat-row *matRowDef="
                                                 let row;
                                                 columns: [
                                                     'NombreCompleto',
@@ -369,16 +251,13 @@
                                                     'EstadoEstudiante',
                                                     'Opciones'
                                                 ]
-                                            "
-                                        ></tr>
+                                            "></tr>
                                     </table>
                                 </div>
                             </div>
                             <!-- #endregion-->
                             }@else {
-                            <div
-                                class="flex items-center justify-center h-50 border rounded"
-                            >
+                            <div class="flex items-center justify-center h-50 border rounded">
                                 <p class="text-center">
                                     No hay información disponible.
                                 </p>
@@ -392,11 +271,8 @@
                         } @case("assign"){
                         <!-- #region Asignar estudiante -->
                         <div
-                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                        >
-                            <div
-                                class="text-lg font-medium tracking-tight leading-6 truncate"
-                            >
+                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                            <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                 Asignar estudiante
                             </div>
                             <div class="flex flex-col flex-auto mt-2">
@@ -406,41 +282,27 @@
                                         student; let i = $index) {
                                         <mat-chip-row (removed)="remove(i)">
                                             {{ student.nombre }}
-                                            <button
-                                                matChipRemove
-                                                [attr.aria-label]="
+                                            <button matChipRemove [attr.aria-label]="
                                                     'remove ' + student.nombre
-                                                "
-                                            >
-                                                <mat-icon
-                                                    [svgIcon]="'remove'"
-                                                />
+                                                ">
+                                                <mat-icon [svgIcon]="'remove'" />
                                             </button>
                                         </mat-chip-row>
                                         }
                                     </div>
                                     <mat-form-field class="flex flex-col mt-2">
-                                        <input
-                                            matInput
-                                            #autocompleteInput
-                                            [ngModel]="inputValue"
-                                            (ngModelChange)="
+                                        <input matInput #autocompleteInput [ngModel]="inputValue" (ngModelChange)="
                                                 onInputChange($event)
-                                            "
-                                            [matAutocomplete]="auto"
-                                            placeholder="Ingresar nombre del estudiante o DNI"
-                                        />
-                                        <mat-autocomplete
-                                            #auto="matAutocomplete"
-                                            (optionSelected)="selected($event)"
-                                            [displayWith]="displayFn"
-                                        >
+                                            " [matAutocomplete]="auto"
+                                            placeholder="Ingresar nombre del estudiante o DNI" />
+                                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)"
+                                            [displayWith]="displayFn">
                                             @for (student of
                                             filteredSearchedStudents; track
                                             student) {
                                             <mat-option [value]="student">
                                                 {{ student.nombre }} ({{
-                                                    student.dni
+                                                student.dni
                                                 }})
                                             </mat-option>
                                             }
@@ -448,15 +310,9 @@
                                     </mat-form-field>
                                 </div>
                                 <div>
-                                    <button
-                                        type="submit"
-                                        mat-raised-button
-                                        color="primary"
-                                        [disabled]="
+                                    <button type="submit" mat-raised-button color="primary" [disabled]="
                                             selectedStudents.length == 0
-                                        "
-                                        (click)="asignarEstudiante()"
-                                    >
+                                        " (click)="asignarEstudiante()">
                                         Asignar
                                     </button>
                                 </div>
@@ -466,11 +322,8 @@
                         } @case("register"){
                         <!-- #region Registrar estudiante -->
                         <div
-                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                        >
-                            <div
-                                class="text-lg font-medium tracking-tight leading-6 truncate"
-                            >
+                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                            <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                 Registrar estudiante
                             </div>
                             <div class="flex flex-col flex-auto mt-2">
@@ -478,131 +331,86 @@
                                     <div class="flex flex-col gap-4">
                                         <div class="flex flex-col items-start">
                                             <div class="w-full">
-                                                <form
-                                                    [formGroup]="
+                                                <form [formGroup]="
                                                         formRegistrarEstudiante
-                                                    "
-                                                    (ngSubmit)="
+                                                    " (ngSubmit)="
                                                         registerStudent()
-                                                    "
-                                                    class="flex flex-col p-2"
-                                                >
-                                                    <mat-form-field
-                                                        class="flex-auto mb-2"
-                                                    >
+                                                    " class="flex flex-col p-2">
+                                                    <mat-form-field class="flex-auto mb-2">
                                                         <mat-label>
                                                             Nombres
                                                         </mat-label>
-                                                        <input
-                                                            type="text"
-                                                            matInput
-                                                            formControlName="nombres"
-                                                            placeholder="Ingrese su nombre"
-                                                        />
-                                                        <mat-error
-                                                            *ngIf="
+                                                        <input type="text" matInput formControlName="nombres"
+                                                            placeholder="Ingrese su nombre" />
+                                                        <mat-error *ngIf="
                                                                 formRegistrarEstudiante.get(
                                                                     'nombres'
                                                                 ).invalid &&
                                                                 formRegistrarEstudiante.get(
                                                                     'nombres'
                                                                 ).touched
-                                                            "
-                                                        >
+                                                            ">
                                                             Falta ingresar
                                                             nombre
                                                         </mat-error>
                                                     </mat-form-field>
-                                                    <mat-form-field
-                                                        class="flex-auto mb-2"
-                                                    >
+                                                    <mat-form-field class="flex-auto mb-2">
                                                         <mat-label>
                                                             Apellido Paterno
                                                         </mat-label>
-                                                        <input
-                                                            type="text"
-                                                            matInput
-                                                            formControlName="apellidoPaterno"
-                                                            required
-                                                            placeholder="Ingrese su apellido paterno"
-                                                        />
-                                                        <mat-error
-                                                            *ngIf="
+                                                        <input type="text" matInput formControlName="apellidoPaterno"
+                                                            required placeholder="Ingrese su apellido paterno" />
+                                                        <mat-error *ngIf="
                                                                 formRegistrarEstudiante.get(
                                                                     'apellidoPaterno'
                                                                 ).invalid &&
                                                                 formRegistrarEstudiante.get(
                                                                     'apellidoPaterno'
                                                                 ).touched
-                                                            "
-                                                        >
+                                                            ">
                                                             Falta ingresar
                                                             apellido paterno
                                                         </mat-error>
                                                     </mat-form-field>
-                                                    <mat-form-field
-                                                        class="flex-auto mb-2"
-                                                    >
+                                                    <mat-form-field class="flex-auto mb-2">
                                                         <mat-label>
                                                             Apellido Materno
                                                         </mat-label>
-                                                        <input
-                                                            type="text"
-                                                            matInput
-                                                            formControlName="apellidoMaterno"
-                                                            placeholder="Ingrese su apellido materno"
-                                                        />
-                                                        <mat-error
-                                                            *ngIf="
+                                                        <input type="text" matInput formControlName="apellidoMaterno"
+                                                            placeholder="Ingrese su apellido materno" />
+                                                        <mat-error *ngIf="
                                                                 formRegistrarEstudiante.get(
                                                                     'apellidoMaterno'
                                                                 ).invalid &&
                                                                 formRegistrarEstudiante.get(
                                                                     'apellidoMaterno'
                                                                 ).touched
-                                                            "
-                                                        >
+                                                            ">
                                                             Falta ingresar
                                                             apellido materno
                                                         </mat-error>
                                                     </mat-form-field>
-                                                    <mat-form-field
-                                                        class="flex-auto mb-2"
-                                                    >
-                                                        <mat-label
-                                                            >DNI</mat-label
-                                                        >
-                                                        <input
-                                                            type="number"
-                                                            matInput
-                                                            formControlName="dni"
-                                                            placeholder="Ingrese su DNI"
-                                                        />
-                                                        <mat-error
-                                                            *ngIf="
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>DNI</mat-label>
+                                                        <input type="number" matInput formControlName="dni"
+                                                            placeholder="Ingrese su DNI" />
+                                                        <mat-error *ngIf="
                                                                 formRegistrarEstudiante.get(
                                                                     'dni'
                                                                 ).invalid &&
                                                                 formRegistrarEstudiante.get(
                                                                     'dni'
                                                                 ).touched
-                                                            "
-                                                        >
+                                                            ">
                                                             El DNI tiene que
                                                             tener 8 dígitos
                                                         </mat-error>
                                                     </mat-form-field>
-                                                    <div
-                                                        class="flex justify-end mt-4"
-                                                    >
-                                                        <button
-                                                            type="submit"
-                                                            mat-raised-button
-                                                            color="primary"
+                                                    <div class="flex justify-end mt-4">
+                                                        <button type="submit" mat-raised-button color="primary"
                                                             [disabled]="
                                                                 formRegistrarEstudiante.invalid
-                                                            "
-                                                        >
+                                                            ">
                                                             Registrar
                                                         </button>
                                                     </div>
@@ -617,11 +425,8 @@
                         } @case("edit"){
                         <!-- #region Editar estudiante -->
                         <div
-                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                        >
-                            <div
-                                class="text-lg font-medium tracking-tight leading-6 truncate"
-                            >
+                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                            <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                 Editar estudiante
                             </div>
                             <div class="flex flex-col flex-auto mt-2">
@@ -629,108 +434,65 @@
                                     <div class="flex flex-col gap-4">
                                         <div class="flex flex-col items-start">
                                             <div class="w-full">
-                                                <form
-                                                    [formGroup]="
+                                                <form [formGroup]="
                                                         formEditarEstudiante
-                                                    "
-                                                    (ngSubmit)="
+                                                    " (ngSubmit)="
                                                         editEstudiante()
-                                                    "
-                                                    class="flex flex-col p-2"
-                                                >
-                                                    <mat-form-field
-                                                        class="flex-auto mb-2"
-                                                    >
-                                                        <mat-label
-                                                            >Nombres</mat-label
-                                                        >
-                                                        <input
-                                                            type="text"
-                                                            matInput
-                                                            formControlName="nombres"
-                                                            placeholder="Ingrese su nombre"
-                                                        />
-                                                        <mat-error
-                                                            *ngIf="
+                                                    " class="flex flex-col p-2">
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>Nombres</mat-label>
+                                                        <input type="text" matInput formControlName="nombres"
+                                                            placeholder="Ingrese su nombre" />
+                                                        <mat-error *ngIf="
                                                                 formEditarEstudiante.get(
                                                                     'nombres'
                                                                 ).invalid &&
                                                                 formEditarEstudiante.get(
                                                                     'nombres'
                                                                 ).touched
-                                                            "
-                                                        >
+                                                            ">
                                                             Falta ingresar
                                                             nombre
                                                         </mat-error>
                                                     </mat-form-field>
-                                                    <mat-form-field
-                                                        class="flex-auto mb-2"
-                                                    >
-                                                        <mat-label
-                                                            >Apellido
-                                                            Paterno</mat-label
-                                                        >
-                                                        <input
-                                                            type="text"
-                                                            matInput
-                                                            formControlName="apellidoPaterno"
-                                                            required
-                                                            placeholder="Ingrese su apellido paterno"
-                                                        />
-                                                        <mat-error
-                                                            *ngIf="
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>Apellido
+                                                            Paterno</mat-label>
+                                                        <input type="text" matInput formControlName="apellidoPaterno"
+                                                            required placeholder="Ingrese su apellido paterno" />
+                                                        <mat-error *ngIf="
                                                                 formEditarEstudiante.get(
                                                                     'apellidoPaterno'
                                                                 ).invalid &&
                                                                 formEditarEstudiante.get(
                                                                     'apellidoPaterno'
                                                                 ).touched
-                                                            "
-                                                        >
+                                                            ">
                                                             Falta ingresar
                                                             apellido paterno
                                                         </mat-error>
                                                     </mat-form-field>
-                                                    <mat-form-field
-                                                        class="flex-auto mb-2"
-                                                    >
-                                                        <mat-label
-                                                            >Apellido
-                                                            Materno</mat-label
-                                                        >
-                                                        <input
-                                                            type="text"
-                                                            matInput
-                                                            formControlName="apellidoMaterno"
-                                                            placeholder="Ingrese su apellido materno"
-                                                        />
-                                                        <mat-error
-                                                            *ngIf="
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>Apellido
+                                                            Materno</mat-label>
+                                                        <input type="text" matInput formControlName="apellidoMaterno"
+                                                            placeholder="Ingrese su apellido materno" />
+                                                        <mat-error *ngIf="
                                                                 formEditarEstudiante.get(
                                                                     'apellidoMaterno'
                                                                 ).invalid &&
                                                                 formEditarEstudiante.get(
                                                                     'apellidoMaterno'
                                                                 ).touched
-                                                            "
-                                                        >
+                                                            ">
                                                             Falta ingresar
                                                             apellido materno
                                                         </mat-error>
                                                     </mat-form-field>
-                                                    <mat-form-field
-                                                        class="flex-auto mb-2"
-                                                    >
-                                                        <mat-label
-                                                            >DNI</mat-label
-                                                        >
-                                                        <input
-                                                            type="number"
-                                                            matInput
-                                                            formControlName="dni"
-                                                            placeholder="Ingrese su DNI"
-                                                        />
+                                                    <mat-form-field class="flex-auto mb-2">
+                                                        <mat-label>DNI</mat-label>
+                                                        <input type="number" matInput formControlName="dni"
+                                                            placeholder="Ingrese su DNI" />
                                                         @if(
                                                         formEditarEstudiante.get('dni'
                                                         ).invalid &&
@@ -742,17 +504,11 @@
                                                         </mat-error>
                                                         }
                                                     </mat-form-field>
-                                                    <div
-                                                        class="flex justify-end mt-4"
-                                                    >
-                                                        <button
-                                                            type="submit"
-                                                            mat-raised-button
-                                                            color="primary"
+                                                    <div class="flex justify-end mt-4">
+                                                        <button type="submit" mat-raised-button color="primary"
                                                             [disabled]="
                                                                 formEditarEstudiante.invalid
-                                                            "
-                                                        >
+                                                            ">
                                                             Editar
                                                         </button>
                                                     </div>
