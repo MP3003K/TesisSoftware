@@ -4,12 +4,12 @@ import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import { classroomsRoutes } from './modules/admin/classrooms/classrooms.routes';
+import { RoleGuard } from './core/auth/guards/role.guard';
 
 // @formatter:off
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
-
     // Redirect empty path to '/example'
     { path: '', pathMatch: 'full', redirectTo: 'home' },
 
@@ -27,15 +27,41 @@ export const appRoutes: Route[] = [
         canActivateChild: [NoAuthGuard],
         component: LayoutComponent,
         data: {
-            layout: 'empty'
+            layout: 'empty',
         },
         children: [
-            { path: 'confirmation-required', loadChildren: () => import('app/modules/auth/confirmation-required/confirmation-required.routes') },
-            { path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes') },
-            { path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.routes') },
-            { path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes') },
-            { path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.routes') }
-        ]
+            {
+                path: 'confirmation-required',
+                loadChildren: () =>
+                    import(
+                        'app/modules/auth/confirmation-required/confirmation-required.routes'
+                    ),
+            },
+            {
+                path: 'forgot-password',
+                loadChildren: () =>
+                    import(
+                        'app/modules/auth/forgot-password/forgot-password.routes'
+                    ),
+            },
+            {
+                path: 'reset-password',
+                loadChildren: () =>
+                    import(
+                        'app/modules/auth/reset-password/reset-password.routes'
+                    ),
+            },
+            {
+                path: 'sign-in',
+                loadChildren: () =>
+                    import('app/modules/auth/sign-in/sign-in.routes'),
+            },
+            {
+                path: 'sign-up',
+                loadChildren: () =>
+                    import('app/modules/auth/sign-up/sign-up.routes'),
+            },
+        ],
     },
 
     // Auth routes for authenticated users
@@ -45,27 +71,55 @@ export const appRoutes: Route[] = [
         canActivateChild: [AuthGuard],
         component: LayoutComponent,
         data: {
-            layout: 'empty'
+            layout: 'empty',
         },
         children: [
-            { path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.routes') },
-            { path: 'unlock-session', loadChildren: () => import('app/modules/auth/unlock-session/unlock-session.routes') }
-        ]
+            {
+                path: 'sign-out',
+                loadChildren: () =>
+                    import('app/modules/auth/sign-out/sign-out.routes'),
+            },
+            {
+                path: 'unlock-session',
+                loadChildren: () =>
+                    import(
+                        'app/modules/auth/unlock-session/unlock-session.routes'
+                    ),
+            },
+        ],
     },
     {
         path: '',
-        canActivate: [AuthGuard],
-        canActivateChild: [AuthGuard],
+        canActivate: [AuthGuard, RoleGuard],
+        canActivateChild: [AuthGuard, RoleGuard],
         component: LayoutComponent,
         resolve: {
-            initialData: initialDataResolver
+            initialData: initialDataResolver,
         },
         children: [
-            { path: 'home', loadChildren: () => import('app/modules/admin/home/home.routes') },
-            { path: 'evaluation', loadChildren: () => import('app/modules/admin/evaluation/evaluation.routes') },
-            { path: 'reports', loadChildren: () => import('app/modules/admin/reports/reports.routes') },
+            {
+                path: 'home',
+                loadChildren: () =>
+                    import('app/modules/admin/home/home.routes'),
+            },
+            {
+                path: 'evaluation',
+                loadChildren: () =>
+                    import('app/modules/admin/evaluation/evaluation.routes'),
+            },
+            {
+                path: 'reports',
+                loadChildren: () =>
+                    import('app/modules/admin/reports/reports.routes'),
+            },
             { path: 'classrooms', loadChildren: () => classroomsRoutes },
-            { path: 'questionaries', loadChildren: () => import('app/modules/admin/questionaries/questionaries.routes') },
+            {
+                path: 'questionaries',
+                loadChildren: () =>
+                    import(
+                        'app/modules/admin/questionaries/questionaries.routes'
+                    ),
+            },
 
             {
                 path: '404-not-found',
@@ -76,6 +130,6 @@ export const appRoutes: Route[] = [
                     ),
             },
             { path: '**', redirectTo: '404-not-found' },
-        ]
-    }
+        ],
+    },
 ];
