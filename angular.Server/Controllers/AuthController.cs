@@ -121,29 +121,45 @@ namespace Controllers
             }
 
         }
-        [Authorize]
 
+        [Authorize]
         [HttpGet("Navigation")]
         public async Task<ActionResult> GetNavigation()
         {
+            string nameIdentifier = ClaimTypes.NameIdentifier;
+            if (string.IsNullOrEmpty(nameIdentifier))
+            {
+                return BadRequest(new { message = "El nameIdentifier del usuario no se encontró.", userId = nameIdentifier ?? "null" });
+            }
+
+#pragma warning disable CS8600
+            nameIdentifier = User.FindFirstValue(nameIdentifier);
+#pragma warning restore CS8600
+
+            if (string.IsNullOrEmpty(nameIdentifier))
+            {
+                return BadRequest(new { message = "El userId no se encontró.", userId = nameIdentifier ?? "null" });
+            }
             try
             {
-                int UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                int userId = int.Parse(nameIdentifier);
 
                 using (var connection = context.CreateConnection())
                 {
-                    var accesses = await connection.QueryAsync<Access>("OBTENER_ACCESOS", new { UserId }, commandType: CommandType.StoredProcedure);
+                    var accesses = await connection.QueryAsync<Access>("OBTENER_ACCESOS", new { UserId = userId }, commandType: CommandType.StoredProcedure);
                     return Ok(new Navigation(accesses.ToList()));
                 }
             }
             catch (Exception e)
             {
+                // Considera usar un logger para registrar la excepción
                 Console.WriteLine(e);
-
-                return BadRequest();
+                return BadRequest(new { message = e.Message, userId = nameIdentifier });
             }
-
         }
+
+
+
         private string GetAccessToken(int Id)
         {
             var claims = new Claim[]

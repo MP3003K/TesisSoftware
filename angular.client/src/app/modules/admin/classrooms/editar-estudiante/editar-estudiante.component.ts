@@ -29,7 +29,7 @@ export class EditarEstudianteComponent {
     ) { }
 
 
-    editEstudiante() {
+    editEstudiante(): void {
         this.classroomsService
             .actualizarEstudiante(this.formEditarEstudiante.value)
             .subscribe(

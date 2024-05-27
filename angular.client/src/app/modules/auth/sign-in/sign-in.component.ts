@@ -59,7 +59,7 @@ export class AuthSignInComponent implements OnInit {
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
         private userService: UserService
-    ) {}
+    ) { }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
@@ -97,6 +97,9 @@ export class AuthSignInComponent implements OnInit {
         this.showAlert = false;
 
         // Sign in
+        this.signInForm.value.password = this.signInForm.value.password.trim();
+        this.signInForm.value.email = this.signInForm.value.email.trim();
+
         this._authService.signIn(this.signInForm.value).subscribe({
             next: ({ user: { redirect } }) => {
                 // Set the redirect url.
@@ -104,10 +107,10 @@ export class AuthSignInComponent implements OnInit {
                 // to the correct page after a successful sign in. This way, that url can be set via
                 // routing file and we don't have to touch here.
 
-                let redirectURL  
+                let redirectURL
 
 
-                if(redirect){
+                if (redirect) {
                     console.log(redirect)
                     redirectURL = redirect
                 } else {
@@ -115,7 +118,7 @@ export class AuthSignInComponent implements OnInit {
                         'redirectURL'
                     ) || '/signed-in-redirect';
                 }
-                   
+
 
                 // Navigate to the redirect url
                 this._router.navigateByUrl(redirectURL);

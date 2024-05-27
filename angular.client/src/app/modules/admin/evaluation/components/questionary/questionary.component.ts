@@ -25,6 +25,10 @@ export class QuestionaryComponent {
     endedTest = false;
     evaPsiEstId!: number;
     public questions: any = [];
+
+    errorValidador: boolean = false;
+    errorTexto: string = '';
+
     @ViewChild('parentSection') miDivRef!: ElementRef;
 
     paginator = {
@@ -59,29 +63,48 @@ export class QuestionaryComponent {
         }
     }
 
-    public getEvaluations() {
-        this.evaluationService.getQuestions(this.evaPsiEstId).subscribe({
-            next: (response) => {
-                if (response.succeeded) {
-                    this.questions = response.data;
-                    this.db.saveQuestions(this.questions, this.evaPsiEstId);
+   public getEvaluations() {
+    this.evaluationService.getQuestions(this.evaPsiEstId).subscribe({
+        next: (response) => {
+            if (response.succeeded) {
+                this.db.getSavedQuestions(this.evaPsiEstId).then(savedQuestions => {
+                    if (savedQuestions.length > 0) {
+                        // Si hay preguntas guardadas, las usa
+                        this.questions = savedQuestions;
+                    } else {
+                        // Si no hay preguntas guardadas, obtiene las preguntas del servidor y las guarda en la base de datos IndexedDB
+                        this.questions = response.data;
+                        this.db.saveQuestions(this.questions, this.evaPsiEstId);
+                    }
                     this.updatePaginator();
+                }).catch(error => {
+                    // Maneja el error
+                });
+            }
+        },
+        error: (x) => {
+            if (x.error && x.error.errorNumber) {
+                let message = '';
+                switch (x.error.errorNumber) {
+                    case 50001:
+                        this.errorValidador = true;
+                        this.errorTexto = x.error.error;
+                        break;
+                    case 50002:
+                        this.endedTest = true; // Ya ha terminado la Evaluacion Psicologica el estudiante
+                        break;
+                    case 50003:
+                        this.errorValidador = true;
+                        this.errorTexto = x.error.error;
+                        break;
+                    default:
+                        message = x.error;
                 }
-            },
-            error: (err) => {
-                if (err.status == 400) {
-                    this.endedTest = true;
-                    this._snackbar.open(
-                        'No hay test disponibles para este usuario',
-                        '',
-                        {
-                            duration: 3000,
-                        }
-                    );
-                }
-            },
-        });
-    }
+                this._snackbar.open(message, '', {duration: 3000});
+            }
+        }
+    });
+}
 
     public goToLogin() {
         this.router.navigate(['../../login']);
@@ -106,11 +129,15 @@ export class QuestionaryComponent {
     ];
 
     public radioChange(value: string, questionId: number) {
-        // this.evaluationService
-        //     .updateQuestion(value, questionId, this.evaPsiEstId)
-        //     .subscribe((res) => {
-        //         this.db.saveQuestions(this.questions, this.evaPsiEstId);
-        //     });
+        // Encuentra la pregunta en el array de preguntas
+        const question = this.questions.find(q => q.id === questionId);
+        if (question) {
+            // Actualiza la respuesta de la pregunta
+            question.answer = value;
+        }
+
+        // Actualiza la respuesta de la pregunta en la base de datos IndexedDB
+        this.db.updateQuestion(this.evaPsiEstId, questionId, value);
     }
 
     public filterQuestions() {
@@ -161,7 +188,7 @@ export class QuestionaryComponent {
                     this.evaluationService
                         .updateTestState(this.evaPsiEstId)
                         .subscribe((res) => {
-                            console.log(res);
+                            this.db.deleteQuestions(this.evaPsiEstId);
                             this.endedTest = true;
                         });
                 }

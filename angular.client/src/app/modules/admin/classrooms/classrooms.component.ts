@@ -438,11 +438,27 @@ export class ClassroomsComponent implements OnInit {
         });
         this.items = 'edit';
     }
-    
+
     onEditarEstudianteSuccessful(event: boolean) {
         if (event == true)
             this.obtnerEstudiantesPorAulaYUnidad();
         this.items = 'list';
     }
     // #endregion
+
+
+    hol() {
+    let hola;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        console.log(hola);
+        hola = hola + 1;
+        console.log(hola);
+    }
+    
 }
