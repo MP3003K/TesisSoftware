@@ -11,12 +11,8 @@ export const RoleGuard: CanActivateFn | CanActivateChildFn = (route: ActivatedRo
 
     return _service.validateAccess(state.url).pipe(
         switchMap(({ succeeded, data }) => {
-            console.log('--------- INICIO ---------');
-            console.log('Respuesta validateAccess');
-            console.log('State.url: ',state.url);
-            console.log('Succeeded: ',succeeded);
-            console.log('Data: ',data);
-            console.log('---------- FIN --------');
+            console.log(`--------- INICIO --------- Respuesta validateAccess State.url: ${state.url}, Succeeded: ${succeeded}, Data: ${JSON.stringify(data)} ---------- FIN --------`);
+
 
             if (succeeded) {
                 if (data) {
@@ -27,7 +23,7 @@ export const RoleGuard: CanActivateFn | CanActivateChildFn = (route: ActivatedRo
             } else {
                 return of(false);
             }
-        }),catchError((error) => {
+        }), catchError((error) => {
             if (error.status === 401) {
                 console.error('No autorizado (validateAccess): ', error);
                 router.navigate(['/sign-in']); // Redirige al usuario a la página de inicio de sesión
