@@ -13,7 +13,9 @@
         "test": "ng test",
         "prestart": "node aspnetcore-https",
         "start:windows": "ng serve --ssl --ssl-cert \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.pem\" --ssl-key \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.key\" --host=127.0.0.1",
-        "start:default": "ng serve --ssl --ssl-cert \"$HOME/.aspnet/https/${npm_package_name}.pem\" --ssl-key \"$HOME/.aspnet/https/${npm_package_name}.key\" --host=127.0.0.1"
+        "start:default": "ng serve --ssl --ssl-cert \"$HOME/.aspnet/https/${npm_package_name}.pem\" --ssl-key \"$HOME/.aspnet/https/${npm_package_name}.key\" --host=127.0.0.1",
+        "cy:open": "cypress open",
+        "cy:run": "cypress run"
     },
     "dependencies": {
         "@angular/animations": "17.0.3",
@@ -60,6 +62,7 @@
         "@types/node": "^20.12.12",
         "autoprefixer": "10.4.16",
         "chroma-js": "2.4.2",
+        "cypress": "^13.10.0",
         "karma": "6.4.2",
         "karma-chrome-launcher": "3.2.0",
         "karma-coverage": "2.2.1",

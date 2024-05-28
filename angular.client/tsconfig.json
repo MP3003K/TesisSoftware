@@ -5,7 +5,7 @@
         "allowSyntheticDefaultImports": true,
         "baseUrl": "./src",
         "outDir": "./dist/out-tsc",
-        "sourceMap": true,
+        // "sourceMap": true,
         "declaration": false,
         "downlevelIteration": true,
         "experimentalDecorators": true,
@@ -14,7 +14,9 @@
         "target": "ES2022",
         "module": "ES2022",
         "useDefineForClassFields": false,
-        "lib": ["ES2022", "dom"]
+        "lib": ["ES2022", "dom"],
+                "inlineSourceMap": true,
+        "sourceMap": false,
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,
