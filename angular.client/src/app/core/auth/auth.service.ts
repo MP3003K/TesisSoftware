@@ -63,7 +63,7 @@ export class AuthService {
             .post(`${environment.baseURL}/auth/login`, credentials)
             .pipe(
                 switchMap((response: any) => {
-                    console.log(response);
+                    console.log('switchMap', response);
                     // Store the access token in the local storage
                     this.accessToken = response.accessToken;
 

@@ -33,7 +33,7 @@ export const authInterceptor = (
     // catch and delete the access token from the local storage while logging
     // the user out from the app.
     if (
-        authService.accessToken &&
+        authService.accessToken && authService.accessToken.length> 0 &&
         !AuthUtils.isTokenExpired(authService.accessToken)
     ) {
         newReq = req.clone({
