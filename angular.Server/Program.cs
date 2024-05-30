@@ -53,7 +53,7 @@ else
 
 }
 
-app.UseCors(x => x.WithOrigins("https://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+app.UseCors(x => x.AllowAnyHeader().AllowCredentials().AllowCredentials().SetIsOriginAllowed(hostname => true));
 
 app.UseHttpsRedirection();
 
