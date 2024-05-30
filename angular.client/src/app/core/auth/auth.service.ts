@@ -60,9 +60,7 @@ export class AuthService {
         }
 
         return this._httpClient
-            .post(`${environment.baseURL}/auth/login`, credentials, {
-                withCredentials: true,
-            })
+            .post(`${environment.baseURL}/auth/login`, credentials)
             .pipe(
                 switchMap((response: any) => {
                     console.log(response);

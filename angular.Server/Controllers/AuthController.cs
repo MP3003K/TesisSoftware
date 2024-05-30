@@ -104,6 +104,7 @@ namespace Controllers
 
             try
             {
+                Console.WriteLine("bendiciones");
                 int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
                 using (var connection = context.CreateConnection())
@@ -134,6 +135,7 @@ namespace Controllers
         [HttpGet("Navigation")]
         public async Task<ActionResult> GetNavigation()
         {
+
             string nameIdentifier = ClaimTypes.NameIdentifier;
             if (string.IsNullOrEmpty(nameIdentifier))
             {
