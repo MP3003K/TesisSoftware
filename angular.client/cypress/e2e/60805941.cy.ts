@@ -1,25 +1,28 @@
-let userEmail = '06960144';
+userEmail = '60805941';
 
 describe('Simulación de inicio de sesión', () => {
     let registro = { user: userEmail, estadoApi: true, userId: null, succeeded: null, link: null };
 
     it(`Inicia sesión como ${userEmail}`, () => {
         // Intercepta las solicitudes específicas y asigna un alias
-        cy.intercept('POST', 'https://localhost:5001/auth/login').as('login');
-        cy.intercept('POST', 'https://localhost:5001/role/access/validate').as('validateAccess');
-        cy.intercept('GET', 'https://localhost:5001/auth/navigation').as('navigation');
+        cy.intercept('POST', 'http://26.97.164.113/auth/login').as('login');
+        cy.intercept('POST', 'http://26.97.164.113/role/access/validate').as('validateAccess');
+        cy.intercept('GET', 'http://26.97.164.113/auth/navigation').as('navigation');
 
-        // Visita la página de inicio de sesión
         cy.visit('/sign-in');
-        // Ingresa los datos del usuario
-        cy.get('input[id=email]').type(userEmail);
-        cy.get('input[id=password]').type(userEmail);
 
-        // Haz clic en el botón de inicio de sesión
-        cy.get('button[type=submit]').click();
+        // Ingresa los datos del usuario
+        cy.get('input[id=email]', { timeout: 20000 }).should('be.visible').type(userEmail);
+
+
+        cy.get('input[id=password]').should('be.visible').type(userEmail);
+
+
+        cy.get('button[type=submit]').should('be.visible').click();
+
 
         // Espera a que se complete cada llamada a la API y registra la respuesta
-        cy.wait('@login').then(({ request, response }) => {
+        cy.wait('@login', { timeout: 20000 }).then(({ request, response }) => {
             // Verifica que response, body, user e id existen
             if (response && response.body && response.body.user && response.body.user.id) {
                 // Guarda el id del usuario
@@ -29,7 +32,7 @@ describe('Simulación de inicio de sesión', () => {
             }
         });
 
-        cy.wait('@validateAccess').then(({ request, response }) => {
+        cy.wait('@validateAccess', { timeout: 20000 }).then(({ request, response }) => {
             // Verifica que succeeded es true
             if (response.body.succeeded !== true) {
                 registro.estadoApi = false;
@@ -37,7 +40,7 @@ describe('Simulación de inicio de sesión', () => {
             registro.succeeded = response.body.succeeded;
         });
 
-        cy.wait('@navigation').then(({ request, response }) => {
+        cy.wait('@navigation', { timeout: 20000 }).then(({ request, response }) => {
             // Obtiene el primer enlace de compact
             if (response.body.compact.length > 0) {
                 registro.link = response.body.compact[0].link;
