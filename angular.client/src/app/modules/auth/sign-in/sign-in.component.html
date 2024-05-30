@@ -33,7 +33,7 @@
                 <!-- Password field -->
                 <mat-form-field class="w-full">
                     <mat-label>Contraseña</mat-label>
-                    <input id="password" matInput type="password" [formControlName]="'password'" #passwordField>
+                    <input autocomplete="current-password" id="password" matInput type="password" [formControlName]="'password'" #passwordField>
                     <button mat-icon-button type="button"
                         (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
                         matSuffix>
