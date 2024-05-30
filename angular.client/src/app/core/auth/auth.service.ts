@@ -26,8 +26,6 @@ export class AuthService {
         return localStorage.getItem('accessToken') ?? '';
     }
 
- 
-
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -62,10 +60,12 @@ export class AuthService {
         }
 
         return this._httpClient
-            .post(`${environment.baseURL}/auth/login`, credentials)
+            .post(`${environment.baseURL}/auth/login`, credentials, {
+                withCredentials: true,
+            })
             .pipe(
                 switchMap((response: any) => {
-                    console.log(response)
+                    console.log(response);
                     // Store the access token in the local storage
                     this.accessToken = response.accessToken;
 

@@ -77,6 +77,14 @@ namespace Controllers
 
                     var accessToken = GetAccessToken(user.Id);
 
+                    ;
+                    Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+                    {
+                        Expires = DateTime.Now.AddDays(1),  // La cookie expirará en 1 día
+                        Path = "/",
+                        HttpOnly = true,                   // La cookie solo es accesible a través de HTTP(S)
+                        Secure = true                      // La cookie solo se enviará a través de HTTPS
+                    });
                     return Ok(new { accessToken, user });
                 }
             }
@@ -132,9 +140,7 @@ namespace Controllers
                 return BadRequest(new { message = "El nameIdentifier del usuario no se encontró.", userId = nameIdentifier ?? "null" });
             }
 
-#pragma warning disable CS8600
             nameIdentifier = User.FindFirstValue(nameIdentifier);
-#pragma warning restore CS8600
 
             if (string.IsNullOrEmpty(nameIdentifier))
             {
