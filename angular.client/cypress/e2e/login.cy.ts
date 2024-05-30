@@ -1,63 +1,54 @@
-let failCount = 0;
+let userEmail = '06960144';
 
 describe('Simulación de inicio de sesión', () => {
-    let users = ['06960144', '74269438', '74270873', '62595705', '62027636', '74796235', '75044104', '76713289', '74680432', '75297357', '62721124', '74342062', '62517728', '79188125', '76487030', '74336532', '74190424', '74188321', '73548778', '75295841', '74259797', '74796174', '76115937', '75035604', '74264006', '75035290', '75638781', '75296588', '74668818', '74669851', '74521107', '74341613', '74517262', '75305397', '73851353', '74783959', '74260948', '76703133', '74330374', '74340556', '77254762', '75303339', '74799418', '76500586', '76491529', '74195738', '76484664', '73296050', '74782134', '75287978', '74328934', '74274055', '74781905', '81148394', '74333783', '74262528', '62605992', '75042199', '62714969', '74273355', '75297344', '76715721', '77191342', '74266652', '74785354', '76107312', '74516949', '63256470', '76116636', '73402934', '74197645', '73732749', '73922816', '74004275', '73559095', '73395117', '74015554', '73717347', '73917614', '74000173', '77109913', '77632140', '73716301', '73730591', '74017567', '75033465', '73289350', '74101211', '73720981', '73850459', '73555226', '73291325', '74102257', '73559002', '74342961', '74110912', '73287576', '61660189', '61660190', '74103995', '73719060', '73926460', '74114544', '78119407', '74010818', '74109223', '62699862', '73397562', '78120223', '61943532', '81620153', '74187100', '62201774', '73718863', '61795241', '77825107', '73845552', '75027096', '73410108', '73845069', '73725995', '78155581', '73289532', '74105417', '74113677', '73720864', '77004232', '73723585', '73839530', '62577843', '73909982', '72833533', '71357801', '72832374', '71164168', '73153996', '72820572', '72999264', '71357861', '72340361', '71360571', '73278915', '72338548', '72331048', '72593407', '72986662', '71673558', '77585740', '71353198', '60719356', '72601933', '61505833', '61474290', '72993379', '71362741', '72836761', '71678927', '62032732', '72827849', '72594515', '60382969', '71190597', '71371866', '76498179', '71685170', '72336103', '71681021', '73154280', '71682431', '62024758', '77888421', '72822793', '60297996', '72994023', '72999239', '72994709', '71686390', '76898251', '70739165', '72992583', '71681744', '73295308', '73295230', '72602437', '71353050', '72348633', '71673694', '72990539', '72591359', '72054625', '74781093', '72829213', '72340908', '72594560', '73165743', '70699327', '63006629', '71147426', '70698542', '71186717', '71162186', '60699100', '71354173', '74786165', '71156892', '71158630', '70953298', '71361230', '70716758', '71157225', '70721962', '74443782', '75027151', '70963087', '71191426', '61296311', '61493510', '71144331', '71185189', '63256469', '71351949', '71166986', '75644283', '61154739', '70695531', '70695366', '71357968', '70964636', '60873116', '70729526', '75167951', '71144961', '71181073', '70742945', '71352745', '70957889', '71175258', '71177884', '71161802', '70648026', '61294412', '70952987', '78387643', '71355651', '60863523', '71166844', '71179457', '70735500', '71157806', '61213905', '70968816', '60445413', '60537033', '70696351', '71171424', '70729188', '70736274', '60863434', '71182209', '74060498', '62925190', '60863502', '71184687', '71150810', '71162738', '60515161', '71181142', '70962382', '77878319', '71181127', '71677409', '71363985', '70702804', '71157244', '72360056', '70649158', '79508823', '74063543', '60786444', '60892639', '77435003', '60053127', '77106988', '70628682', '61011411', '73703002', '70635023', '72335032', '60434439', '70595704', '70630454', '60873462', '74785437', '60805853', '70646359', '60863275', '70537186', '60074465', '10000001', '70740097', '70623941', '70697927', '72830718', '62852895', '75260632', '60008872', '61419706', '75149418', '70696565', '70496933', '60805669', '60770950', '75475105', '60429771', '70588294', '60805941', '60194711', '70516270', '60972336', '70698211', '60805875', '70696574', '60920479', '77191620', '70591026', '70499111', '60808430', '60750029', '60920416', '60972321', '63256468', '60920517', '60460834', '60861609', '61007764', '70594577', '60874444', '70487239', '10000002', '60800998', '70629717', '60761559', '60842802', '72529312', '60920269', '71624646', '60805881', '70637933', '60805762', '60001010', '70702311', '70596100', '70637559', '72591373', '70533851', '60863529', '60805911', '60861163', '70592641', '75039234', '60819178', '60805739'];
+    let registro = { user: userEmail, estadoApi: true, userId: null, succeeded: null, link: null };
 
+    it(`Inicia sesión como ${userEmail}`, () => {
+        // Intercepta las solicitudes específicas y asigna un alias
+        cy.intercept('POST', 'https://localhost:5001/auth/login').as('login');
+        cy.intercept('POST', 'https://localhost:5001/role/access/validate').as('validateAccess');
+        cy.intercept('GET', 'https://localhost:5001/auth/navigation').as('navigation');
 
-    let registros = [];
-    let registrosImprimir = [];
-    users.forEach((userEmail) => {
-        it(`Inicia sesión como ${userEmail}`, () => {
-            // Intercepta las solicitudes específicas y asigna un alias
-            cy.intercept('POST', 'https://localhost:5001/auth/login').as('login');
-            cy.intercept('POST', 'https://localhost:5001/role/access/validate').as('validateAccess');
-            cy.intercept('GET', 'https://localhost:5001/auth/navigation').as('navigation');
+        // Visita la página de inicio de sesión
+        cy.visit('/sign-in');
+        // Ingresa los datos del usuario
+        cy.get('input[id=email]').type(userEmail);
+        cy.get('input[id=password]').type(userEmail);
 
-            // Visita la página de inicio de sesión
-            cy.visit('/sign-in');
-            // Ingresa los datos del usuario
-            cy.get('input[id=email]').type(userEmail);
-            cy.get('input[id=password]').type(userEmail);
+        // Haz clic en el botón de inicio de sesión
+        cy.get('button[type=submit]').click();
 
-            // Haz clic en el botón de inicio de sesión
-            cy.get('button[type=submit]').click();
+        // Espera a que se complete cada llamada a la API y registra la respuesta
+        cy.wait('@login').then(({ request, response }) => {
+            // Verifica que response, body, user e id existen
+            if (response && response.body && response.body.user && response.body.user.id) {
+                // Guarda el id del usuario
+                registro.userId = response.body.user.id;
+            } else {
+                registro.estadoApi = false;
+            }
+        });
 
-            // Define el registro para este usuario
-            let registro = { user: userEmail, estadoApi: true, userId: null, succeeded: null, link: null };
+        cy.wait('@validateAccess').then(({ request, response }) => {
+            // Verifica que succeeded es true
+            if (response.body.succeeded !== true) {
+                registro.estadoApi = false;
+            }
+            registro.succeeded = response.body.succeeded;
+        });
 
-            // Espera a que se complete cada llamada a la API y registra la respuesta
-            cy.wait('@login').then(({ request, response }) => {
-                // Verifica que response, body, user e id existen
-                if (response && response.body && response.body.user && response.body.user.id) {
-                    // Guarda el id del usuario
-                    registro.userId = response.body.user.id;
-                } else {
-                    registro.estadoApi = false;
-                }
-            });
-
-            cy.wait('@validateAccess').then(({ request, response }) => {
-                // Verifica que succeeded es true
-                if (response.body.succeeded !== true) {
-                    registro.estadoApi = false;
-                }
-                registro.succeeded = response.body.succeeded;
-            });
-
-            cy.wait('@navigation').then(({ request, response }) => {
-                // Obtiene el primer enlace de compact
-                if (response.body.compact.length > 0) {
-                    registro.link = response.body.compact[0].link;
-                } else {
-                    registro.estadoApi = false;
-                }
-            });
+        cy.wait('@navigation').then(({ request, response }) => {
+            // Obtiene el primer enlace de compact
+            if (response.body.compact.length > 0) {
+                registro.link = response.body.compact[0].link;
+            } else {
+                registro.estadoApi = false;
+            }
         });
     });
 
+
     after(() => {
-        // Imprime los registros después de que todas las pruebas se hayan completado
-        registrosImprimir = registros;
-        console.log('REGISTROS', registros);
+        assert.isTrue(registro.estadoApi, `El estado de la API no es válido: ${JSON.stringify(registro)}`);
     });
 });
