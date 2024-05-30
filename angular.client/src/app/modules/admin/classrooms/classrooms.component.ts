@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ElementRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
     MatAutocompleteModule,
@@ -21,6 +21,10 @@ import { PersonaService } from './persona.service';
 import { StudentService } from './student.service';
 import { FilterTablePipe } from './filter-table.pipe';
 import { forkJoin } from 'rxjs';
+import { EditarEstudianteComponent } from './editar-estudiante/editar-estudiante.component';
+import { RegistrarEstudiantesComponent } from './registrar-estudiantes/registrar-estudiantes.component';
+import { AsignarEstudiantesComponent } from './asignar-estudiantes/asignar-estudiantes.component';
+import { Component, ViewChild, EventEmitter, Output } from '@angular/core';
 
 @Component({
     selector: 'app-classrooms',
@@ -39,6 +43,9 @@ import { forkJoin } from 'rxjs';
         MatChipsModule,
         MatIconModule,
         FilterTablePipe,
+        EditarEstudianteComponent,
+        RegistrarEstudiantesComponent,
+        AsignarEstudiantesComponent,
     ],
 })
 export class ClassroomsComponent implements OnInit {
@@ -67,16 +74,6 @@ export class ClassroomsComponent implements OnInit {
             Validators.pattern('^[0-9]{8}$'),
         ]),
     });
-    formEditarEstudiante = new FormGroup({
-        id: new FormControl('', [Validators.required]),
-        nombres: new FormControl('', [Validators.required]),
-        apellidoPaterno: new FormControl('', [Validators.required]),
-        apellidoMaterno: new FormControl('', [Validators.required]),
-        dni: new FormControl('', [
-            Validators.required,
-            Validators.pattern('^[0-9]{8}$'),
-        ]),
-    });
 
     items: string = 'list';
     estadoEvalucionPsicologicaAula: string = 'N';
@@ -94,7 +91,7 @@ export class ClassroomsComponent implements OnInit {
         private personaService: PersonaService,
         private studentService: StudentService,
         private snack: MatSnackBar
-    ) {}
+    ) { }
 
     // Métodos de ciclo de vida
     ngOnInit() {
@@ -138,7 +135,6 @@ export class ClassroomsComponent implements OnInit {
 
         forkJoin(observables).subscribe((responses) => {
             if (responses.every((e) => e.succeeded)) {
-                console.log(responses);
                 this.selectedStudents = [];
                 this.searchedStudents = [];
                 this.obtnerEstudiantesPorAulaYUnidad();
@@ -154,28 +150,18 @@ export class ClassroomsComponent implements OnInit {
             .subscribe((response) => {
                 if (response.succeeded) {
                     this.classroomStudents = response.data;
-                    const [firstStudent] = this.classroomStudents;
-                    this.estadoEvalucionPsicologicaAula =
-                        firstStudent?.EstadoAula ?? 'N';
+                    this.estadoEvalucionPsicologicaAula = this.classroomStudents[0]?.estadoAula ?? 'N';
+                    this.updateEstadoModificarAula();
                 }
             });
     }
 
     cambiarEstadoEvaluacionPsicologicaAula() {
         let estado = this.estadoEvalucionPsicologicaAula;
-        console.log(estado);
-        console.log('Hola');
         if (estado == 'F') return;
 
         if (['N', 'P'].includes(estado)) {
             let opcion = estado === 'N' ? 1 : 0; // 1: Iniciar, 0: Finalizar
-            console.log(
-                'selectedUnity: ',
-                this.selectedUnity,
-                'selectedSection: ',
-                this.selectedSection,
-                'opcion: '
-            );
             this.classroomsService
                 .updateEstadoEvaPsiAula(
                     this.selectedUnity,
@@ -214,31 +200,6 @@ export class ClassroomsComponent implements OnInit {
                 this.items = 'register';
             }
         });
-    }
-    getEstadoPruebaPsicologicaAula(status: string): {
-        text: string;
-        class: string;
-    } {
-        let classStyle = 'w-auto font-bold';
-        switch (status) {
-            case 'F':
-                return {
-                    text: 'Evaluación Terminado',
-                    class: `${classStyle} bg-green-200 text-green-800`,
-                };
-            case 'N':
-                return {
-                    text: 'Evaluación No iniciado',
-                    class: `${classStyle} bg-gray-200 text-gray-800 `,
-                };
-            case 'P':
-                return {
-                    text: 'Evaluación En proceso',
-                    class: `${classStyle} bg-orange-200 text-orange-800 `,
-                };
-            default:
-                return { text: '', class: '' };
-        }
     }
 
     remove(index: number): void {
@@ -352,7 +313,6 @@ export class ClassroomsComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((res) => {
             if (res === 'confirmed') {
-                console.log('hola');
                 const tipoMap = {
                     Unidad: 0,
                     Año: 1,
@@ -425,51 +385,14 @@ export class ClassroomsComponent implements OnInit {
                 this.selectedUnity
             )
             .subscribe((res) => {
-                console.log(res);
                 if (res.succeeded) {
                     this.filteredStudents = [];
                     this.obtnerEstudiantesPorAulaYUnidad();
                 }
             });
     }
-    // #region Editar Estudiante
-    formEditStudent(student) {
-        if (!student) return;
 
-        this.formEditarEstudiante.patchValue({
-            id: student.EstudianteId,
-            nombres: student.Nombres,
-            apellidoPaterno: student.ApellidoPaterno,
-            apellidoMaterno: student.ApellidoMaterno,
-            dni: student.DNI,
-        });
-        this.items = 'edit';
-    }
 
-    editEstudiante() {
-        this.classroomsService
-            .actualizarEstudiante(this.formEditarEstudiante.value)
-            .subscribe(
-                (response) => {
-                    if (response.succeeded) {
-                        this.obtnerEstudiantesPorAulaYUnidad();
-                        this.formEditarEstudiante.reset();
-                        this.items = 'list';
-                    }
-                },
-                (error) => {
-                    console.error('Error al realizar la solicitud: ', error);
-                }
-            );
-    }
-
-    formatName(name: string): string {
-        return name
-            .toLowerCase()
-            .split(' ')
-            .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
-            .join(' ');
-    }
 
     showDNI: boolean = true;
     showOptions: boolean = true;
@@ -477,5 +400,65 @@ export class ClassroomsComponent implements OnInit {
         this.showDNI = event.target.innerWidth > 768;
         this.showOptions = event.target.innerWidth > 640;
     }
-    // #region Hola
+
+
+    modificarAula: boolean = false;
+    updateEstadoModificarAula() {
+        this.selectedUnity;
+        let estado = this.unidades.find(x => x.id == this.selectedUnity).estado;
+        this.modificarAula = estado;
+    }
+
+
+    // #region Editar Estudiante
+    @ViewChild(EditarEstudianteComponent) editarEstudianteComponent: EditarEstudianteComponent;
+
+    @Output() editarEstudianteSuccessful = new EventEmitter<FormGroup>();
+
+    formEditarEstudiante = new FormGroup({
+        id: new FormControl('', [Validators.required]),
+        nombres: new FormControl('', [Validators.required]),
+        apellidoPaterno: new FormControl('', [Validators.required]),
+        apellidoMaterno: new FormControl('', [Validators.required]),
+        dni: new FormControl('', [
+            Validators.required,
+            Validators.pattern('^[0-9]{8}$'),
+        ]),
+    });
+
+    editarEstudianteComponente(student: any) {
+        if (!student) return;
+
+        this.formEditarEstudiante.patchValue({
+            id: student.estudianteId,
+            nombres: student.nombres,
+            apellidoPaterno: student.apellidoPaterno,
+            apellidoMaterno: student.apellidoMaterno,
+            dni: student.dni,
+        });
+        this.items = 'edit';
+    }
+
+    onEditarEstudianteSuccessful(event: boolean) {
+        if (event == true)
+            this.obtnerEstudiantesPorAulaYUnidad();
+        this.items = 'list';
+    }
+    // #endregion
+
+
+    hol() {
+    let hola;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        hola = hola + 1;
+        console.log(hola);
+        hola = hola + 1;
+        console.log(hola);
+    }
+    
 }

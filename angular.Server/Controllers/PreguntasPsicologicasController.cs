@@ -1,7 +1,8 @@
-﻿using Application.Wrappers;
+using Application.Wrappers;
 using Context;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using System.Data;
 
 namespace webapi.Controllers
@@ -33,6 +34,14 @@ namespace webapi.Controllers
                     return Ok(new Response<dynamic> { Message = null, Succeeded = true, Data = questions.ToList() });
 
                 }
+            }
+            catch (SqlException ex)
+            {
+                return BadRequest(new
+                {
+                    error = ex.Message,
+                    errorNumber = ex.Number
+                });
             }
             catch (Exception ex)
             {

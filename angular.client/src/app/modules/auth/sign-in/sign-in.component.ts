@@ -18,7 +18,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
-import { UserService } from 'app/core/user/user.service';
 
 @Component({
     selector: 'auth-sign-in',
@@ -50,24 +49,13 @@ export class AuthSignInComponent implements OnInit {
     signInForm: UntypedFormGroup;
     showAlert: boolean = false;
 
-    /**
-     * Constructor
-     */
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
-        private userService: UserService
-    ) {}
+    ) { }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * On init
-     */
     ngOnInit(): void {
         // Create the form
         this.signInForm = this._formBuilder.group({
@@ -77,13 +65,8 @@ export class AuthSignInComponent implements OnInit {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
+    desabilitarBoton: boolean = false;
 
-    /**
-     * Sign in
-     */
     signIn(): void {
         // Return if the form is invalid
         if (this.signInForm.invalid) {
@@ -91,38 +74,31 @@ export class AuthSignInComponent implements OnInit {
         }
 
         // Disable the form
-        this.signInForm.disable();
+        this.desabilitarBoton = true;
 
         // Hide the alert
         this.showAlert = false;
 
         // Sign in
+        this.signInForm.value.password = this.signInForm.value.password.trim();
+        this.signInForm.value.email = this.signInForm.value.email.trim();
+
         this._authService.signIn(this.signInForm.value).subscribe({
             next: ({ user: { redirect } }) => {
-                // Set the redirect url.
-                // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
-                // to the correct page after a successful sign in. This way, that url can be set via
-                // routing file and we don't have to touch here.
-
-                let redirectURL  
-
-
-                if(redirect){
-                    console.log(redirect)
+                let redirectURL
+                if (redirect)
                     redirectURL = redirect
-                } else {
+                else
                     redirectURL = this._activatedRoute.snapshot.queryParamMap.get(
                         'redirectURL'
                     ) || '/signed-in-redirect';
-                }
-                   
 
                 // Navigate to the redirect url
                 this._router.navigateByUrl(redirectURL);
             },
             error: (response) => {
                 // Re-enable the form
-                this.signInForm.enable();
+                this.desabilitarBoton = false;
 
                 // Reset the form
                 this.signInNgForm.resetForm();
@@ -130,7 +106,7 @@ export class AuthSignInComponent implements OnInit {
                 // Set the alert
                 this.alert = {
                     type: 'error',
-                    message: 'Wrong email or password',
+                    message: 'Correo o contraseña equivocada',
                 };
 
                 // Show the alert

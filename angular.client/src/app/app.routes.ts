@@ -3,6 +3,7 @@ import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
+import { classroomsRoutes } from './modules/admin/classrooms/classrooms.routes';
 import { RoleGuard } from './core/auth/guards/role.guard';
 
 // @formatter:off
@@ -111,11 +112,7 @@ export const appRoutes: Route[] = [
                 loadChildren: () =>
                     import('app/modules/admin/reports/reports.routes'),
             },
-            {
-                path: 'classrooms',
-                loadChildren: () =>
-                    import('app/modules/admin/classrooms/classrooms.routes'),
-            },
+            { path: 'classrooms', loadChildren: () => classroomsRoutes },
             {
                 path: 'questionaries',
                 loadChildren: () =>

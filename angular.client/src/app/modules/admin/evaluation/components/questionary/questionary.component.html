@@ -58,6 +58,12 @@
                 <span>El Formulario se ha realizado exitosamente</span>
             </mat-card-content>
         </mat-card>
+        <mat-card *ngIf="errorValidador">
+            <mat-card-content class="flex items-center justify-center">
+                <mat-icon svgIcon="report"></mat-icon>
+                <span>{{ errorTexto }}</span>
+            </mat-card-content>
+        </mat-card>
         <div *ngIf="!endedTest">
             <div class="sticky top-0 py-2 px-4 flex justify-between z-10">
                 <div class="flex flex-col gap-2">
@@ -138,23 +144,26 @@
                     <button
                         (click)="getPreviousItem()"
                         [disabled]="paginator.pageNumber == 1"
-                        mat-button
+                        mat-button color="basic"
                     >
                         Anterior
                     </button>
                     @if( paginator.pageNumber != paginator.pages ){
-                    <button mat-flat-button (click)="getNextItem()">
-                        Siguiente
-                    </button>
+                        <button mat-stroked-button color="primary"
+                                (click)="getNextItem()">
+                            Siguiente
+                        </button>
                     }
-                    <button
-                        mat-flat-button
-                        color="primary"
-                        [disabled]="questions.length != countCompletedAnswers"
-                        (click)="submitForm()"
-                    >
-                        Enviar
-                    </button>
+                    @if(questions.length == countCompletedAnswers){
+                        <button
+                            mat-flat-button
+                            color="primary"
+                            [disabled]="questions.length != countCompletedAnswers"
+                            (click)="submitForm()"
+                        >
+                            Enviar
+                        </button>
+                    }
                 </div>
             </div>
         </div>
