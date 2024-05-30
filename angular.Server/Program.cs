@@ -53,7 +53,7 @@ else
 
 }
 
-app.UseCors(x => x.AllowAnyHeader().AllowCredentials().AllowCredentials().SetIsOriginAllowed(hostname => true));
+app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().AllowCredentials().SetIsOriginAllowed(origin => true));
 
 app.UseHttpsRedirection();
 

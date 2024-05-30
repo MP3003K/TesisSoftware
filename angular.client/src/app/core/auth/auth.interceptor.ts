@@ -22,7 +22,7 @@ export const authInterceptor = (
     const authService = inject(AuthService);
 
     // Clone the request object
-    let newReq = req.clone();
+    let newReq = req.clone({ withCredentials: true });
 
     // Request
     //
