@@ -1,4 +1,5 @@
-﻿using Context;
+﻿using Application.Wrappers;
+using Context;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -77,15 +78,15 @@ namespace Controllers
 
                     var accessToken = GetAccessToken(user.Id);
 
-                    ;
+
                     Response.Cookies.Append("accessToken", accessToken, new CookieOptions
                     {
-                        Expires = DateTime.Now.AddDays(1),  // La cookie expirará en 1 día
+                        Expires = DateTime.Now.AddDays(1),
                         Path = "/",
-                        HttpOnly = true,                   // La cookie solo es accesible a través de HTTP(S)
-                        Secure = true                      // La cookie solo se enviará a través de HTTPS
+                        HttpOnly = true,
+                        Secure = true
                     });
-                    return Ok(new { accessToken, user });
+                    return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
                 }
             }
             catch (Exception e)
@@ -119,14 +120,19 @@ namespace Controllers
 
                     var accessToken = GetAccessToken(user.Id);
 
-                    return Ok(new { accessToken, user });
+                    Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+                    {
+                        Expires = DateTime.Now.AddDays(1),
+                        Path = "/",
+                        HttpOnly = true,
+                        Secure = true
+                    });
+                    return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-
-                return BadRequest();
+                return BadRequest(new Response<dynamic> { Data = null, Succeeded = false, Message = e.Message });
             }
 
         }
@@ -160,10 +166,16 @@ namespace Controllers
             }
             catch (Exception e)
             {
-                // Considera usar un logger para registrar la excepción
-                Console.WriteLine(e);
                 return BadRequest(new { message = e.Message, userId = nameIdentifier });
             }
+        }
+
+        [Authorize]
+        [HttpPost("SignOut")]
+        public ActionResult Logout()
+        {
+            Response.Cookies.Delete("accessToken");
+            return Ok(new Response<dynamic> { Data = true, Succeeded = true, Message = "Sesión cerrada correctamente" });
         }
 
 
