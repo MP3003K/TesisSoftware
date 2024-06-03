@@ -96,9 +96,9 @@
                                 Asignar Estudiantes
                             </mat-button-toggle>
                             <!-- Botón para Registrar Estudiantes -->
-                            <mat-button-toggle value="register"
+                            <mat-button-toggle value="regitrar-estudiantes"
                                 [disabled]="!selectedSection || !selectedUnity || !modificarAula">
-                                Registrar Estudiante
+                                Registrar Estudiantes
                             </mat-button-toggle>
                             }
 
@@ -430,7 +430,11 @@
                         <app-editar-estudiante #editarEstudiante [formEditarEstudiante]="formEditarEstudiante"
                             (editarEstudianteSuccessful)="onEditarEstudianteSuccessful($event)">
                             ></app-editar-estudiante>
-                        }}
+                        } @case("regitrar-estudiantes"){
+                        <app-registrar-estudiantes [unidadIdSeleccionada]="selectedUnity"
+                            [seccionIdSeleccionada]="selectedSection"></app-registrar-estudiantes>
+                        }
+                        }
                     </div>
                 </div>
             </div>

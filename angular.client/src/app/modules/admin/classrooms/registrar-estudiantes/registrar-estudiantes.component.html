@@ -1,1 +1,85 @@
-<p>registrar-estudiantes works!</p>
+<div class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+    <div class="text-lg font-medium tracking-tight leading-6 truncate">
+        Registrar lista de estudiantes
+    </div>
+    <div class="flex flex-col flex-auto mt-2">
+        <div class="flex-auto py-1 sm:py-3">
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-col items-start">
+                    <div class="w-full">
+
+                        <div class="flex items-center ml-2 mb-5">
+                            <input type="file" #fileInput (change)="cargarDatosEstudiantes_Excel($event)" multiple
+                                hidden>
+                            <button mat-stroked-button color="accent" class="flex items-center"
+                                (click)="fileInput.click()">
+                                Cargar datos
+                                <mat-icon aria-hidden="false" aria-label="Example home icon"
+                                    fontIcon="upload_file"></mat-icon>
+                            </button>
+                            <button mat-button class="flex items-center" (click)="descargarPlantilla()">
+                                Descargar Plantilla
+                                <mat-icon aria-hidden="false" aria-label="Example home icon"
+                                    fontIcon="description"></mat-icon>
+                            </button>
+                            <button mat-button class="flex items-center" (click)="limpiarRegistrosFormulario()">
+                                Limpiar registros
+                                <mat-icon aria-hidden="false" aria-label="Example home icon"
+                                    fontIcon="history"></mat-icon>
+                            </button>
+                        </div>
+
+                        <form [formGroup]="formEstudiantes" (ngSubmit)="registrarEstudiantesApi()" class="w-full">
+                            <div formArrayName="estudiantes">
+                                <div *ngFor="let estudiante of estudiantes.controls; let i = index" [formGroupName]="i"
+                                    class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-start sm:items-center">
+                                    <div class="font-bold text-lg">{{ i + 1 }}</div>
+                                    <mat-form-field class="w-full">
+                                        <input matInput placeholder="Nombres" formControlName="nombres" class="w-full">
+                                        <mat-error
+                                            *ngIf="estudiante.get('nombres').invalid && estudiante.get('nombres').touched">
+                                            Falta agregar nombre
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <mat-form-field class="w-full">
+                                        <input matInput placeholder="Apellido Paterno" formControlName="apellidoPaterno"
+                                            class="w-full">
+                                        <mat-error
+                                            *ngIf="estudiante.get('apellidoPaterno').invalid && estudiante.get('apellidoPaterno').touched">
+                                            Falta agregar apellido paterno
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <mat-form-field class="w-full">
+                                        <input matInput placeholder="Apellido Materno" formControlName="apellidoMaterno"
+                                            class="w-full">
+                                        <mat-error
+                                            *ngIf="estudiante.get('apellidoMaterno').invalid && estudiante.get('apellidoMaterno').touched">
+                                            Falta agregar apellido materno
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <mat-form-field class="w-full">
+                                        <input matInput placeholder="DNI" formControlName="dni" class="w-full">
+                                        <mat-error
+                                            *ngIf="estudiante.get('dni').invalid && estudiante.get('dni').touched">
+                                            El DNI debe tener 8 dígitos
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <div class="flex items-center">
+                                        <button mat-icon-button type="button" (click)="removerEstudiante(i)">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center mt-4">
+                                <button mat-raised-button type="button" (click)="agregarEstudiante()">Agregar
+                                    Estudiante</button>
+                                <button mat-raised-button color="primary" type="submit">Registrar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

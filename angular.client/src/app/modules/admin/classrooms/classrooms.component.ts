@@ -409,7 +409,9 @@ export class ClassroomsComponent implements OnInit {
         this.modificarAula = estado;
     }
 
-
+    // #region Registrar Estudiantes:
+    @ViewChild(RegistrarEstudiantesComponent) registrarEstudiantesComponent: RegistrarEstudiantesComponent;
+    
     // #region Editar Estudiante
     @ViewChild(EditarEstudianteComponent) editarEstudianteComponent: EditarEstudianteComponent;
 
@@ -446,19 +448,4 @@ export class ClassroomsComponent implements OnInit {
     }
     // #endregion
 
-
-    hol() {
-    let hola;
-        hola = hola + 1;
-        hola = hola + 1;
-        hola = hola + 1;
-        hola = hola + 1;
-        hola = hola + 1;
-        hola = hola + 1;
-        hola = hola + 1;
-        console.log(hola);
-        hola = hola + 1;
-        console.log(hola);
-    }
-    
 }
