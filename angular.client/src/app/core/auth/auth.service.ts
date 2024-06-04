@@ -101,9 +101,10 @@ export class AuthService {
                     of(false)
                 ),
                 switchMap((response: any) => {
+                    console.log('switchMap', response);
                     if (response.succeeded) {
                         this.accessToken = response.data?.accessToken;
-
+                        console.log('this.accessToken', this.accessToken)
                         // Set the authenticated flag to true
                         this._authenticated = true;
 
