@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
+import { HttpResponse } from 'app/shared/interfaces';
 import { environment } from 'environments/environment';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 
@@ -56,25 +57,29 @@ export class AuthService {
     signIn(credentials: { email: string; password: string }): Observable<any> {
         // Throw error, if the user is already logged in
         if (this._authenticated) {
-            return throwError('User is already logged in.');
+            return throwError(() => new Error('User is already logged in.'));
         }
 
         return this._httpClient
-            .post(`${environment.baseURL}/auth/login`, credentials)
+            .post<HttpResponse<any>>(
+                `${environment.baseURL}/auth/login`,
+                credentials
+            )
             .pipe(
-                switchMap((response: any) => {
-                    console.log('switchMap', response);
-                    // Store the access token in the local storage
-                    this.accessToken = response.accessToken;
-                    console.log('this.accessToken', this.accessToken)
-                    // Set the authenticated flag to true
-                    this._authenticated = true;
+                switchMap((response) => {
+                    if (response.succeeded) {
+                        // Store the access token in the local storage
+                        this.accessToken = response.data?.accessToken;
 
-                    // Store the user on the user service
-                    this._userService.user = response.user;
+                        // Set the authenticated flag to true
+                        this._authenticated = true;
 
-                    // Return a new observable with the response
-                    return of(response);
+                        // Store the user on the user service
+                        this._userService.user = response.data?.user;
+
+                        // Return a new observable with the response
+                        return of(response.data);
+                    }
                 })
             );
     }
@@ -96,25 +101,18 @@ export class AuthService {
                     of(false)
                 ),
                 switchMap((response: any) => {
-                    // Replace the access token with the new one if it's available on
-                    // the response object.
-                    //
-                    // This is an added optional step for better security. Once you sign
-                    // in using the token, you should generate a new one on the server
-                    // side and attach it to the response object. Then the following
-                    // piece of code can replace the token with the refreshed one.
-                    if (response.accessToken) {
-                        this.accessToken = response.accessToken;
+                    if (response.succeeded) {
+                        this.accessToken = response.data?.accessToken;
+
+                        // Set the authenticated flag to true
+                        this._authenticated = true;
+
+                        // Store the user on the user service
+                        this._userService.user = response.data?.user;
+
+                        // Return true
+                        return of(true);
                     }
-
-                    // Set the authenticated flag to true
-                    this._authenticated = true;
-
-                    // Store the user on the user service
-                    this._userService.user = response.user;
-
-                    // Return true
-                    return of(true);
                 })
             );
     }
@@ -122,15 +120,23 @@ export class AuthService {
     /**
      * Sign out
      */
-    signOut(): Observable<any> {
-        // Remove the access token from the local storage
-        localStorage.removeItem('accessToken');
+    signOut(): Observable<boolean> {
+        return this._httpClient
+            .post<HttpResponse<any>>(`${environment.baseURL}/auth/signOut`, {})
+            .pipe(
+                switchMap((response) => {
+                    if (response.succeeded) {
+                        // Remove the access token from the local storage
+                        localStorage.removeItem('accessToken');
 
-        // Set the authenticated flag to false
-        this._authenticated = false;
+                        // Set the authenticated flag to false
+                        this._authenticated = false;
 
-        // Return the observable
-        return of(true);
+                        // Return the observable
+                        return of(response.data);
+                    }
+                })
+            );
     }
 
     /**
