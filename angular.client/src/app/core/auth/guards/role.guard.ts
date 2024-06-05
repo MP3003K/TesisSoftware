@@ -11,9 +11,6 @@ export const RoleGuard: CanActivateFn | CanActivateChildFn = (route: ActivatedRo
 
     return _service.validateAccess(state.url).pipe(
         switchMap(({ succeeded, data }) => {
-            console.log(`--------- INICIO --------- Respuesta validateAccess State.url: ${state.url}, Succeeded: ${succeeded}, Data: ${JSON.stringify(data)} ---------- FIN --------`);
-
-
             if (succeeded) {
                 if (data) {
                     return of(data);

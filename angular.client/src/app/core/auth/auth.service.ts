@@ -24,9 +24,28 @@ export class AuthService {
     }
 
     get accessToken(): string {
-        return localStorage.getItem('accessToken') ?? '';
+        let accessToken: string = localStorage.getItem('accessToken');
+        if (accessToken && accessToken.trim() !== '') {
+            return accessToken;
+        }
+
+        accessToken = this.getCookie('accessToken');
+        if (accessToken && accessToken.trim() !== '') {
+            return accessToken;
+        }
+        return null;
     }
 
+    getCookie(name: string): string {
+        let cookieArr = document.cookie.split(";");
+        for (let i = 0; i < cookieArr.length; i++) {
+            let cookiePair = cookieArr[i].split("=");
+            if (name == cookiePair[0].trim()) {
+                return decodeURIComponent(cookiePair[1]);
+            }
+        }
+        return null;
+    }
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -69,7 +88,7 @@ export class AuthService {
                 switchMap((response) => {
                     if (response.succeeded) {
                         // Store the access token in the local storage
-                        this.accessToken = response.data?.accessToken;
+                        // this.accessToken = response.data?.accessToken;
 
                         // Set the authenticated flag to true
                         this._authenticated = true;
@@ -104,7 +123,7 @@ export class AuthService {
                     console.log('switchMap', response);
                     if (response.succeeded) {
                         this.accessToken = response.data?.accessToken;
-                        console.log('this.accessToken', this.accessToken)
+
                         // Set the authenticated flag to true
                         this._authenticated = true;
 

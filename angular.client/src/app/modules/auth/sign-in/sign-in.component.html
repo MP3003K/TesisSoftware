@@ -4,7 +4,7 @@
         <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
             <!-- Logo -->
             <div class="w-60">
-                <img src="assets/images/logo/logo-app2.png">
+                <img src="assets/images/logo/logo-app2.png" alt="Logo de la aplicación">
             </div>
 
             <!-- Title -->
@@ -21,7 +21,7 @@
                 <!-- Email field -->
                 <mat-form-field class="w-full">
                     <mat-label>DNI</mat-label>
-                    <input id="email" matInput [formControlName]="'email'">
+                    <input id="email" matInput [formControlName]="'email'" autocomplete="username">
                     <mat-error *ngIf="signInForm.get('email').hasError('required')">
                         El DNI es requerido
                     </mat-error>
@@ -33,14 +33,17 @@
                 <!-- Password field -->
                 <mat-form-field class="w-full">
                     <mat-label>Contraseña</mat-label>
-                    <input autocomplete="current-password" id="password" matInput type="password" [formControlName]="'password'" #passwordField>
-                    <button mat-icon-button type="button"
+                    <input autocomplete="current-password" id="password" matInput type="password"
+                        [formControlName]="'password'" #passwordField>
+                    <button mat-icon-button type="button" aria-label="Toggle password visibility"
                         (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
                         matSuffix>
-                        <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'password'"
-                            [svgIcon]="'heroicons_solid:eye'"></mat-icon>
-                        <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'text'"
-                            [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                        <ng-container *ngIf="passwordField.type === 'password'; else showPassword">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                        </ng-container>
+                        <ng-template #showPassword>
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                        </ng-template>
                     </button>
                     <mat-error>
                         La contraseña es requerida
@@ -50,11 +53,12 @@
                 <!-- Submit button -->
                 <button class="fuse-mat-button-large w-full mt-6" mat-flat-button [color]="'primary'" type="submit"
                     [disabled]="this.desabilitarBoton">
-                    <span *ngIf="!this.desabilitarBoton">
+                    <ng-container *ngIf="!this.desabilitarBoton; else loading">
                         Ingresar
-                    </span>
-                    <mat-progress-spinner *ngIf="desabilitarBoton" [diameter]="24"
-                        [mode]="'indeterminate'"></mat-progress-spinner>
+                    </ng-container>
+                    <ng-template #loading>
+                        <mat-progress-spinner [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+                    </ng-template>
                 </button>
 
             </form>
@@ -85,7 +89,8 @@
         <!-- @formatter:on -->
         <!-- Content -->
         <div>
-            <img src="assets/images/logo/logo-app3.webp" class="z-10 relative w-full max-w-2xl rounded-xl">
+            <img src="assets/images/logo/logo-app3.webp" alt="Logo de la aplicación"
+                class="z-10 relative w-full max-w-2xl rounded-xl">
         </div>
     </div>
 </div>

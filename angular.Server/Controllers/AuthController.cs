@@ -83,8 +83,9 @@ namespace Controllers
                     {
                         Expires = DateTime.Now.AddDays(1),
                         Path = "/",
-                        HttpOnly = true,
-                        Secure = true
+                        HttpOnly = false,
+                        Secure = true,
+                        SameSite = SameSiteMode.None
                     });
                     return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
                 }
@@ -105,7 +106,6 @@ namespace Controllers
 
             try
             {
-                Console.WriteLine("bendiciones");
                 int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
                 using (var connection = context.CreateConnection())
