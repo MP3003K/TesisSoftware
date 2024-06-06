@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import {
     FormsModule,
     NgForm,
@@ -41,6 +41,8 @@ import { AuthService } from 'app/core/auth/auth.service';
 })
 export class AuthSignInComponent implements OnInit {
     @ViewChild('signInNgForm') signInNgForm: NgForm;
+    token: string = '';
+    authService = inject(AuthService);
 
     alert: { type: FuseAlertType; message: string } = {
         type: 'success',

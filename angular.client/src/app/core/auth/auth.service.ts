@@ -11,7 +11,11 @@ export class AuthService {
     private _authenticated: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
+    accessTokenTemporal: string;
 
+    constructor() {
+        this.accessTokenTemporal = '';
+    }
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
@@ -19,23 +23,52 @@ export class AuthService {
     /**
      * Setter & getter for access token
      */
+
     set accessToken(token: string) {
-        localStorage.setItem('accessToken', token);
+        console.log('set accessToken', token);
+        this.accessTokenTemporal = token;
+        try {
+            localStorage.setItem('accessToken', token);
+            // Verificar si el token se guardó correctamente
+            if (localStorage.getItem('accessToken') !== token) {
+                // Manejar el error
+                console.error('Error al guardar el token de acceso en el almacenamiento local.');
+            } else {
+                // Comprobar si el token está disponible en el almacenamiento local
+                let attempts = 0;
+                const checkToken = setInterval(() => {
+                    attempts++;
+                    if (localStorage.getItem('accessToken') === token || attempts > 5) {
+                        clearInterval(checkToken);
+                        if (attempts > 5) {
+                            console.error('El token de acceso no se guardó en el almacenamiento local después de 5 intentos.');
+                        }
+                    }
+                }, 1000);
+            }
+        } catch (error) {
+            console.error('No se pudo guardar el token en el almacenamiento local:', error);
+        }
     }
 
     get accessToken(): string {
+        if (this.accessTokenTemporal && this.accessTokenTemporal.trim() !== '') {
+            console.log('Ingreso token temporal')
+            return this.accessTokenTemporal;
+        }
         let accessToken: string = localStorage.getItem('accessToken');
         if (accessToken && accessToken.trim() !== '') {
+            console.log('Ingreso token local')
             return accessToken;
         }
 
         accessToken = this.getCookie('accessToken');
         if (accessToken && accessToken.trim() !== '') {
+            console.log('Ingreso token cookies')
             return accessToken;
         }
         return null;
     }
-
     getCookie(name: string): string {
         let cookieArr = document.cookie.split(";");
         for (let i = 0; i < cookieArr.length; i++) {
@@ -86,12 +119,14 @@ export class AuthService {
             )
             .pipe(
                 switchMap((response) => {
+                    console.log('switchMap', response);
                     if (response.succeeded) {
-                        // Store the access token in the local storage
-                        // this.accessToken = response.data?.accessToken;
 
                         // Set the authenticated flag to true
                         this._authenticated = true;
+
+                        // Store the access token in the local storage
+                        this.accessToken = response.data?.accessToken;
 
                         // Store the user on the user service
                         this._userService.user = response.data?.user;
@@ -146,6 +181,7 @@ export class AuthService {
             .pipe(
                 switchMap((response) => {
                     if (response.succeeded) {
+                        this.accessTokenTemporal = '';
                         // Remove the access token from the local storage
                         localStorage.removeItem('accessToken');
 
