@@ -411,7 +411,7 @@ export class ClassroomsComponent implements OnInit {
 
     // #region Registrar Estudiantes:
     @ViewChild(RegistrarEstudiantesComponent) registrarEstudiantesComponent: RegistrarEstudiantesComponent;
-    
+
     // #region Editar Estudiante
     @ViewChild(EditarEstudianteComponent) editarEstudianteComponent: EditarEstudianteComponent;
 
@@ -447,5 +447,8 @@ export class ClassroomsComponent implements OnInit {
         this.items = 'list';
     }
     // #endregion
-
+    changeItems(event: string) {
+        this.obtnerEstudiantesPorAulaYUnidad();
+        this.items = event;
+    }
 }

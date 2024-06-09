@@ -6,7 +6,9 @@ using Dapper;
 using Application.Wrappers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-
+using Microsoft.Data.SqlClient;
+using Entities;
+using Newtonsoft.Json;
 namespace Controllers
 {
 
@@ -253,6 +255,93 @@ namespace Controllers
             }
         }
 
+        [HttpPost("PROC_CREAR_Y_ASIGNAR_ESTUDIANTES")]
+        public async Task<ActionResult> CrearYAsignarEstudiantes([FromBody] crearEstudiantesDto dto)
+        {
+            try
+            {
+                using var connection = context.CreateConnection();
+                // Define los parámetros, incluyendo los de salida
+                var parameters = new DynamicParameters();
+                parameters.Add("v_aulaId", dto.aulaId, DbType.Int32);
+                parameters.Add("v_unidadId", dto.unidadId, DbType.Int32);
+                parameters.Add("v_jsonEstudiantes", dto.jsonEstudiantes, DbType.String);
+                parameters.Add("successful", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+                parameters.Add("errorMessage", dbType: DbType.String, direction: ParameterDirection.Output, size: 4000); // Ajusta el tamaño según sea necesario
+                parameters.Add("dataEstudiantesRechazados", dbType: DbType.String, direction: ParameterDirection.Output, size: 4000); // Ajusta el tamaño según sea necesario
+
+                // Ejecuta el procedimiento almacenado
+                await connection.ExecuteAsync("PROC_CREAR_Y_ASIGNAR_ESTUDIANTES", parameters, commandType: CommandType.StoredProcedure);
+
+                // Lee los valores de salida
+                bool succeeded = parameters.Get<bool>("successful");
+                string errorMessage = parameters.Get<string>("errorMessage");
+                string dataEstudiantesRechazados = parameters.Get<string>("dataEstudiantesRechazados");
+
+                // Ahora puedes manejar los resultados como necesites
+                if (!succeeded)
+                {
+                    // Maneja el caso de error
+                    return BadRequest(new Response<dynamic> { Message = errorMessage, Succeeded = false, Data = dataEstudiantesRechazados });
+                }
+                else
+                {
+                    // Proceso exitoso
+                    return Ok(new Response<dynamic> { Message = "Operación exitosa.", Succeeded = true, Data = null });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Response<dynamic> { Message = ex.Message, Succeeded = false, Data = null });
+            }
+        }
+
+
+        [HttpPost("VALIDAR_DNI_UNICO")]
+        public async Task<ActionResult> ValidarDniUnico([FromBody] ValidarDniDto dto)
+        {
+            try
+            {
+                using var connection = context.CreateConnection();
+                // Define los parámetros, incluyendo los de salida
+                var parameters = new DynamicParameters();
+                parameters.Add("jsonDnis", dto.jsonDnis, DbType.String);
+                parameters.Add("resultado", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+                parameters.Add("jsonDnisRechazados", dbType: DbType.String, direction: ParameterDirection.Output, size: -1); // -1 para NVARCHAR(MAX)
+
+                // Ejecuta el procedimiento almacenado
+                await connection.ExecuteAsync("VALIDAR_DNI_UNICO", parameters, commandType: CommandType.StoredProcedure);
+
+                // Lee los valores de salida
+                bool resultado = parameters.Get<bool>("resultado");
+                string jsonDnisRechazados = parameters.Get<string>("jsonDnisRechazados");
+
+                // Maneja los resultados
+                if (!resultado)
+                {
+                    // Caso de DNI no únicos
+                    return BadRequest(new Response<dynamic> { Message = "Existen DNI no únicos.", Succeeded = false, Data = jsonDnisRechazados });
+                }
+                else
+                {
+                    // Todos los DNI son únicos
+                    return Ok(new Response<dynamic> { Message = "Todos los DNI son únicos.", Succeeded = true, Data = null });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Response<dynamic> { Message = ex.Message, Succeeded = false, Data = null });
+            }
+        }
+
+        public class ValidarDniDto
+        {
+            public string jsonDnis { get; set; } = string.Empty;
+        }
+        public class DniDto
+        {
+            public int Dni { get; set; }
+        }
         public class StudentClassroomDto
         {
             public int ClassroomId { get; set; }
@@ -267,6 +356,14 @@ namespace Controllers
             public string ApellidoPaterno { get; set; } = string.Empty;
             public string ApellidoMaterno { get; set; } = string.Empty;
             public int DNI { get; set; }
+        }
+
+
+        public class crearEstudiantesDto
+        {
+            public int unidadId { get; set; }
+            public int aulaId { get; set; }
+            public string jsonEstudiantes { get; set; } = string.Empty;
         }
     }
 

@@ -135,4 +135,21 @@ export class ClassroomsService {
             params
         );
     }
+    crearYAsignarEstudiantes(
+        params: { unidadId: number, aulaId: number, jsonEstudiantes: string }
+    ) {
+        return this.http.post<any>(
+            `${environment.baseURL}/Classroom/PROC_CREAR_Y_ASIGNAR_ESTUDIANTES`,
+            params
+        );
+    }
+
+    validarDniUnico(params: { jsonDnis: string }) {
+        return this.http.post<any>(
+            `${environment.baseURL}/Classroom/VALIDAR_DNI_UNICO`,
+            params
+        );
+    }
+
+
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injectable, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Injectable, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,35 +9,40 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 
 import * as XLSX from 'xlsx';
+import { ClassroomsService } from '../classrooms.service';
+
 
 @Component({
     selector: 'app-registrar-estudiantes',
     standalone: true,
+    templateUrl: './registrar-estudiantes.component.html',
+    styleUrl: './registrar-estudiantes.component.scss',
     imports: [
         CommonModule,
         ReactiveFormsModule,
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
-        MatIconModule
-    ],
-    templateUrl: './registrar-estudiantes.component.html',
-    styleUrl: './registrar-estudiantes.component.scss'
+        MatIconModule,
+    ]
 })
 
 export class RegistrarEstudiantesComponent implements OnInit {
     @Input() unidadIdSeleccionada: number = 0;
-    @Input() seccionIdSeleccionada: number = 0;
+    @Input() aulaIdSeleccionada: number = 0;
+    @Output() itemsChange = new EventEmitter<string>();
 
     formEstudiantes: FormGroup;
 
-    constructor(private fb: FormBuilder) { }
+    constructor(
+        private fb: FormBuilder,
+        private classroomsService: ClassroomsService
+    ) { }
 
     ngOnInit() {
         this.formEstudiantes = this.fb.group({
-            estudiantes: this.fb.array([this.crearFormularioEstudiante()])
+            estudiantes: this.fb.array([this.crearFormularioEstudiante()], [this.validarDniUnicoForm.bind(this)])
         });
-        console.log(this.unidadIdSeleccionada, this.seccionIdSeleccionada);
     }
 
 
@@ -64,7 +69,36 @@ export class RegistrarEstudiantesComponent implements OnInit {
     }
 
     registrarEstudiantesApi() {
-        console.log(this.formEstudiantes.value);
+        const { unidadIdSeleccionada, aulaIdSeleccionada, formEstudiantes } = this;
+
+        if (unidadIdSeleccionada === 0 || aulaIdSeleccionada === 0) {
+            return console.error('Parámetros para registrar estudiantes no válidos: unidad o aula no seleccionada.');
+        }
+
+        const estudiantes = formEstudiantes?.value?.estudiantes;
+        if (!Array.isArray(estudiantes) || estudiantes.length === 0) {
+            return console.error('Parámetros para registrar estudiantes no válidos: lista de estudiantes vacía o inválida.');
+        }
+
+        const jsonEstudiantes = JSON.stringify(estudiantes.map(estudiante => ({
+            ...estudiante,
+            dni: estudiante.dni.toString()
+        })));
+
+        this.classroomsService.crearYAsignarEstudiantes({
+            unidadId: unidadIdSeleccionada,
+            aulaId: aulaIdSeleccionada,
+            jsonEstudiantes
+        }).subscribe({
+            next: (response) => {
+                if (response.succeeded) {
+                    this.itemsChange.emit('list');
+                }
+            },
+            error: (error) => {
+                console.error(`Error al registrar estudiantes: ${error}`);
+            }
+        });
     }
 
     get estudiantes(): FormArray {
@@ -77,6 +111,38 @@ export class RegistrarEstudiantesComponent implements OnInit {
         this.agregarEstudiante();
     }
     // #endregion
+    dnisRechazados: Set<number> = new Set();
+    dnisDuplicados: Set<number> = new Set();
+
+    validarDniUnico() {
+        const dnis = this.estudiantes.value.map(estudiante => estudiante.dni);
+        this.classroomsService.validarDniUnico({ jsonDnis: JSON.stringify(dnis) }).subscribe({
+            next: (response) => {
+                console.log(response);
+                if (response.succeeded) {
+                    this.dnisRechazados.clear();
+                    return true;
+
+                } else {
+                    if (response?.Data?.length > 0) {
+                        this.dnisRechazados = new Set(response.Data.map(dniObj => dniObj.dni));
+                    }
+                    return false;
+                }
+            },
+            error: (error) => {
+                console.error(`Error al validar DNIs: ${error}`);
+                return false;
+            }
+        });
+    }
+
+    validarDniUnicoForm(formArray: FormArray): ValidationErrors | null {
+        const dnis = formArray.controls.map(control => control.get('dni')?.value);
+        const tieneDnisDuplicados = dnis.some((dni, index) => dnis.indexOf(dni) !== index);
+        return tieneDnisDuplicados ? { dniDuplicado: true } : null;
+    }
+
 
     // #region Excel
     @ViewChild('fileInput') fileInput: ElementRef;
@@ -143,4 +209,10 @@ export class RegistrarEstudiantesComponent implements OnInit {
     }
 
     // #endregion
+
+
+
+
+
+
 }

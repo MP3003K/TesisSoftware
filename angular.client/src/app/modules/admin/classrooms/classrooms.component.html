@@ -412,7 +412,9 @@
                             ></app-editar-estudiante>
                         } @case("regitrar-estudiantes"){
                         <app-registrar-estudiantes [unidadIdSeleccionada]="selectedUnity"
-                            [seccionIdSeleccionada]="selectedSection"></app-registrar-estudiantes>
+                            [aulaIdSeleccionada]="selectedSection"
+                            (itemsChange)="changeItems($event)"
+                            ></app-registrar-estudiantes>
                         }
                         }
                     </div>

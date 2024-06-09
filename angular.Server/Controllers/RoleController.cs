@@ -55,7 +55,6 @@ namespace angular.Server.Controllers
 
 
 
-        [Authorize]
         [HttpPost("access/validate")]
         public async Task<ActionResult> ValidateAccess([FromBody] RoleAccessDto dto)
         {
@@ -93,7 +92,7 @@ namespace angular.Server.Controllers
                 Console.WriteLine($"Error: {ex.Message}, UserId: {userId}, Path: {dto.Path}");
 
                 // Devolver el error y el userId
-                return BadRequest(new { error = ex.Message, userId = userId , path = dto.Path});
+                return BadRequest(new { error = ex.Message, userId = userId, path = dto.Path });
             }
             catch (Exception ex)
             {
