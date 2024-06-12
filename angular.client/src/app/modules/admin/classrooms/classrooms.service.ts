@@ -144,7 +144,7 @@ export class ClassroomsService {
         );
     }
 
-    validarDniUnico(params: { jsonDnis: string }) {
+    validarDnisUnicos(params: { jsonDnis: string }) {
         return this.http.post<any>(
             `${environment.baseURL}/Classroom/VALIDAR_DNI_UNICO`,
             params

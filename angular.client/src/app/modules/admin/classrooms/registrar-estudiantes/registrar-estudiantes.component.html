@@ -32,35 +32,58 @@
                         <form [formGroup]="formEstudiantes" (ngSubmit)="registrarEstudiantesApi()" class="w-full">
                             <div formArrayName="estudiantes" class="flex flex-col gap-4">
                                 <div *ngFor="let estudiante of estudiantes.controls; let i = index" [formGroupName]="i"
-                                    class="flex flex-row gap-2 items-start"> <!-- Cambio aquí: 'items-center' a 'items-start' -->
+                                    class="flex flex-row gap-2 items-start">
+                                    <!-- Cambio aquí: 'items-center' a 'items-start' -->
                                     <!-- Número de estudiante en la misma fila -->
                                     <div class="font-bold text-lg">{{ i + 1 }}.</div>
                                     <mat-form-field class="flex-1">
                                         <input matInput placeholder="Nombres" formControlName="nombres" class="w-full"
                                             (ngModelChange)="estudiante.get('nombres').setValue($event.trim())">
-                                        <mat-error *ngIf="estudiante.get('nombres').invalid && estudiante.get('nombres').touched">
+                                        <mat-error
+                                            *ngIf="estudiante.get('nombres').invalid && estudiante.get('nombres').touched">
                                             Falta agregar nombres
                                         </mat-error>
                                     </mat-form-field>
                                     <mat-form-field class="flex-1">
-                                        <input matInput placeholder="Apellido Paterno" formControlName="apellidoPaterno" class="w-full"
+                                        <input matInput placeholder="Apellido Paterno" formControlName="apellidoPaterno"
+                                            class="w-full"
                                             (ngModelChange)="estudiante.get('apellidoPaterno').setValue($event.trim())">
-                                        <mat-error *ngIf="estudiante.get('apellidoPaterno').invalid && estudiante.get('apellidoPaterno').touched">
+                                        <mat-error
+                                            *ngIf="estudiante.get('apellidoPaterno').invalid && estudiante.get('apellidoPaterno').touched">
                                             Falta agregar apellido paterno
                                         </mat-error>
                                     </mat-form-field>
                                     <mat-form-field class="flex-1">
-                                        <input matInput placeholder="Apellido Materno" formControlName="apellidoMaterno" class="w-full"
+                                        <input matInput placeholder="Apellido Materno" formControlName="apellidoMaterno"
+                                            class="w-full"
                                             (ngModelChange)="estudiante.get('apellidoMaterno').setValue($event.trim())">
-                                        <mat-error *ngIf="estudiante.get('apellidoMaterno').invalid && estudiante.get('apellidoMaterno').touched">
+                                        <mat-error
+                                            *ngIf="estudiante.get('apellidoMaterno').invalid && estudiante.get('apellidoMaterno').touched">
                                             Falta agregar apellido materno
                                         </mat-error>
                                     </mat-form-field>
                                     <mat-form-field class="flex-1">
-                                        <input type="number" matInput placeholder="DNI" formControlName="dni" class="w-full">
-                                        <mat-error *ngIf="estudiante.get('dni').invalid && estudiante.get('dni').touched">
-                                            El DNI debe tener 8 dígitos
+                                        <input type="number" matInput placeholder="DNI" formControlName="dni"
+                                            class="w-full">
+                                        @if(estudiante.get('dni')?.value?.toString()?.length!=8){
+                                        <mat-error>
+                                            El DNI debe tener 8 dígitos.
                                         </mat-error>
+                                        }
+                                        @else if (
+                                        estudiante.get('dni').errors?.dniDuplicado
+                                        ) {
+                                        <mat-error>
+                                            Este DNI esta duplicado.
+                                        </mat-error>
+                                        } @else if (
+                                        estudiante.get('dni').errors?.dniRegistrado
+                                        ) {
+                                        <mat-error>
+                                            Este DNI ya ha sido registrado.
+                                        </mat-error>
+                                        }
+
                                     </mat-form-field>
                                     <!-- Botón de eliminar estudiante -->
                                     <button mat-icon-button type="button" (click)="removerEstudiante(i)">
@@ -68,12 +91,15 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="flex flex-col sm:flex-row justify-between items-center mt-4 space-y-2 sm:space-y-0">
+                            <div
+                                class="flex flex-col sm:flex-row justify-between items-center mt-4 space-y-2 sm:space-y-0">
                                 <!-- Botones aquí -->
-                                <button mat-raised-button type="button" (click)="agregarEstudiante()" class="w-full sm:w-auto">
+                                <button mat-raised-button type="button" (click)="agregarEstudiante()"
+                                    class="w-full sm:w-auto">
                                     Agregar Nuevo Estudiante
                                 </button>
-                                <button mat-raised-button color="primary" type="submit" [disabled]="!formEstudiantes.valid" class="w-full sm:w-auto">
+                                <button mat-raised-button color="primary" type="submit"
+                                    [disabled]="!formEstudiantes.valid" class="w-full sm:w-auto">
                                     <b>Finalizar Registro</b>
                                 </button>
                             </div>

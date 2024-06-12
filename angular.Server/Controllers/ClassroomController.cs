@@ -305,22 +305,22 @@ namespace Controllers
                 using var connection = context.CreateConnection();
                 // Define los parámetros, incluyendo los de salida
                 var parameters = new DynamicParameters();
-                parameters.Add("jsonDnis", dto.jsonDnis, DbType.String);
-                parameters.Add("resultado", dbType: DbType.Boolean, direction: ParameterDirection.Output);
-                parameters.Add("jsonDnisRechazados", dbType: DbType.String, direction: ParameterDirection.Output, size: -1); // -1 para NVARCHAR(MAX)
+                parameters.Add("v_jsonDnis", dto.jsonDnis, DbType.String);
+                parameters.Add("v_resultado", dbType: DbType.Boolean, direction: ParameterDirection.Output); // Cambiado a "v_resultado" para coincidir con el procedimiento
+                parameters.Add("v_jsonDnisRechazados", dbType: DbType.String, direction: ParameterDirection.Output, size: -1); // Cambiado a "v_jsonDnisRechazados" para coincidir
 
                 // Ejecuta el procedimiento almacenado
                 await connection.ExecuteAsync("VALIDAR_DNI_UNICO", parameters, commandType: CommandType.StoredProcedure);
 
                 // Lee los valores de salida
-                bool resultado = parameters.Get<bool>("resultado");
-                string jsonDnisRechazados = parameters.Get<string>("jsonDnisRechazados");
+                bool resultado = parameters.Get<bool>("v_resultado");
+                string jsonDnisRechazados = parameters.Get<string>("v_jsonDnisRechazados");
 
                 // Maneja los resultados
                 if (!resultado)
                 {
                     // Caso de DNI no únicos
-                    return BadRequest(new Response<dynamic> { Message = "Existen DNI no únicos.", Succeeded = false, Data = jsonDnisRechazados });
+                    return Ok(new Response<dynamic> { Message = "En la BD ya se han registrados algunos DNIs", Succeeded = false, Data = jsonDnisRechazados });
                 }
                 else
                 {

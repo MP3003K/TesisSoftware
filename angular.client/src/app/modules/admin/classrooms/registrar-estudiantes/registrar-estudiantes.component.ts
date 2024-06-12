@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Injectable, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButton, MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 import * as XLSX from 'xlsx';
 import { ClassroomsService } from '../classrooms.service';
+import { set } from 'lodash';
 
 
 @Component({
@@ -41,22 +42,51 @@ export class RegistrarEstudiantesComponent implements OnInit {
 
     ngOnInit() {
         this.formEstudiantes = this.fb.group({
-            estudiantes: this.fb.array([this.crearFormularioEstudiante()], [this.validarDniUnicoForm.bind(this)])
+            estudiantes: this.fb.array([this.crearFormularioEstudiante()], [this.validadorDniDuplicadoEnFormEstudiantes()])
         });
+        this.llenarRegistrosEstudiantes();
     }
 
 
 
+
+    llenarRegistrosEstudiantes() {
+        // Datos de ejemplo para 4 estudiantes
+        const datosEstudiantes = [
+            { nombres: 'Juan', apellidoPaterno: 'Perez', apellidoMaterno: 'Gomez', dni: '73705438' },
+            { nombres: 'Ana', apellidoPaterno: 'Lopez', apellidoMaterno: 'Martinez', dni: '84736291' },
+            { nombres: 'Luis', apellidoPaterno: 'Fernandez', apellidoMaterno: 'Ruiz', dni: '95847263' },
+            { nombres: 'Sofia', apellidoPaterno: 'Garcia', apellidoMaterno: 'Torres', dni: '76294815' }
+        ];
+
+        // Iterar sobre los datos de los estudiantes y agregarlos al FormArray
+        datosEstudiantes.forEach(estudianteData => {
+            let estudianteForm = this.crearFormularioEstudiante();
+            estudianteForm.setValue(estudianteData);
+            (this.formEstudiantes.get('estudiantes') as FormArray).push(estudianteForm);
+        });
+    }
+
+
     // #region Formulario
+
+    /**
+     * Crea y retorna un FormGroup para un estudiante
+     * @returns FormGroup
+     */
+    get estudiantes(): FormArray {
+        return this.formEstudiantes.get('estudiantes') as FormArray;
+    }
 
     crearFormularioEstudiante(): FormGroup {
         return this.fb.group({
             nombres: ['', Validators.required],
             apellidoPaterno: ['', Validators.required],
             apellidoMaterno: ['', Validators.required],
-            dni: ['', [Validators.required, Validators.pattern('^[0-9]{8}$')]],
+            dni: ['', [Validators.required, Validators.pattern('^[0-9]{8}$')]]
         });
     }
+
 
     agregarEstudiante() {
         const estudiantes = this.formEstudiantes.get('estudiantes') as FormArray;
@@ -68,7 +98,17 @@ export class RegistrarEstudiantesComponent implements OnInit {
         estudiantes.removeAt(index);
     }
 
-    registrarEstudiantesApi() {
+    async registrarEstudiantesApi() {
+        console.log(this.formEstudiantes.invalid);
+        if (this.formEstudiantes.invalid) {
+            console.error('Formulario estudiantes es invalido');
+            return;
+        }
+
+        let validador = await this.sonDnisUnicosEnBaseDeDatos();
+
+        if (!validador) return;
+
         const { unidadIdSeleccionada, aulaIdSeleccionada, formEstudiantes } = this;
 
         if (unidadIdSeleccionada === 0 || aulaIdSeleccionada === 0) {
@@ -96,14 +136,11 @@ export class RegistrarEstudiantesComponent implements OnInit {
                 }
             },
             error: (error) => {
-                console.error(`Error al registrar estudiantes: ${error}`);
+                console.error(`Error al registrar estudiantes, Message: ${error}`);
             }
         });
     }
 
-    get estudiantes(): FormArray {
-        return this.formEstudiantes.get('estudiantes') as FormArray;
-    }
 
     limpiarRegistrosFormulario() {
         this.formEstudiantes.reset();
@@ -111,37 +148,105 @@ export class RegistrarEstudiantesComponent implements OnInit {
         this.agregarEstudiante();
     }
     // #endregion
-    dnisRechazados: Set<number> = new Set();
-    dnisDuplicados: Set<number> = new Set();
 
-    validarDniUnico() {
-        const dnis = this.estudiantes.value.map(estudiante => estudiante.dni);
-        this.classroomsService.validarDniUnico({ jsonDnis: JSON.stringify(dnis) }).subscribe({
-            next: (response) => {
-                console.log(response);
-                if (response.succeeded) {
-                    this.dnisRechazados.clear();
-                    return true;
 
-                } else {
-                    if (response?.Data?.length > 0) {
-                        this.dnisRechazados = new Set(response.Data.map(dniObj => dniObj.dni));
+    // #region Validadores
+
+
+    /**
+   * La funcion valida que en FormEstudiantes no existan DNIs duplicados (solo para DNIs de 8 dígitos)
+   */
+    validadorDniDuplicadoEnFormEstudiantes(): ValidatorFn {
+        return (formArray: AbstractControl): ValidationErrors | null => {
+            if (formArray instanceof FormArray) {
+                formArray.controls.forEach(control => {
+                    const dniControl = control.get('dni');
+
+                    if (dniControl?.errors) {
+                        const { dniDuplicado, dniRegistrado, ...remainingErrors } = dniControl.errors;
+                        const hasTargetErrors = dniDuplicado || dniRegistrado;
+                        if (hasTargetErrors) {
+                            dniControl.setErrors(Object.keys(remainingErrors).length ? remainingErrors : null);
+                        }
                     }
-                    return false;
+                });
+
+                const dnis = formArray.controls.map(control => control.get('dni')?.value)
+                    .filter(dni => dni && dni.toString().length == 8);
+
+                const dnisDuplicados = dnis.filter((dni, index, self) => self.indexOf(dni) !== index);
+
+                if (dnisDuplicados.length > 0) {
+                    formArray.controls.forEach(control => {
+                        if (dnisDuplicados.includes(control.get('dni')?.value)) {
+                            const dniControl = control.get('dni');
+                            const currentErrors = dniControl.errors || {};
+                            dniControl.setErrors({ ...currentErrors, dniDuplicado: true });
+                        }
+                    });
+                    return { dniDuplicado: true };
                 }
-            },
-            error: (error) => {
-                console.error(`Error al validar DNIs: ${error}`);
+            }
+            return null;
+        };
+    }
+
+
+    async sonDnisUnicosEnBaseDeDatos(): Promise<boolean> {
+        const dnis = (this.formEstudiantes.get('estudiantes') as FormArray).controls
+            .map(control => ({ dni: control.value.dni }));
+
+        if (!dnis || dnis.length === 0) return true;
+
+        let dnisJson = JSON.stringify(dnis);
+
+        try {
+            const response = await this.classroomsService.validarDnisUnicos({ jsonDnis: dnisJson }).toPromise();
+            if (response?.succeeded) {
+                return true;
+            }
+            if (!response?.succeeded && response.data) {
+                let dnisRegistrados = new Set<number>(
+                    JSON.parse(response.data)
+                        .map(obj => Number(obj.dni))
+                        .filter(dni => !isNaN(dni))
+                );
+                console.log('dnisRegistrados', dnisRegistrados)
+                if (dnisRegistrados && dnisRegistrados.size > 0) {
+                    this.marcarDnisDuplicadosEnFormularioEstudiantes(dnisRegistrados);
+                }
+
                 return false;
+            }
+            return false;
+        } catch (error) {
+            console.error(`Error al verificar existencia de DNIs: ${error}`);
+            return false;
+        }
+    }
+
+    marcarDnisDuplicadosEnFormularioEstudiantes(dnisRegistrados: Set<number>) {
+        const estudiantesFormArray = this.formEstudiantes.get('estudiantes') as FormArray;
+        estudiantesFormArray.controls.forEach(control => {
+            console.log('dnisRegistrados', dnisRegistrados);
+            const dniValue = control.get('dni')?.value;
+            const dni: number = parseInt(dniValue);
+
+            if (!isNaN(dni) && dnisRegistrados.has(dni)) {
+                console.log('dni registrado bd', dni);
+                const dniControl = control.get('dni');
+                const currentErrors = dniControl.errors || {};
+                dniControl.setErrors({ ...currentErrors, dniRegistrado: true });
             }
         });
     }
 
-    validarDniUnicoForm(formArray: FormArray): ValidationErrors | null {
-        const dnis = formArray.controls.map(control => control.get('dni')?.value);
-        const tieneDnisDuplicados = dnis.some((dni, index) => dnis.indexOf(dni) !== index);
-        return tieneDnisDuplicados ? { dniDuplicado: true } : null;
-    }
+
+
+
+
+
+    // #endregion
 
 
     // #region Excel
@@ -207,6 +312,8 @@ export class RegistrarEstudiantesComponent implements OnInit {
             event.target.value = '';
         }
     }
+
+
 
     // #endregion
 

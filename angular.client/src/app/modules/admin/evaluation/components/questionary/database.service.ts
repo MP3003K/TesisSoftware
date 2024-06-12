@@ -60,7 +60,6 @@ export class DatabaseService {
 
     async saveQuestions(questions: any[] = [], formId: number) {
         const db = await this.connection();
-        console.log('formId', formId);
         db.transaction(['questions'], 'readwrite')
             .objectStore('questions')
             .put({ id: formId, questions });

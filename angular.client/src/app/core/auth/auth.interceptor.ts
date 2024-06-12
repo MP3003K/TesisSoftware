@@ -23,11 +23,9 @@ export const authInterceptor = (
 
     let newReq = req.clone({ withCredentials: true });
 
-    console.log('URL de la API:', req.url, 'AuthService', authService, 'authInterceptor', authService.accessToken, AuthUtils.isTokenExpired(authService.accessToken));
-    if (
-        authService.accessToken && authService.accessToken.length > 0 &&
-        !AuthUtils.isTokenExpired(authService.accessToken)
-    ) {
+    let validacion: boolean = authService.accessToken && authService.accessToken.length > 0 && !AuthUtils.isTokenExpired(authService.accessToken);
+
+    if (validacion) {
         newReq = req.clone({
             headers: req.headers.set(
                 'Authorization',

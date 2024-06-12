@@ -184,10 +184,10 @@ namespace Controllers
         {
             var claims = new Claim[]
                         {
-                        new(JwtRegisteredClaimNames.Sub, Id.ToString()),
+                new(ClaimTypes.NameIdentifier, Id.ToString()),
                         };
 
-            var token = new JwtSecurityToken(config["Jwt:Issuer"], config["Jwt:Audience"], claims, null, DateTime.UtcNow.Add(TimeSpan.FromHours(1)), new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!)), SecurityAlgorithms.HmacSha256));
+            var token = new JwtSecurityToken(config["Jwt:Issuer"], config["Jwt:Audience"], claims, null, DateTime.UtcNow.Add(TimeSpan.FromHours(6)), new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!)), SecurityAlgorithms.HmacSha256));
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

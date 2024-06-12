@@ -98,6 +98,16 @@ export class ClassroomsComponent implements OnInit {
         this.obtenerListadeUnidades();
         this.obtenerListadeAulas();
         this.applyFilter('');
+        this.cargarValoresInicialesFiltros();
+    }
+
+    cargarValoresInicialesFiltros() {
+
+        this.selectedUnity = 2;
+        this.selectedDegree = 1;
+        this.selectedSection = 1;
+        this.obtnerEstudiantesPorAulaYUnidad();
+        this.items = 'regitrar-estudiantes'
     }
 
     // MétodosngOnInit() {

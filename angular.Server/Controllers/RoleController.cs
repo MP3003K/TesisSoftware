@@ -54,7 +54,7 @@ namespace angular.Server.Controllers
         }
 
 
-
+        [Authorize]
         [HttpPost("access/validate")]
         public async Task<ActionResult> ValidateAccess([FromBody] RoleAccessDto dto)
         {

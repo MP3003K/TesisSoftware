@@ -25,7 +25,6 @@ export class AuthService {
      */
 
     set accessToken(token: string) {
-        console.log('set accessToken', token);
         this.accessTokenTemporal = token;
         try {
             localStorage.setItem('accessToken', token);
@@ -53,18 +52,15 @@ export class AuthService {
 
     get accessToken(): string {
         if (this.accessTokenTemporal && this.accessTokenTemporal.trim() !== '') {
-            console.log('Ingreso token temporal')
             return this.accessTokenTemporal;
         }
         let accessToken: string = localStorage.getItem('accessToken');
         if (accessToken && accessToken.trim() !== '') {
-            console.log('Ingreso token local')
             return accessToken;
         }
 
         accessToken = this.getCookie('accessToken');
         if (accessToken && accessToken.trim() !== '') {
-            console.log('Ingreso token cookies')
             return accessToken;
         }
         return null;
@@ -119,7 +115,6 @@ export class AuthService {
             )
             .pipe(
                 switchMap((response) => {
-                    console.log('switchMap', response);
                     if (response.succeeded) {
 
                         // Set the authenticated flag to true
@@ -155,7 +150,6 @@ export class AuthService {
                     of(false)
                 ),
                 switchMap((response: any) => {
-                    console.log('switchMap', response);
                     if (response.succeeded) {
                         this.accessToken = response.data?.accessToken;
 
