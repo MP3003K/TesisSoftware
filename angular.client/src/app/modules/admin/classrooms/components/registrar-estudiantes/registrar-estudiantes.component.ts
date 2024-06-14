@@ -1,23 +1,21 @@
-import { Component, ElementRef, EventEmitter, Injectable, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { ItemOptions } from '../../enums/item-options.enum';
+import { FiltrosSeleccionados } from '../../models/filtros-seleccionados.model';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatButton, MatButtonModule } from '@angular/material/button';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
 
+
+import { ClassroomsService } from '../../services'
 
 import * as XLSX from 'xlsx';
-import { ClassroomsService } from '../classrooms.service';
-import { set } from 'lodash';
-
 
 @Component({
     selector: 'app-registrar-estudiantes',
     standalone: true,
-    templateUrl: './registrar-estudiantes.component.html',
-    styleUrl: './registrar-estudiantes.component.scss',
     imports: [
         CommonModule,
         ReactiveFormsModule,
@@ -25,13 +23,15 @@ import { set } from 'lodash';
         MatInputModule,
         MatButtonModule,
         MatIconModule,
-    ]
+    ],
+    templateUrl: './registrar-estudiantes.component.html',
+    styleUrl: './registrar-estudiantes.component.scss'
 })
+export class RegistrarEstudiantesComponent {
 
-export class RegistrarEstudiantesComponent implements OnInit {
-    @Input() unidadIdSeleccionada: number = 0;
-    @Input() aulaIdSeleccionada: number = 0;
-    @Output() itemsChange = new EventEmitter<string>();
+    @Input() filtrosSeleccionados: FiltrosSeleccionados;
+
+    @Output() itemOption = new EventEmitter<ItemOptions>();
 
     formEstudiantes: FormGroup;
 
@@ -44,27 +44,7 @@ export class RegistrarEstudiantesComponent implements OnInit {
         this.formEstudiantes = this.fb.group({
             estudiantes: this.fb.array([this.crearFormularioEstudiante()], [this.validadorDniDuplicadoEnFormEstudiantes()])
         });
-        this.llenarRegistrosEstudiantes();
-    }
 
-
-
-
-    llenarRegistrosEstudiantes() {
-        // Datos de ejemplo para 4 estudiantes
-        const datosEstudiantes = [
-            { nombres: 'Juan', apellidoPaterno: 'Perez', apellidoMaterno: 'Gomez', dni: '73705438' },
-            { nombres: 'Ana', apellidoPaterno: 'Lopez', apellidoMaterno: 'Martinez', dni: '84736291' },
-            { nombres: 'Luis', apellidoPaterno: 'Fernandez', apellidoMaterno: 'Ruiz', dni: '95847263' },
-            { nombres: 'Sofia', apellidoPaterno: 'Garcia', apellidoMaterno: 'Torres', dni: '76294815' }
-        ];
-
-        // Iterar sobre los datos de los estudiantes y agregarlos al FormArray
-        datosEstudiantes.forEach(estudianteData => {
-            let estudianteForm = this.crearFormularioEstudiante();
-            estudianteForm.setValue(estudianteData);
-            (this.formEstudiantes.get('estudiantes') as FormArray).push(estudianteForm);
-        });
     }
 
 
@@ -99,7 +79,6 @@ export class RegistrarEstudiantesComponent implements OnInit {
     }
 
     async registrarEstudiantesApi() {
-        console.log(this.formEstudiantes.invalid);
         if (this.formEstudiantes.invalid) {
             console.error('Formulario estudiantes es invalido');
             return;
@@ -108,8 +87,9 @@ export class RegistrarEstudiantesComponent implements OnInit {
         let validador = await this.sonDnisUnicosEnBaseDeDatos();
 
         if (!validador) return;
-
-        const { unidadIdSeleccionada, aulaIdSeleccionada, formEstudiantes } = this;
+        let unidadIdSeleccionada = this.filtrosSeleccionados?.unidad;
+        let aulaIdSeleccionada = this.filtrosSeleccionados?.seccion;
+        let formEstudiantes = this.formEstudiantes;
 
         if (unidadIdSeleccionada === 0 || aulaIdSeleccionada === 0) {
             return console.error('Parámetros para registrar estudiantes no válidos: unidad o aula no seleccionada.');
@@ -132,7 +112,8 @@ export class RegistrarEstudiantesComponent implements OnInit {
         }).subscribe({
             next: (response) => {
                 if (response.succeeded) {
-                    this.itemsChange.emit('list');
+                    console.log('registrarexitoso');
+                    this.itemOption.emit(ItemOptions.ListarEstudiantes);
                 }
             },
             error: (error) => {
@@ -211,7 +192,6 @@ export class RegistrarEstudiantesComponent implements OnInit {
                         .map(obj => Number(obj.dni))
                         .filter(dni => !isNaN(dni))
                 );
-                console.log('dnisRegistrados', dnisRegistrados)
                 if (dnisRegistrados && dnisRegistrados.size > 0) {
                     this.marcarDnisDuplicadosEnFormularioEstudiantes(dnisRegistrados);
                 }
@@ -228,12 +208,10 @@ export class RegistrarEstudiantesComponent implements OnInit {
     marcarDnisDuplicadosEnFormularioEstudiantes(dnisRegistrados: Set<number>) {
         const estudiantesFormArray = this.formEstudiantes.get('estudiantes') as FormArray;
         estudiantesFormArray.controls.forEach(control => {
-            console.log('dnisRegistrados', dnisRegistrados);
             const dniValue = control.get('dni')?.value;
             const dni: number = parseInt(dniValue);
 
             if (!isNaN(dni) && dnisRegistrados.has(dni)) {
-                console.log('dni registrado bd', dni);
                 const dniControl = control.get('dni');
                 const currentErrors = dniControl.errors || {};
                 dniControl.setErrors({ ...currentErrors, dniRegistrado: true });

@@ -1,0 +1,157 @@
+<div class="flex flex-col gap-4">
+    @if(true){ @if(classroomStudents.length > 0){
+    <!-- #region Buscador -->
+    <div class="flex flex-col md:flex-row gap-4">
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+            <mat-icon matPrefix class="icon-size-5" [svgIcon]="
+                                            'heroicons_solid:magnifying-glass'
+                                        "></mat-icon>
+            <input type="text" matInput placeholder="Buscar estudiante" #query />
+        </mat-form-field>
+        <button class="flex-none w-auto font-bold" mat-button [ngClass]="{
+                                'bg-green-200 text-green-800': estadoEvalucionPsicologicaAula === 'F',
+                                'bg-gray-200 text-gray-800': estadoEvalucionPsicologicaAula === 'N',
+                                'bg-orange-200 text-orange-800': estadoEvalucionPsicologicaAula === 'P'
+                            }" (click)="openUpdateEstadoEvaPsiAulaModal(
+                                estadoEvalucionPsicologicaAula === 'F' ? 'Evaluación Terminado' :
+                                estadoEvalucionPsicologicaAula === 'N' ? 'Evaluación No iniciado' :
+                                estadoEvalucionPsicologicaAula === 'P' ? 'Evaluación En proceso' :
+                                ''
+                            )">
+            {{
+            estadoEvalucionPsicologicaAula === 'F' ? 'Evaluación Terminado' :
+            estadoEvalucionPsicologicaAula === 'N' ? 'Evaluación No iniciado' :
+            estadoEvalucionPsicologicaAula === 'P' ? 'Evaluación En proceso' :
+            ''
+            }}
+        </button>
+    </div>
+    <!-- #endregion -->
+    <!-- #region Tabla Estudiante -->
+    <div class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+        <div class="text-lg font-medium tracking-tight leading-6 truncate">
+            DETALLES DE LOS ESTUDIANTES
+        </div>
+        <div class="text-secondary font-medium flex row">
+            <p>
+                En total hay
+                <b>{{ classroomStudents.length }}</b>
+                estudiantes.
+            </p>
+        </div>
+        <div class="flex flex-col flex-auto mt-2">
+            <table class="w-full overflow-y-visible" mat-table [dataSource]="
+                                            classroomStudents
+                                                | filterTable : query.value
+                                        ">
+                <!-- Nombre Completo -->
+                <ng-container matColumnDef="NombreCompleto" sticky>
+                    <th mat-header-cell *matHeaderCellDef>
+                        Nombre Completo
+                    </th>
+                    <td mat-cell *matCellDef="let student">
+                        {{
+                        (student.apellidoPaterno.toLowerCase() + ' '+
+                        student.apellidoMaterno.toLowerCase() + ', ' +
+                        student.nombres.toLowerCase()) | titlecase
+
+                        }}
+                    </td>
+                </ng-container>
+
+                <!-- DNI -->
+                <ng-container matColumnDef="DNI" class="hidden md:table-cell">
+                    <th mat-header-cell *matHeaderCellDef>
+                        DNI
+                    </th>
+                    <td mat-cell *matCellDef="let student">
+                        <span class="font-medium text-right">{{ student.dni }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Estado Estudiante -->
+                <ng-container matColumnDef="EstadoEstudiante">
+                    <th mat-header-cell *matHeaderCellDef>
+                        Estado
+                    </th>
+                    <td mat-cell *matCellDef="let student">
+                        <span
+                            class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+                            [ngClass]="{
+                                                        'bg-orange-200 text-orange-800 dark:bg-orange-600 dark:text-orange-50':
+                                                            student.estadoEstudiante ===
+                                                            'P',
+                                                        'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-50':
+                                                            student.estadoEstudiante ===
+                                                            'N',
+                                                        'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50':
+                                                            student.estadoEstudiante ===
+                                                            'F'
+                                                    }">
+                            <span class="leading-relaxed whitespace-nowrap">
+                                {{
+                                student.estadoEstudiante ===
+                                "F"
+                                ? "Terminado"
+                                : student.estadoEstudiante ===
+                                "N"
+                                ? "No iniciado"
+                                : student.estadoEstudiante ===
+                                "P"
+                                ? "En proceso"
+                                : ""
+                                }}
+                            </span>
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Opciones -->
+                <ng-container matColumnDef="Opciones" class="hidden sm:table-cell">
+                    <th mat-header-cell *matHeaderCellDef>
+                        Opciones
+                    </th>
+                    <td mat-cell *matCellDef="let student">
+                        <ng-container *ngIf="modificarAula; else noOptions">
+                            <button (click)="editarEstudianteComponente(student)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button (click)="deleteStudent(student.estudianteId)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </ng-container>
+                        <ng-template #noOptions>
+                            <span class="text-gray-500 italic">No tiene opciones</span>
+                        </ng-template>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="[
+                                                'NombreCompleto',
+                                                'DNI',
+                                                'EstadoEstudiante',
+                                                'Opciones'
+                                            ]"></tr>
+                <tr mat-row *matRowDef="
+                                                let row;
+                                                columns: [
+                                                    'NombreCompleto',
+                                                    'DNI',
+                                                    'EstadoEstudiante',
+                                                    'Opciones'
+                                                ]
+                                            "></tr>
+            </table>
+        </div>
+    </div>
+    <!-- #endregion-->
+    }@else {
+    <div class="flex items-center justify-center h-50 border rounded">
+        <p class="text-center">
+            No hay información disponible.
+        </p>
+    </div>
+    } }@else {
+    <p>Selecciona un formulario.</p>
+
+    }
+</div>

@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from 'app/shared/shared.module';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { ClassroomsService } from '../../classrooms/classrooms.service';
+import { ClassroomsService } from '../../classrooms/services/classrooms.service';
 import { MatButtonModule } from '@angular/material/button';
 
 // librerias para exportar a excel

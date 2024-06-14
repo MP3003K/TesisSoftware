@@ -1,0 +1,46 @@
+<div class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+    <div class="text-lg font-medium tracking-tight leading-6 truncate">
+        Asignar estudiante
+    </div>
+    <div class="flex flex-col flex-auto mt-2">
+        <div class="flex flex-col gap-2">
+            <div class="flex flex-wrap gap-2">
+                @for (student of selectedStudents; track
+                student; let i = $index) {
+                <mat-chip-row (removed)="remove(i)">
+                    {{ student.nombre }}
+                    <button matChipRemove [attr.aria-label]="
+                                                    'remove ' + student.nombre
+                                                ">
+                        <mat-icon [svgIcon]="'remove'" />
+                    </button>
+                </mat-chip-row>
+                }
+            </div>
+            <mat-form-field class="flex flex-col mt-2">
+                <input matInput #autocompleteInput [ngModel]="inputValue" (ngModelChange)="
+                                                onInputChange($event)
+                                            " [matAutocomplete]="auto"
+                    placeholder="Ingresar nombre del estudiante o DNI" />
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)" [displayWith]="displayFn">
+                    @for (student of
+                    filteredSearchedStudents; track
+                    student) {
+                    <mat-option [value]="student">
+                        {{ student.nombre }} ({{
+                        student.dni
+                        }})
+                    </mat-option>
+                    }
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+        <div>
+            <button type="submit" mat-raised-button color="primary" [disabled]="
+                                            selectedStudents.length == 0
+                                        " (click)="asignarEstudiante()">
+                Asignar
+            </button>
+        </div>
+    </div>
+</div>

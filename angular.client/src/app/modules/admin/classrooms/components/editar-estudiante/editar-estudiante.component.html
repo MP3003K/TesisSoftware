@@ -5,10 +5,11 @@
     </div>
     <div class="flex flex-col flex-auto mt-2">
         <div class="flex-auto py-1 sm:py-3">
-            <div class="flex flex-col gap-4">  
+            <div class="flex flex-col gap-4">
                 <div class="flex flex-col items-start">
                     <div class="w-full">
-                        <form [formGroup]="this.formEditarEstudiante" (ngSubmit)="editEstudiante()" class="flex flex-col p-2">
+                        <form [formGroup]="this.formEditarEstudiante" (ngSubmit)="editEstudiante()"
+                            class="flex flex-col p-2">
                             <mat-form-field class="flex-auto mb-2">
                                 <mat-label>Nombres</mat-label>
                                 <input type="text" matInput formControlName="nombres" placeholder="Ingrese su nombre" />
@@ -73,7 +74,8 @@
                                 }
                             </mat-form-field>
                             <div class="flex justify-end mt-4">
-                                <button type="submit" mat-raised-button color="primary" [disabled]="formEditarEstudiante.invalid">
+                                <button type="submit" mat-raised-button color="primary"
+                                    [disabled]="formEditarEstudiante.invalid">
                                     Editar
                                 </button>
                             </div>

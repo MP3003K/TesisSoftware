@@ -1,9 +1,8 @@
 import { Routes } from '@angular/router';
 import { ClassroomsComponent } from './classrooms.component';
-import { EditarEstudianteComponent } from './editar-estudiante/editar-estudiante.component';
-import { RegistrarEstudiantesComponent } from './registrar-estudiantes/registrar-estudiantes.component';
-import { AsignarEstudiantesComponent } from './asignar-estudiantes/asignar-estudiantes.component';
-
+import {
+    EditarEstudianteComponent, RegistrarEstudiantesComponent, ListarEstudiantesComponent, AsignarEstudianteComponent
+} from './components';
 export const classroomsRoutes: Routes = [
     {
         path: '',
@@ -11,7 +10,8 @@ export const classroomsRoutes: Routes = [
         children: [
             { path: 'editar-estudiante', component: EditarEstudianteComponent },
             { path: 'registrar-estudiantes', component: RegistrarEstudiantesComponent },
-            { path: 'asignar-estudiantes', component: AsignarEstudiantesComponent }
+            { path: 'asignar-estudiantes', component: AsignarEstudianteComponent },
+            { path: 'listar-estudiantes', component: ListarEstudiantesComponent }
         ]
     }
 ];

@@ -17,13 +17,15 @@
                 <div class="grid sm:grid-cols-4 gap-2 items-center">
                     <mat-form-field>
                         <mat-label>Unidad</mat-label>
-                        <mat-select [(ngModel)]="selectedUnity">
+                        <mat-select [(ngModel)]="this.filtrosSeleccionados.unidad"
+                            (ngModelChange)="this.seleccionarEstadoUnidad($event)"
+                            (selectionChange)="this.filtrosSeleccionados.unidad">
+
                             @for(unidad of unidades;track unidad){
                             <mat-option [value]="unidad.id">
                                 {{ unidad.nombre }}
                             </mat-option>
                             }
-
                             <mat-option (click)="openCreateUnitModal('Unidad')">
                                 Crear Unidad
                             </mat-option>
@@ -34,7 +36,8 @@
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Grado</mat-label>
-                        <mat-select [(ngModel)]="selectedDegree" (selectionChange)="selectedSection = null">
+                        <mat-select [(ngModel)]="this.filtrosSeleccionados.grado"
+                            (selectionChange)="this.filtrosSeleccionados.seccion = null">
                             @for(degree of distinctClassrooms; track degree){
                             <mat-option [value]="degree">
                                 {{ degree }}
@@ -44,7 +47,8 @@
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Sección</mat-label>
-                        <mat-select [disabled]="!selectedDegree" [(ngModel)]="selectedSection">
+                        <mat-select [disabled]="!this.filtrosSeleccionados.grado"
+                            [(ngModel)]="this.filtrosSeleccionados.seccion">
                             @for(aula of sections; track aula){
                             <mat-option [value]="aula.id">
                                 {{ aula.seccion }}
@@ -53,8 +57,9 @@
                         </mat-select>
                     </mat-form-field>
                     <div>
-                        <button mat-fab extended [disabled]="!selectedSection || !selectedUnity"
-                            (click)="obtnerEstudiantesPorAulaYUnidad()">
+                        <button mat-fab extended
+                            [disabled]="!this.filtrosSeleccionados.seccion || !this.filtrosSeleccionados.unidad"
+                            (click)="this.changeItemOption()">
                             <mat-icon svgIcon="filter_alt"></mat-icon>
                             Filtrar
                         </button>
@@ -63,358 +68,48 @@
 
                 <div class="flex flex-col gap-4">
                     <div class="overflow-x-auto space-x-4">
-                        <mat-button-toggle-group [(ngModel)]="items" aria-label="Font Style">
+                        <mat-button-toggle-group [(ngModel)]="itemOption" aria-label="Font Style">
                             <!-- Botón para Listar Estudiantes -->
-                            <mat-button-toggle value="list" [disabled]="!selectedSection || !selectedUnity">
+                            <mat-button-toggle value="list" [disabled]="!this.filtrosSeleccionados.succeeded()">
                                 Listar
                             </mat-button-toggle>
 
-                            @if(modificarAula){
-                            <!-- Botón para Asignar Estudiantes -->
-                            <mat-button-toggle value="assign"
-                                [disabled]="!selectedSection || !selectedUnity || !modificarAula">
+                            @if(filtrosSeleccionados.succeeded() && modificarAula){
+                            <mat-button-toggle value="assign">
                                 Asignar Estudiantes
                             </mat-button-toggle>
-                            <!-- Botón para Registrar Estudiantes -->
-                            <mat-button-toggle value="regitrar-estudiantes"
-                                [disabled]="!selectedSection || !selectedUnity || !modificarAula">
+                            <mat-button-toggle value="register">
                                 Registrar Estudiantes
                             </mat-button-toggle>
-                            }
 
-                            <!-- Botón para Editar Estudiante -->
-                            @if (items === 'edit') {
-                            <mat-button-toggle value="edit" [disabled]="!selectedSection || !selectedUnity">
+                            @if (itemOption === 'edit') {
+                            <mat-button-toggle value="edit">
                                 Editar Estudiante
                             </mat-button-toggle>
                             }
+                            }
                         </mat-button-toggle-group>
                     </div>
+
                     <div>
-                        @switch(items){ @case("list"){
-                        <!-- #region Listar estudiantes -->
-                        <div class="flex flex-col gap-4">
-                            @if(true){ @if(classroomStudents.length > 0){
-                            <!-- #region Buscador -->
-                            <div class="flex flex-col md:flex-row gap-4">
-                                <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                                    <mat-icon matPrefix class="icon-size-5" [svgIcon]="
-                                            'heroicons_solid:magnifying-glass'
-                                        "></mat-icon>
-                                    <input type="text" matInput placeholder="Buscar estudiante" #query />
-                                </mat-form-field>
-                                <button class="flex-none w-auto font-bold" mat-button [ngClass]="{
-                                'bg-green-200 text-green-800': estadoEvalucionPsicologicaAula === 'F',
-                                'bg-gray-200 text-gray-800': estadoEvalucionPsicologicaAula === 'N',
-                                'bg-orange-200 text-orange-800': estadoEvalucionPsicologicaAula === 'P'
-                            }" (click)="openUpdateEstadoEvaPsiAulaModal(
-                                estadoEvalucionPsicologicaAula === 'F' ? 'Evaluación Terminado' :
-                                estadoEvalucionPsicologicaAula === 'N' ? 'Evaluación No iniciado' :
-                                estadoEvalucionPsicologicaAula === 'P' ? 'Evaluación En proceso' :
-                                ''
-                            )">
-                                    {{
-                                    estadoEvalucionPsicologicaAula === 'F' ? 'Evaluación Terminado' :
-                                    estadoEvalucionPsicologicaAula === 'N' ? 'Evaluación No iniciado' :
-                                    estadoEvalucionPsicologicaAula === 'P' ? 'Evaluación En proceso' :
-                                    ''
-                                    }}
-                                </button>
-                            </div>
-                            <!-- #endregion -->
-                            <!-- #region Tabla Estudiante -->
-                            <div
-                                class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
-                                <div class="text-lg font-medium tracking-tight leading-6 truncate">
-                                    DETALLES DE LOS ESTUDIANTES
-                                </div>
-                                <div class="text-secondary font-medium flex row">
-                                    <p>
-                                        En total hay
-                                        <b>{{ classroomStudents.length }}</b>
-                                        estudiantes.
-                                    </p>
-                                </div>
-                                <div class="flex flex-col flex-auto mt-2">
-                                    <table class="w-full overflow-y-visible" mat-table [dataSource]="
-                                            classroomStudents
-                                                | filterTable : query.value
-                                        ">
-                                        <!-- Nombre Completo -->
-                                        <ng-container matColumnDef="NombreCompleto" sticky>
-                                            <th mat-header-cell *matHeaderCellDef>
-                                                Nombre Completo
-                                            </th>
-                                            <td mat-cell *matCellDef="let student">
-                                                {{
-                                                (student.apellidoPaterno.toLowerCase() + ' '+
-                                                student.apellidoMaterno.toLowerCase() + ', ' +
-                                                student.nombres.toLowerCase()) | titlecase
-
-                                                }}
-                                            </td>
-                                        </ng-container>
-
-                                        <!-- DNI -->
-                                        <ng-container matColumnDef="DNI" class="hidden md:table-cell">
-                                            <th mat-header-cell *matHeaderCellDef>
-                                                DNI
-                                            </th>
-                                            <td mat-cell *matCellDef="let student">
-                                                <span class="font-medium text-right">{{ student.dni }}</span>
-                                            </td>
-                                        </ng-container>
-
-                                        <!-- Estado Estudiante -->
-                                        <ng-container matColumnDef="EstadoEstudiante">
-                                            <th mat-header-cell *matHeaderCellDef>
-                                                Estado
-                                            </th>
-                                            <td mat-cell *matCellDef="let student">
-                                                <span
-                                                    class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
-                                                    [ngClass]="{
-                                                        'bg-orange-200 text-orange-800 dark:bg-orange-600 dark:text-orange-50':
-                                                            student.estadoEstudiante ===
-                                                            'P',
-                                                        'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-50':
-                                                            student.estadoEstudiante ===
-                                                            'N',
-                                                        'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50':
-                                                            student.estadoEstudiante ===
-                                                            'F'
-                                                    }">
-                                                    <span class="leading-relaxed whitespace-nowrap">
-                                                        {{
-                                                        student.estadoEstudiante ===
-                                                        "F"
-                                                        ? "Terminado"
-                                                        : student.estadoEstudiante ===
-                                                        "N"
-                                                        ? "No iniciado"
-                                                        : student.estadoEstudiante ===
-                                                        "P"
-                                                        ? "En proceso"
-                                                        : ""
-                                                        }}
-                                                    </span>
-                                                </span>
-                                            </td>
-                                        </ng-container>
-
-                                        <!-- Opciones -->
-                                        <ng-container matColumnDef="Opciones" class="hidden sm:table-cell">
-                                            <th mat-header-cell *matHeaderCellDef>
-                                                Opciones
-                                            </th>
-                                            <td mat-cell *matCellDef="let student">
-                                                <ng-container *ngIf="modificarAula; else noOptions">
-                                                    <button (click)="editarEstudianteComponente(student)">
-                                                        <mat-icon>edit</mat-icon>
-                                                    </button>
-                                                    <button (click)="deleteStudent(student.estudianteId)">
-                                                        <mat-icon>delete</mat-icon>
-                                                    </button>
-                                                </ng-container>
-                                                <ng-template #noOptions>
-                                                    <span class="text-gray-500 italic">No tiene opciones</span>
-                                                </ng-template>
-                                            </td>
-                                        </ng-container>
-                                        <tr mat-header-row *matHeaderRowDef="[
-                                                'NombreCompleto',
-                                                'DNI',
-                                                'EstadoEstudiante',
-                                                'Opciones'
-                                            ]"></tr>
-                                        <tr mat-row *matRowDef="
-                                                let row;
-                                                columns: [
-                                                    'NombreCompleto',
-                                                    'DNI',
-                                                    'EstadoEstudiante',
-                                                    'Opciones'
-                                                ]
-                                            "></tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <!-- #endregion-->
-                            }@else {
-                            <div class="flex items-center justify-center h-50 border rounded">
-                                <p class="text-center">
-                                    No hay información disponible.
-                                </p>
-                            </div>
-                            } }@else {
-                            <p>Selecciona un formulario.</p>
-
-                            }
-                        </div>
-                        <!-- #endregion -->
+                        @switch(this.itemOption){
+                        @case('list'){
+                        <app-listar-estudiantes [filtrosSeleccionados]="this.filtrosSeleccionados"
+                            [cargarValoresIniciales]="cargarValoresIniciales"
+                            (estudianteParaEditar)="editarEstudiante($event)" (itemOption)="changeItemOption($event)">
+                        </app-listar-estudiantes>
                         } @case("assign"){
-                        <!-- #region Asignar estudiante -->
-                        <div
-                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
-                            <div class="text-lg font-medium tracking-tight leading-6 truncate">
-                                Asignar estudiante
-                            </div>
-                            <div class="flex flex-col flex-auto mt-2">
-                                <div class="flex flex-col gap-2">
-                                    <div class="flex flex-wrap gap-2">
-                                        @for (student of selectedStudents; track
-                                        student; let i = $index) {
-                                        <mat-chip-row (removed)="remove(i)">
-                                            {{ student.nombre }}
-                                            <button matChipRemove [attr.aria-label]="
-                                                    'remove ' + student.nombre
-                                                ">
-                                                <mat-icon [svgIcon]="'remove'" />
-                                            </button>
-                                        </mat-chip-row>
-                                        }
-                                    </div>
-                                    <mat-form-field class="flex flex-col mt-2">
-                                        <input matInput #autocompleteInput [ngModel]="inputValue" (ngModelChange)="
-                                                onInputChange($event)
-                                            " [matAutocomplete]="auto"
-                                            placeholder="Ingresar nombre del estudiante o DNI" />
-                                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)"
-                                            [displayWith]="displayFn">
-                                            @for (student of
-                                            filteredSearchedStudents; track
-                                            student) {
-                                            <mat-option [value]="student">
-                                                {{ student.nombre }} ({{
-                                                student.dni
-                                                }})
-                                            </mat-option>
-                                            }
-                                        </mat-autocomplete>
-                                    </mat-form-field>
-                                </div>
-                                <div>
-                                    <button type="submit" mat-raised-button color="primary" [disabled]="
-                                            selectedStudents.length == 0
-                                        " (click)="asignarEstudiante()">
-                                        Asignar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- #endregion-->
-                        } @case("register"){
-                        <!-- #region Registrar estudiante -->
-                        <div
-                            class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
-                            <div class="text-lg font-medium tracking-tight leading-6 truncate">
-                                Registrar estudiante
-                            </div>
-                            <div class="flex flex-col flex-auto mt-2">
-                                <div class="flex-auto py-1 sm:py-3">
-                                    <div class="flex flex-col gap-4">
-                                        <div class="flex flex-col items-start">
-                                            <div class="w-full">
-                                                <form [formGroup]="
-                                                        formRegistrarEstudiante
-                                                    " (ngSubmit)="
-                                                        registerStudent()
-                                                    " class="flex flex-col p-2">
-                                                    <mat-form-field class="flex-auto mb-2">
-                                                        <mat-label>
-                                                            Nombres
-                                                        </mat-label>
-                                                        <input type="text" matInput formControlName="nombres"
-                                                            placeholder="Ingrese su nombre" />
-                                                        <mat-error *ngIf="
-                                                                formRegistrarEstudiante.get(
-                                                                    'nombres'
-                                                                ).invalid &&
-                                                                formRegistrarEstudiante.get(
-                                                                    'nombres'
-                                                                ).touched
-                                                            ">
-                                                            Falta ingresar
-                                                            nombre
-                                                        </mat-error>
-                                                    </mat-form-field>
-                                                    <mat-form-field class="flex-auto mb-2">
-                                                        <mat-label>
-                                                            Apellido Paterno
-                                                        </mat-label>
-                                                        <input type="text" matInput formControlName="apellidoPaterno"
-                                                            required placeholder="Ingrese su apellido paterno" />
-                                                        <mat-error *ngIf="
-                                                                formRegistrarEstudiante.get(
-                                                                    'apellidoPaterno'
-                                                                ).invalid &&
-                                                                formRegistrarEstudiante.get(
-                                                                    'apellidoPaterno'
-                                                                ).touched
-                                                            ">
-                                                            Falta ingresar
-                                                            apellido paterno
-                                                        </mat-error>
-                                                    </mat-form-field>
-                                                    <mat-form-field class="flex-auto mb-2">
-                                                        <mat-label>
-                                                            Apellido Materno
-                                                        </mat-label>
-                                                        <input type="text" matInput formControlName="apellidoMaterno"
-                                                            placeholder="Ingrese su apellido materno" />
-                                                        <mat-error *ngIf="
-                                                                formRegistrarEstudiante.get(
-                                                                    'apellidoMaterno'
-                                                                ).invalid &&
-                                                                formRegistrarEstudiante.get(
-                                                                    'apellidoMaterno'
-                                                                ).touched
-                                                            ">
-                                                            Falta ingresar
-                                                            apellido materno
-                                                        </mat-error>
-                                                    </mat-form-field>
-                                                    <mat-form-field class="flex-auto mb-2">
-                                                        <mat-label>DNI</mat-label>
-                                                        <input type="number" matInput formControlName="dni"
-                                                            placeholder="Ingrese su DNI" />
-                                                        <mat-error *ngIf="
-                                                                formRegistrarEstudiante.get(
-                                                                    'dni'
-                                                                ).invalid &&
-                                                                formRegistrarEstudiante.get(
-                                                                    'dni'
-                                                                ).touched
-                                                            ">
-                                                            El DNI tiene que
-                                                            tener 8 dígitos
-                                                        </mat-error>
-                                                    </mat-form-field>
-                                                    <div class="flex justify-end mt-4">
-                                                        <button type="submit" mat-raised-button color="primary"
-                                                            [disabled]="
-                                                                formRegistrarEstudiante.invalid
-                                                            ">
-                                                            Registrar
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- #endregion-->
+                        <app-asignar-estudiante [filtrosSeleccionados]="this.filtrosSeleccionados"
+                            (itemOption)="changeItemOption($event)">
+                        </app-asignar-estudiante>
                         } @case("edit"){
-                        <app-editar-estudiante #editarEstudiante [formEditarEstudiante]="formEditarEstudiante"
-                            (editarEstudianteSuccessful)="onEditarEstudianteSuccessful($event)">
+                        <app-editar-estudiante [filtrosSeleccionados]="filtrosSeleccionados"
+                            [estudiante]="datosEstudianteParaEditar" (itemOption)="changeItemOption($event)">
                             ></app-editar-estudiante>
-                        } @case("regitrar-estudiantes"){
-                        <app-registrar-estudiantes [unidadIdSeleccionada]="selectedUnity"
-                            [aulaIdSeleccionada]="selectedSection"
-                            (itemsChange)="changeItems($event)"
-                            ></app-registrar-estudiantes>
+                        } @case("register"){
+                        <app-registrar-estudiantes [filtrosSeleccionados]="filtrosSeleccionados"
+                            (itemOption)="changeItemOption($event)">
+                        </app-registrar-estudiantes>
                         }
                         }
                     </div>
