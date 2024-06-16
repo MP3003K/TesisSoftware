@@ -1,9 +1,12 @@
+import { DimensionPsicologica } from "../enums/dimensionPsicologica.enum";
+
 export class FiltrosSeleccionados {
     public unidad: number | null = null;
     public grado: number | null = null;
     public seccion: number | null = null;
-    public dimension: number | null = null;
+    public dimension: DimensionPsicologica = DimensionPsicologica.habilidadesSocioemocionales;
     public estadoUnidad: boolean = false;
+
 
     constructor(
         unidad?: number,
@@ -21,7 +24,7 @@ export class FiltrosSeleccionados {
     set Seccion(seccion: number) {
         this.seccion = seccion;
     }
-    set Dimension(dimension: number) {
+    set Dimension(dimension: DimensionPsicologica) {
         this.dimension = dimension;
     }
     set EstadoUnidad(estadoUnidad: boolean) {

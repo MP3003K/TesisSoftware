@@ -18,7 +18,6 @@
                     <mat-form-field>
                         <mat-label>Unidad</mat-label>
                         <mat-select [(ngModel)]="this.filtrosSeleccionados.unidad"
-                            (ngModelChange)="this.seleccionarEstadoUnidad($event)"
                             (selectionChange)="this.filtrosSeleccionados.unidad">
 
                             @for(unidad of unidades;track unidad){
@@ -36,8 +35,7 @@
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Grado</mat-label>
-                        <mat-select [(ngModel)]="this.filtrosSeleccionados.grado"
-                            (selectionChange)="this.filtrosSeleccionados.seccion = null">
+                        <mat-select [(ngModel)]="this.filtrosSeleccionados.grado">
                             @for(degree of distinctClassrooms; track degree){
                             <mat-option [value]="degree">
                                 {{ degree }}
@@ -75,11 +73,14 @@
                             </mat-button-toggle>
 
                             @if(filtrosSeleccionados.succeeded() && modificarAula){
+                            <mat-button-toggle value="reportClassroom">
+                                Reporte resultados
+                            </mat-button-toggle>
                             <mat-button-toggle value="assign">
-                                Asignar Estudiantes
+                                Asignar estudiantes
                             </mat-button-toggle>
                             <mat-button-toggle value="register">
-                                Registrar Estudiantes
+                                Registrar estudiantes
                             </mat-button-toggle>
 
                             @if (itemOption === 'edit') {
@@ -89,13 +90,21 @@
                             }
                             }
                         </mat-button-toggle-group>
+                        <p>
+                            Default appearance:
+                            <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+                                <mat-button-toggle value="bold">Bold</mat-button-toggle>
+                                <mat-button-toggle value="italic">Italic</mat-button-toggle>
+                                <mat-button-toggle value="underline">Underline</mat-button-toggle>
+                            </mat-button-toggle-group>
+                        </p>
                     </div>
 
                     <div>
                         @switch(this.itemOption){
                         @case('list'){
                         <app-listar-estudiantes [filtrosSeleccionados]="this.filtrosSeleccionados"
-                            [cargarValoresIniciales]="cargarValoresIniciales"
+                            [cargarValoresIniciales]="cargarValoresInicialesHijo"
                             (estudianteParaEditar)="editarEstudiante($event)" (itemOption)="changeItemOption($event)">
                         </app-listar-estudiantes>
                         } @case("assign"){
@@ -110,6 +119,10 @@
                         <app-registrar-estudiantes [filtrosSeleccionados]="filtrosSeleccionados"
                             (itemOption)="changeItemOption($event)">
                         </app-registrar-estudiantes>
+                        } @case("reportClassroom"){
+                        <app-reporte-salon [filtrosSeleccionados]="filtrosSeleccionados"
+                            (itemOption)="changeItemOption($event)">
+                        </app-reporte-salon>
                         }
                         }
                     </div>

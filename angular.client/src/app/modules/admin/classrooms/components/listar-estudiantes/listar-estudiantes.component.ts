@@ -39,7 +39,6 @@ export class ListarEstudiantesComponent {
     @Output() estudianteParaEditar = new EventEmitter<Estudiante>();
 
     ngOnChanges(changes: SimpleChanges): void {
-        console.log('cambio');
         if (changes.cargarValoresIniciales)
             this.obtnerEstudiantesPorAulaYUnidad();
     }
@@ -73,7 +72,6 @@ export class ListarEstudiantesComponent {
             .subscribe((response) => {
                 if (response.succeeded) {
                     this.classroomStudents = response.data;
-                    console.log('estudiantes', this.classroomStudents);
                     this.estadoEvalucionPsicologicaAula = this.classroomStudents[0]?.estadoAula ?? 'N';
                     this.updateEstadoModificarAula();
                 }
@@ -100,7 +98,7 @@ export class ListarEstudiantesComponent {
                         this.obtnerEstudiantesPorAulaYUnidad();
                     },
                     (error) => {
-                        console.log(error);
+                        console.error(error);
                     }
                 );
         }

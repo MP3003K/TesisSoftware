@@ -3,5 +3,6 @@ export enum ItemOptions {
     AsignarEstudiantes = 'assign',
     RegistrarEstudiantes = 'register',
     EditarEstudiante = 'edit',
-    Prueba = 'test'
+    Prueba = 'test',
+    reportClassroom = 'reportClassroom',
 }

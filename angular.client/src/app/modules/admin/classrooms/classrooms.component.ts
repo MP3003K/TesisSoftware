@@ -10,10 +10,12 @@ import { SharedModule } from "app/shared/shared.module";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { AsignarEstudianteComponent, EditarEstudianteComponent, ListarEstudiantesComponent, RegistrarEstudiantesComponent } from "./components";
+import { AsignarEstudianteComponent, EditarEstudianteComponent, ListarEstudiantesComponent, RegistrarEstudiantesComponent, ReporteSalonComponent } from "./components";
 import { MatSelectModule } from "@angular/material/select";
 import { MatSortModule } from "@angular/material/sort";
 import { Estudiante } from "./models/estudiante.model";
+import { first } from "lodash";
+import { firstValueFrom } from "rxjs";
 
 
 
@@ -34,7 +36,8 @@ import { Estudiante } from "./models/estudiante.model";
         RegistrarEstudiantesComponent,
         EditarEstudianteComponent,
         ListarEstudiantesComponent,
-        AsignarEstudianteComponent
+        AsignarEstudianteComponent,
+        ReporteSalonComponent,
     ],
 })
 
@@ -46,7 +49,7 @@ export class ClassroomsComponent implements OnInit {
     unidades: any = [];
     classrooms = [];
     unidadSeleccionada: any;
-    cargarValoresIniciales: boolean = false;
+    cargarValoresInicialesHijo: boolean = false;
 
     modificarAula: boolean = false;
     datosEstudianteParaEditar: Estudiante;
@@ -56,13 +59,20 @@ export class ClassroomsComponent implements OnInit {
         private confirmationService: FuseConfirmationService,
     ) { }
 
-    ngOnInit() {
-        this.obtenerListadeUnidades();
-        this.obtenerListadeAulas();
+    async ngOnInit() {
+        await this.obtenerListadeUnidades();
+        await this.obtenerListadeAulas();
+        this.cargarValoresIniciales();
     }
 
+    cargarValoresIniciales() {
+        this.filtrosSeleccionados.unidad = 1003;
+        this.filtrosSeleccionados.grado = 1;
+        this.filtrosSeleccionados.seccion = 1;
+        this.changeItemOption(ItemOptions.reportClassroom);
+    }
 
-    private obtenerListadeUnidades(): void {
+    private async obtenerListadeUnidades(): Promise<any> {
         this.classroomsService.getUnidadesAll().subscribe({
             next: (response) => {
                 if (response.succeeded) {
@@ -70,12 +80,12 @@ export class ClassroomsComponent implements OnInit {
                 }
             },
             error: (err) => {
-                console.log(err);
+                console.error(err);
             },
         });
     }
 
-    private obtenerListadeAulas(): void {
+    private async obtenerListadeAulas(): Promise<any> {
         this.classroomsService.getAulas().subscribe({
             next: (response) => {
                 if (response.succeeded) {
@@ -83,7 +93,7 @@ export class ClassroomsComponent implements OnInit {
                 }
             },
             error: (err) => {
-                console.log(err);
+                console.error(err);
             },
         });
     }
@@ -112,15 +122,10 @@ export class ClassroomsComponent implements OnInit {
                 };
 
                 if (tipo in tipoMap) {
-                    console.log(tipoMap[tipo]);
                     this.classroomsService
                         .crearNUnidadOAnio(tipoMap[tipo], '')
                         .subscribe(
                             (response) => {
-                                console.log(
-                                    'Respuesta del servidor: ',
-                                    response
-                                );
                                 this.obtenerListadeUnidades();
                             },
                             (error) =>
@@ -133,6 +138,7 @@ export class ClassroomsComponent implements OnInit {
             }
         });
     }
+
     get distinctClassrooms() {
         const classrooms = this.classrooms.map((e) => e.grado);
         return [...new Set(classrooms)];
@@ -142,8 +148,10 @@ export class ClassroomsComponent implements OnInit {
     }
 
     seleccionarEstadoUnidad(unidad: number) {
+        console.log(unidad, 'unidad')
         if (unidad) {
             let estado: boolean = this.unidades.find(x => x.id == unidad)?.estado;
+            console.log(estado, 'estado')
             this.filtrosSeleccionados.estadoUnidad = estado;
         }
 
@@ -156,12 +164,13 @@ export class ClassroomsComponent implements OnInit {
     }
 
     changeItemOption(option?: ItemOptions) {
-        console.log('changeItemOption', option);
+        console.log('option', this.filtrosSeleccionados)
         if (!option) this.itemOption = ItemOptions.ListarEstudiantes;
         else this.itemOption = option;
 
+        this.seleccionarEstadoUnidad(this.filtrosSeleccionados.unidad);
         this.modificarAula = this.filtrosSeleccionados.estadoUnidad;
 
-        this.cargarValoresIniciales = !this.cargarValoresIniciales;
+        this.cargarValoresInicialesHijo = !this.cargarValoresInicialesHijo;
     }
 }

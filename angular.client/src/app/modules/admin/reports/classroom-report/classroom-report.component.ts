@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EvaluationService } from '../../evaluation/evaluation.service';
@@ -20,6 +20,7 @@ import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Subscription } from 'rxjs';
+import { ItemOptions } from '../../classrooms/enums';
 
 export interface Student {
     nombre: string;
@@ -30,7 +31,6 @@ export interface Student {
 @Component({
     selector: 'app-classroom-report',
     templateUrl: './classroom-report.component.html',
-    styleUrl: './reports.component.scss',
     standalone: true,
     imports: [
         SharedModule,
@@ -43,6 +43,8 @@ export interface Student {
     ],
 })
 export class ClassroomReportComponent implements AfterViewInit {
+    @Input() itemOption: ItemOptions;
+
     public dataInfo: string = 'Seleccione un formulario';
     public selectedUnity!: number;
     public selectedDimension!: number;

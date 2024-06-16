@@ -112,7 +112,6 @@ export class RegistrarEstudiantesComponent {
         }).subscribe({
             next: (response) => {
                 if (response.succeeded) {
-                    console.log('registrarexitoso');
                     this.itemOption.emit(ItemOptions.ListarEstudiantes);
                 }
             },
