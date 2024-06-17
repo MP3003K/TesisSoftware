@@ -68,7 +68,7 @@ export class ListarEstudiantesComponent {
     obtnerEstudiantesPorAulaYUnidad() {
         this.classroomStudents = [];
         this.classroomsService
-            .getStudentsByAulaYUnidad(this.filtrosSeleccionados.unidad, this.filtrosSeleccionados.seccion)
+            .getStudentsByAulaYUnidad(this.filtrosSeleccionados.Unidad, this.filtrosSeleccionados.Seccion)
             .subscribe((response) => {
                 if (response.succeeded) {
                     this.classroomStudents = response.data;
@@ -88,8 +88,8 @@ export class ListarEstudiantesComponent {
             let opcion = estado === 'N' ? 1 : 0; // 1: Iniciar, 0: Finalizar
             this.classroomsService
                 .updateEstadoEvaPsiAula(
-                    this.filtrosSeleccionados.unidad,
-                    this.filtrosSeleccionados.seccion,
+                    this.filtrosSeleccionados.Unidad,
+                    this.filtrosSeleccionados.Seccion,
                     opcion,
                     ''
                 )
@@ -130,8 +130,8 @@ export class ListarEstudiantesComponent {
 
 
     updateEstadoModificarAula() {
-        this.filtrosSeleccionados.unidad;
-        this.modificarAula = this.filtrosSeleccionados.estadoUnidad;
+        this.filtrosSeleccionados.Unidad;
+        this.modificarAula = this.filtrosSeleccionados.EstadoUnidad;
     }
 
     editarEstudianteComponente(student: any) {
@@ -152,8 +152,8 @@ export class ListarEstudiantesComponent {
         this.classroomsService
             .eliminarEstudianteAula(
                 id,
-                this.filtrosSeleccionados.seccion,
-                this.filtrosSeleccionados.unidad
+                this.filtrosSeleccionados.Seccion,
+                this.filtrosSeleccionados.Unidad
             )
             .subscribe((res) => {
                 if (res.succeeded) {
@@ -161,5 +161,9 @@ export class ListarEstudiantesComponent {
                     this.obtnerEstudiantesPorAulaYUnidad();
                 }
             });
+    }
+
+    cantidadDeEstudiantesPorEstadoEvalucionPsicologico(estado: string): number {
+        return this.classroomStudents.filter(estudiante => estudiante.estadoEstudiante === estado).length;
     }
 }

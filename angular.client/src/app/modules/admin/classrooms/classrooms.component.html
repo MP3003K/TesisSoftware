@@ -1,6 +1,6 @@
 <div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
     <div
-        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-5 sm:py-7 sm:px-10 border-b bg-card dark:bg-transparent">
         <div class="flex-1 min-w-0">
             <div class="mt-1">
                 <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-6 sm:leading-8 truncate">
@@ -11,14 +11,14 @@
     </div>
     <div class="flex flex-col flex-auto min-w-0">
         <!-- Main -->
-        <div class="flex-auto px-6 py-4 sm:px-10 sm:py-7">
+        <div class="flex-auto px-6 py-5 sm:px-10 sm:pb-7 pt-5">
             <!-- CONTENT GOES HERE -->
             <div class="flex flex-col">
                 <div class="grid sm:grid-cols-4 gap-2 items-center">
                     <mat-form-field>
                         <mat-label>Unidad</mat-label>
-                        <mat-select [(ngModel)]="this.filtrosSeleccionados.unidad"
-                            (selectionChange)="this.filtrosSeleccionados.unidad">
+                        <mat-select [(ngModel)]="this.filtrosSeleccionados.Unidad"
+                            (selectionChange)="this.filtrosSeleccionados.Unidad">
 
                             @for(unidad of unidades;track unidad){
                             <mat-option [value]="unidad.id">
@@ -35,7 +35,7 @@
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Grado</mat-label>
-                        <mat-select [(ngModel)]="this.filtrosSeleccionados.grado">
+                        <mat-select [(ngModel)]="this.filtrosSeleccionados.Grado">
                             @for(degree of distinctClassrooms; track degree){
                             <mat-option [value]="degree">
                                 {{ degree }}
@@ -45,8 +45,8 @@
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Sección</mat-label>
-                        <mat-select [disabled]="!this.filtrosSeleccionados.grado"
-                            [(ngModel)]="this.filtrosSeleccionados.seccion">
+                        <mat-select [disabled]="!this.filtrosSeleccionados.Grado"
+                            [(ngModel)]="this.filtrosSeleccionados.Seccion">
                             @for(aula of sections; track aula){
                             <mat-option [value]="aula.id">
                                 {{ aula.seccion }}
@@ -56,76 +56,49 @@
                     </mat-form-field>
                     <div>
                         <button mat-fab extended
-                            [disabled]="!this.filtrosSeleccionados.seccion || !this.filtrosSeleccionados.unidad"
-                            (click)="this.changeItemOption()">
+                            [disabled]="!this.filtrosSeleccionados.Seccion || !this.filtrosSeleccionados.Unidad"
+                            (click)="changeItemOption(itemOption)">
                             <mat-icon svgIcon="filter_alt"></mat-icon>
                             Filtrar
                         </button>
                     </div>
                 </div>
+                <!-- Seleccionar ItemOptions -->
+                <div class="flex h-10 w-min overflow-hidden shadow-md rounded-full font-normal">
+                    @for (button of botonesItemOptionsVisibles; track button) {
+                    <button (click)="button.accion()" [ngClass]="getButtonClass(button)"
+                        class="w-max px-6 py-2 transition-all duration-200 ease-in-out">
+                        {{ button.texto }}
+                    </button>
+                    }
+                </div>
 
-                <div class="flex flex-col gap-4">
-                    <div class="overflow-x-auto space-x-4">
-                        <mat-button-toggle-group [(ngModel)]="itemOption" aria-label="Font Style">
-                            <!-- Botón para Listar Estudiantes -->
-                            <mat-button-toggle value="list" [disabled]="!this.filtrosSeleccionados.succeeded()">
-                                Listar
-                            </mat-button-toggle>
 
-                            @if(filtrosSeleccionados.succeeded() && modificarAula){
-                            <mat-button-toggle value="reportClassroom">
-                                Reporte resultados
-                            </mat-button-toggle>
-                            <mat-button-toggle value="assign">
-                                Asignar estudiantes
-                            </mat-button-toggle>
-                            <mat-button-toggle value="register">
-                                Registrar estudiantes
-                            </mat-button-toggle>
-
-                            @if (itemOption === 'edit') {
-                            <mat-button-toggle value="edit">
-                                Editar Estudiante
-                            </mat-button-toggle>
-                            }
-                            }
-                        </mat-button-toggle-group>
-                        <p>
-                            Default appearance:
-                            <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
-                                <mat-button-toggle value="bold">Bold</mat-button-toggle>
-                                <mat-button-toggle value="italic">Italic</mat-button-toggle>
-                                <mat-button-toggle value="underline">Underline</mat-button-toggle>
-                            </mat-button-toggle-group>
-                        </p>
-                    </div>
-
-                    <div>
-                        @switch(this.itemOption){
-                        @case('list'){
-                        <app-listar-estudiantes [filtrosSeleccionados]="this.filtrosSeleccionados"
-                            [cargarValoresIniciales]="cargarValoresInicialesHijo"
-                            (estudianteParaEditar)="editarEstudiante($event)" (itemOption)="changeItemOption($event)">
-                        </app-listar-estudiantes>
-                        } @case("assign"){
-                        <app-asignar-estudiante [filtrosSeleccionados]="this.filtrosSeleccionados"
-                            (itemOption)="changeItemOption($event)">
-                        </app-asignar-estudiante>
-                        } @case("edit"){
-                        <app-editar-estudiante [filtrosSeleccionados]="filtrosSeleccionados"
-                            [estudiante]="datosEstudianteParaEditar" (itemOption)="changeItemOption($event)">
-                            ></app-editar-estudiante>
-                        } @case("register"){
-                        <app-registrar-estudiantes [filtrosSeleccionados]="filtrosSeleccionados"
-                            (itemOption)="changeItemOption($event)">
-                        </app-registrar-estudiantes>
-                        } @case("reportClassroom"){
-                        <app-reporte-salon [filtrosSeleccionados]="filtrosSeleccionados"
-                            (itemOption)="changeItemOption($event)">
-                        </app-reporte-salon>
-                        }
-                        }
-                    </div>
+                <div class="mt-4">
+                    @switch(this.itemOption){
+                    @case(ItemOptions.ListarEstudiantes){
+                    <app-listar-estudiantes [filtrosSeleccionados]="this.filtrosSeleccionados"
+                        [cargarValoresIniciales]="cargarValoresInicialesHijo"
+                        (estudianteParaEditar)="editarEstudiante($event)" (itemOption)="changeItemOption($event)">
+                    </app-listar-estudiantes>
+                    } @case(ItemOptions.AsignarEstudiantes){
+                    <app-asignar-estudiante [filtrosSeleccionados]="this.filtrosSeleccionados"
+                        (itemOption)="changeItemOption($event)">
+                    </app-asignar-estudiante>
+                    } @case(ItemOptions.EditarEstudiante){
+                    <app-editar-estudiante [filtrosSeleccionados]="filtrosSeleccionados"
+                        [estudiante]="datosEstudianteParaEditar" (itemOption)="changeItemOption($event)">
+                        ></app-editar-estudiante>
+                    } @case(ItemOptions.RegistrarEstudiantes){
+                    <app-registrar-estudiantes [filtrosSeleccionados]="filtrosSeleccionados"
+                        (itemOption)="changeItemOption($event)">
+                    </app-registrar-estudiantes>
+                    } @case(ItemOptions.reportClassroom){
+                    <app-reporte-salon [filtrosSeleccionados]="filtrosSeleccionados"
+                        [cargarValoresIniciales]="cargarValoresInicialesHijo" (itemOption)="changeItemOption($event)">
+                    </app-reporte-salon>
+                    }
+                    }
                 </div>
             </div>
         </div>

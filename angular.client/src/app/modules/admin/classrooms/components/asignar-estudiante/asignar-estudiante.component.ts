@@ -65,7 +65,7 @@ export class AsignarEstudianteComponent {
         const observables = this.selectedStudents.map((e) =>
             this.classroomsService.asignarEstudianteAula(
                 e.id,
-                this.filtrosSeleccionados.seccion, this.filtrosSeleccionados.unidad
+                this.filtrosSeleccionados.Seccion, this.filtrosSeleccionados.Unidad
             )
         );
 
@@ -97,8 +97,8 @@ export class AsignarEstudianteComponent {
             this.personaService
                 .getStudentsByQuery(
                     query,
-                    this.filtrosSeleccionados.seccion,
-                    this.filtrosSeleccionados.unidad
+                    this.filtrosSeleccionados.Seccion,
+                    this.filtrosSeleccionados.Unidad
                 )
                 .subscribe(({ data }) => {
                     this.searchedStudents = data;

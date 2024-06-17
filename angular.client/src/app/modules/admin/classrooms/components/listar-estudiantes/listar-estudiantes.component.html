@@ -30,13 +30,15 @@
     <!-- #region Tabla Estudiante -->
     <div class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
         <div class="text-lg font-medium tracking-tight leading-6 truncate">
-            DETALLES DE LOS ESTUDIANTES
+            <b>Lista de estudiantes</b>
         </div>
         <div class="text-secondary font-medium flex row">
-            <p>
-                En total hay
-                <b>{{ classroomStudents.length }}</b>
-                estudiantes.
+            <p>En total hay {{this.classroomStudents.length}} estudiantes,&nbsp; </p>
+            <p class="text-green-700"> {{cantidadDeEstudiantesPorEstadoEvalucionPsicologico('F')}} terminaron,&nbsp;
+            </p>
+            <p class="text-orange-400">{{cantidadDeEstudiantesPorEstadoEvalucionPsicologico('P')}} estan
+                desarrollando,&nbsp; </p>
+            <p class="text-gray-400"> {{cantidadDeEstudiantesPorEstadoEvalucionPsicologico('N')}} no comenzaron.
             </p>
         </div>
         <div class="flex flex-col flex-auto mt-2">
@@ -152,6 +154,5 @@
     </div>
     } }@else {
     <p>Selecciona un formulario.</p>
-
     }
 </div>

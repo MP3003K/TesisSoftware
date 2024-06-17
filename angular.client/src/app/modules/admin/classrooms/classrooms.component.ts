@@ -1,6 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { Component, OnInit } from "@angular/core";
 import { FuseConfirmationService } from "@fuse/services/confirmation";
 import { ItemOptions } from "./enums";
 import { FiltrosSeleccionados } from "./models/filtros-seleccionados.model";
@@ -12,12 +10,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { AsignarEstudianteComponent, EditarEstudianteComponent, ListarEstudiantesComponent, RegistrarEstudiantesComponent, ReporteSalonComponent } from "./components";
 import { MatSelectModule } from "@angular/material/select";
-import { MatSortModule } from "@angular/material/sort";
 import { Estudiante } from "./models/estudiante.model";
-import { first } from "lodash";
-import { firstValueFrom } from "rxjs";
-
-
+import { ButtonToogle } from "./interfaces/buttonToogle";
 
 
 @Component({
@@ -31,8 +25,6 @@ import { firstValueFrom } from "rxjs";
         MatSelectModule,
         MatButtonToggleModule,
         MatButtonModule,
-        MatTableModule,
-        MatSortModule,
         RegistrarEstudiantesComponent,
         EditarEstudianteComponent,
         ListarEstudiantesComponent,
@@ -43,7 +35,9 @@ import { firstValueFrom } from "rxjs";
 
 export class ClassroomsComponent implements OnInit {
 
-    itemOption: ItemOptions;
+    itemOption: ItemOptions = ItemOptions.ListarEstudiantes;
+    ItemOptions = ItemOptions;
+
     filtrosSeleccionados = new FiltrosSeleccionados();
 
     unidades: any = [];
@@ -66,11 +60,70 @@ export class ClassroomsComponent implements OnInit {
     }
 
     cargarValoresIniciales() {
-        this.filtrosSeleccionados.unidad = 1003;
-        this.filtrosSeleccionados.grado = 1;
-        this.filtrosSeleccionados.seccion = 1;
+        this.filtrosSeleccionados.Unidad = 1;
+        this.filtrosSeleccionados.Grado = 1;
+        this.filtrosSeleccionados.Seccion = 1;
         this.changeItemOption(ItemOptions.reportClassroom);
     }
+
+    // #region ButtonToogle
+    claseActiva: string = 'bg-[#f9fafb] text-[rgb(79,70,229)] font-bold text-md';
+    claseInactiva: string = 'bg-white text-black text-md';
+
+
+    botonesItemOptions: ButtonToogle[] = [
+        {
+            id: ItemOptions.ListarEstudiantes,
+            texto: 'Listar Estudiantes',
+            accion: () => this.changeItemOption(ItemOptions.ListarEstudiantes),
+            claseActiva: this.claseActiva,
+            claseInactiva: this.claseInactiva,
+            esVisible: () => true
+        },
+        {
+            id: ItemOptions.reportClassroom,
+            texto: 'Reporte de Salon',
+            accion: () => this.changeItemOption(ItemOptions.reportClassroom),
+            claseActiva: this.claseActiva,
+            claseInactiva: this.claseInactiva,
+            esVisible: () => this.filtrosSeleccionados.succeeded()
+        },
+        {
+            id: ItemOptions.RegistrarEstudiantes,
+            texto: 'Registrar Estudiantes',
+            accion: () => this.changeItemOption(ItemOptions.RegistrarEstudiantes),
+            claseActiva: this.claseActiva,
+            claseInactiva: this.claseInactiva,
+            esVisible: () => this.filtrosSeleccionados.succeeded() && this.modificarAula
+        },
+        {
+            id: ItemOptions.AsignarEstudiantes,
+            texto: 'Asignar Estudiante',
+            accion: () => this.changeItemOption(ItemOptions.AsignarEstudiantes),
+            claseActiva: this.claseActiva,
+            claseInactiva: this.claseInactiva,
+            esVisible: () => this.filtrosSeleccionados.succeeded() && this.modificarAula
+        },
+        {
+            id: ItemOptions.EditarEstudiante,
+            texto: 'Editar Estudiante',
+            accion: () => this.changeItemOption(ItemOptions.EditarEstudiante),
+            claseActiva: this.claseActiva,
+            claseInactiva: this.claseInactiva,
+            esVisible: () => this.filtrosSeleccionados.succeeded() && this.modificarAula && this.itemOption == ItemOptions.EditarEstudiante
+        },
+    ];
+    get botonesItemOptionsVisibles() {
+        return this.botonesItemOptions.filter(b => b.esVisible());
+    }
+
+    getButtonClass(boton: ButtonToogle): string {
+        if (this.itemOption == boton.id) {
+            return boton.claseActiva;
+        }
+        return boton.claseInactiva;
+    }
+    // #endregion
 
     private async obtenerListadeUnidades(): Promise<any> {
         this.classroomsService.getUnidadesAll().subscribe({
@@ -144,7 +197,7 @@ export class ClassroomsComponent implements OnInit {
         return [...new Set(classrooms)];
     }
     get sections() {
-        return this.classrooms.filter((e) => e.grado == this.filtrosSeleccionados.grado);
+        return this.classrooms.filter((e) => e.grado == this.filtrosSeleccionados.Grado);
     }
 
     seleccionarEstadoUnidad(unidad: number) {
@@ -152,7 +205,7 @@ export class ClassroomsComponent implements OnInit {
         if (unidad) {
             let estado: boolean = this.unidades.find(x => x.id == unidad)?.estado;
             console.log(estado, 'estado')
-            this.filtrosSeleccionados.estadoUnidad = estado;
+            this.filtrosSeleccionados.EstadoUnidad = estado;
         }
 
     }
@@ -163,13 +216,13 @@ export class ClassroomsComponent implements OnInit {
         this.changeItemOption(ItemOptions.EditarEstudiante);
     }
 
-    changeItemOption(option?: ItemOptions) {
+    changeItemOption(option: ItemOptions) {
         console.log('option', this.filtrosSeleccionados)
-        if (!option) this.itemOption = ItemOptions.ListarEstudiantes;
-        else this.itemOption = option;
 
-        this.seleccionarEstadoUnidad(this.filtrosSeleccionados.unidad);
-        this.modificarAula = this.filtrosSeleccionados.estadoUnidad;
+        this.itemOption = option;
+
+        this.seleccionarEstadoUnidad(this.filtrosSeleccionados.Unidad);
+        this.modificarAula = this.filtrosSeleccionados.EstadoUnidad;
 
         this.cargarValoresInicialesHijo = !this.cargarValoresInicialesHijo;
     }

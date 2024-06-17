@@ -9,10 +9,13 @@ import { ReporteEstudianteComponent } from '../reporte-estudiante/reporte-estudi
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 '@angular/material/button-toggle';
-import { MatSort } from '@angular/material/sort';
-import { ItemOptions } from '../../enums';
-import { ChangeDetectionStrategy } from '@angular/core';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { ItemOptions, EstadoEvaluacionEstudiante } from '../../enums';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
+import { SharedModule } from 'app/shared/shared.module';
+import { DimensionPsicologica } from '../../enums/dimensionPsicologica.enum';
+import { ButtonToogle } from '../../interfaces';
 
 
 @Component({
@@ -20,12 +23,17 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     standalone: true,
     imports: [
         CommonModule,
+        SharedModule,
         ReporteEstudianteComponent,
         MatButtonToggleModule,
-        MatTableModule, MatCheckboxModule,],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+        MatTableModule,
+        MatCheckboxModule,
+        MatIconModule,
+        MatSortModule,
+    ],
     templateUrl: './reporte-salon.component.html'
 })
+
 export class ReporteSalonComponent implements AfterViewInit {
     @Input() filtrosSeleccionados: FiltrosSeleccionados;
     @Input() cargarValoresIniciales: boolean;
@@ -35,50 +43,165 @@ export class ReporteSalonComponent implements AfterViewInit {
     @ViewChild('estudiantesTable', { read: MatSort }) estudiantesTableMatSort: MatSort;
 
     reporteSalon = new MatTableDataSource<Student>([]);
+    reporteSalonFiltrado = new MatTableDataSource<Student>([]);
+
     evaluacionPsicologicaAulaId: number = 0;
     mensajeSnackbar: string = "";
-    dimensionSeleccionadoIndicador = signal(false);
-
-
-
-
 
     displayedColumns: string[] = ['nombre', 'DNI', 'estadoEvaluacionEstudiante', 'promedio', 'opciones']; dataSource = new MatTableDataSource<Student>([]);
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.cargarValoresIniciales) {
-            this.obtenerReporteSalon();
-        }
-    }
     constructor(
         private classroomsService: ClassroomsService,
         private evaluationService: EvaluationService,
         private _snackbar: MatSnackBar,
     ) {
+        this.estadoEvaluacionPsicologica = EstadoEvaluacionEstudiante.Todos;
+    }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        console.log(changes, 'changes')
+        if (changes.cargarValoresIniciales) {
+            this.obtenerReporteSalon();
+        }
     }
 
     ngAfterViewInit() {
-        this.reporteSalon.sort = this.estudiantesTableMatSort;
+        this.reporteSalonFiltrado.sort = this.estudiantesTableMatSort;
     }
 
-    async obtenerReporteSalon() {
+    // #region buttones toogle
+    claseInactiva: string = 'bg-white text-black text-md';
+    estadoEvaluacionPsicologica: EstadoEvaluacionEstudiante;
+
+
+    botonesDimensiones: ButtonToogle[] = [
+        {
+            id: DimensionPsicologica.habilidadesSocioemocionales.toString(),
+            texto: 'Habilidades Socioemocionales',
+            accion: () => {
+                this.filtrosSeleccionados.Dimension = DimensionPsicologica.habilidadesSocioemocionales;
+                this.obtenerReporteSalon();
+            },
+            claseActiva: 'bg-[#f9fafb] text-green-700 font-bold text-md',
+            claseInactiva: this.claseInactiva,
+            esVisible: () => true
+        },
+        {
+            id: DimensionPsicologica.factoresDeRiesgo.toString(),
+            texto: 'Factores de Riesgo',
+            accion: () => {
+                this.filtrosSeleccionados.Dimension = DimensionPsicologica.factoresDeRiesgo;
+                this.obtenerReporteSalon();
+            },
+            claseActiva: 'bg-[#f9fafb] text-orange-400 font-bold text-md',
+            claseInactiva: this.claseInactiva,
+            esVisible: () => true
+        }
+    ];
+
+    claseInactivaEstado: string = 'bg-[#f1f5f9] text-black text-md';
+    botonesEstado: ButtonToogle[] = [
+        {
+            id: EstadoEvaluacionEstudiante.Todos.toString(),
+            texto: 'Todos',
+            accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.Todos),
+            claseActiva: 'bg-white text-black font-bold text-md',
+            claseInactiva: this.claseInactivaEstado,
+            esVisible: () => true
+        },
+        {
+            id: EstadoEvaluacionEstudiante.EnInicio.toString(),
+            texto: 'En Inicio',
+            accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.EnInicio),
+            claseActiva: 'bg-white text-black font-bold text-md',
+            claseInactiva: this.claseInactivaEstado,
+            esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.habilidadesSocioemocionales
+        },
+        {
+            id: EstadoEvaluacionEstudiante.EnProceso.toString(),
+            texto: 'En Proceso',
+            accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.EnProceso),
+            claseActiva: 'bg-white text-black font-bold text-md',
+            claseInactiva: this.claseInactivaEstado,
+            esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.habilidadesSocioemocionales
+        },
+        {
+            id: EstadoEvaluacionEstudiante.Satisfactorio.toString(),
+            texto: 'Satisfactorio',
+            accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.Satisfactorio),
+            claseActiva: 'bg-white text-black font-bold text-md',
+            claseInactiva: this.claseInactivaEstado,
+            esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.habilidadesSocioemocionales
+        },
+        {
+            id: EstadoEvaluacionEstudiante.AltoRiesgo.toString(),
+            texto: 'Alto Riesgo',
+            accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.AltoRiesgo),
+            claseActiva: 'bg-white text-black font-bold text-md',
+            claseInactiva: this.claseInactivaEstado,
+            esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.factoresDeRiesgo
+        },
+        {
+            id: EstadoEvaluacionEstudiante.RiesgoModerado.toString(),
+            texto: 'Riesgo Moderado',
+            accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.RiesgoModerado),
+            claseActiva: 'bg-white text-black font-bold text-md',
+            claseInactiva: this.claseInactivaEstado,
+            esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.factoresDeRiesgo
+        },
+        {
+            id: EstadoEvaluacionEstudiante.BajoRiesgo.toString(),
+            texto: 'Bajo Riesgo',
+            accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.BajoRiesgo),
+            claseActiva: 'bg-white text-black font-bold text-md',
+            claseInactiva: this.claseInactivaEstado,
+            esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.factoresDeRiesgo
+        }
+    ];
+
+    get botonesEstadosVisibles() {
+        return this.botonesEstado.filter(b => b.esVisible());
+    }
+
+    getButtonClassDimension(boton: ButtonToogle): string {
+        if (this.filtrosSeleccionados.Dimension.toString() == boton.id) {
+            return boton.claseActiva;
+        }
+        return boton.claseInactiva;
+    }
+
+    getButtonClassEstado(boton: ButtonToogle): string {
+        if (this.estadoEvaluacionPsicologica.toString() == boton.id) {
+            return boton.claseActiva;
+        }
+        return boton.claseInactiva;
+    }
+
+    // #endregion
+
+    // #region reporteSalon
+    obtenerReporteSalon() {
+        console.log('llamando api')
         this.reporteSalon.data = [];
+
         if (!this.filtrosSeleccionados.succeeded) return;
 
         this.classroomsService
-            .getEvaluation(this.filtrosSeleccionados.unidad, this.filtrosSeleccionados.seccion)
+            .getEvaluation(this.filtrosSeleccionados.Unidad, this.filtrosSeleccionados.Seccion)
             .subscribe((response) => {
                 if (response.succeeded) {
                     let id = response.data?.id;
                     if (id) {
+
                         this.evaluacionPsicologicaAulaId = id;
+                        console.log(this.evaluacionPsicologicaAulaId, 'id')
                         this.evaluationService
-                            .getClasroomAnswers(id, this.filtrosSeleccionados.dimension)
+                            .getClasroomAnswers(id, this.filtrosSeleccionados.Dimension)
                             .subscribe({
                                 next: (response) => {
                                     if (response.succeeded) {
                                         this.reporteSalon.data = response.data;
+                                        this.reporteSalonFiltrado.data = response.data;
                                     }
                                 },
                                 error: ({ status }) => {
@@ -90,7 +213,7 @@ export class ReporteSalonComponent implements AfterViewInit {
                                             { duration: 2000 }
                                         );
                                     }
-                                },
+                                }
                             });
                     } else {
                         this._snackbar.open(
@@ -103,18 +226,78 @@ export class ReporteSalonComponent implements AfterViewInit {
             });
     }
 
+    filtrarReporteSalon(estado: EstadoEvaluacionEstudiante) {
+        this.estadoEvaluacionPsicologica = estado;
+
+        if (estado == EstadoEvaluacionEstudiante.Todos) this.reporteSalonFiltrado.data = this.reporteSalon.data;
+        console.log('filtrar', 'estado', estado)
+        this.reporteSalonFiltrado.data = this.reporteSalon.data.filter(estudiante => estudiante.estadoEvaluacionEstudiante === estado);
+    }
+
     getEstudiantesPorEstado(estado: string): number {
         return this.reporteSalon.data.filter(estudiante => estudiante.estadoEvaluacionEstudiante === estado).length;
     }
 
-    hideSingleSelectionIndicator = signal(false);
-    hideMultipleSelectionIndicator = signal(false);
+    obtenerCategoriaPorPuntajeReporteEstudiante(promedio: number): string {
+        if (promedio === 0) {
+            return 'NO INICIADO';
+        }
 
-    toggleSingleSelectionIndicator() {
-        this.hideSingleSelectionIndicator.update(value => !value);
+        if (this.filtrosSeleccionados.Dimension == DimensionPsicologica.habilidadesSocioemocionales) {
+            if (promedio > 0 && promedio <= 1) {
+                return 'En Inicio';
+            } else if (promedio > 1 && promedio < 3) {
+                return 'En Proceso';
+            } else if (promedio >= 3 && promedio <= 4) {
+                return 'Satisfactorio';
+            }
+        }
+
+        if (this.filtrosSeleccionados.Dimension == DimensionPsicologica.factoresDeRiesgo) {
+            if (promedio >= 3 && promedio <= 4) {
+                return 'Alto Riesgo';
+            } else if (promedio > 1 && promedio < 3) {
+                return 'Riesgo Moderado';
+            } else if (promedio > 0 && promedio <= 1) {
+                return 'Bajo Riesgo';
+            }
+        }
+
+        return 'NO INICIO'; // Por defecto si no cumple ninguna condición anterior
     }
 
-    toggleMultipleSelectionIndicator() {
-        this.hideMultipleSelectionIndicator.update(value => !value);
+    obtenerClasePorPuntajeReporteEstudiante(promedio: number) {
+        const styles = {
+            1: [ // Estilos para la dimensión 1
+                { range: [0, 0], class: 'bg-gray-200 text-gray-800' }, // Estilo para promedio 0
+                { range: [0.01, 1], class: 'bg-[#b6d7a8] text-black' },
+                { range: [1, 3], class: 'bg-[#70ad47] text-white' },
+                { range: [3, 4], class: 'bg-[#548135] text-white' }
+            ],
+            2: [ // Estilos para la dimensión 2
+                { range: [0, 0], class: 'bg-gray-200 text-gray-800' }, // Estilo para promedio 0
+                { range: [0.01, 1], class: 'bg-[#00b050] text-white' },
+                { range: [1, 3], class: 'bg-[#ffff00] text-black' },
+                { range: [3, 4], class: 'bg-[#ff0000] text-white' }
+            ]
+        };
+
+        const dimensionId = this.filtrosSeleccionados.Dimension;
+        const defaultClass = 'bg-black'; // Clase por defecto si no se encuentra en ningún rango
+        const dimensionStyles = styles[dimensionId];
+
+        for (const { range, class: className } of dimensionStyles) {
+            if (promedio >= range[0] && promedio <= range[1]) {
+                return className;
+            }
+        }
+
+        return defaultClass;
+    }
+
+    // #endregion
+
+    redirigirReporteEstudiante(estudiante: Student) {
+        console.log(estudiante, 'estudiante')
     }
 }

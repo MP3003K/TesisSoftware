@@ -87,8 +87,8 @@ export class RegistrarEstudiantesComponent {
         let validador = await this.sonDnisUnicosEnBaseDeDatos();
 
         if (!validador) return;
-        let unidadIdSeleccionada = this.filtrosSeleccionados?.unidad;
-        let aulaIdSeleccionada = this.filtrosSeleccionados?.seccion;
+        let unidadIdSeleccionada = this.filtrosSeleccionados?.Unidad;
+        let aulaIdSeleccionada = this.filtrosSeleccionados?.Seccion;
         let formEstudiantes = this.formEstudiantes;
 
         if (unidadIdSeleccionada === 0 || aulaIdSeleccionada === 0) {
