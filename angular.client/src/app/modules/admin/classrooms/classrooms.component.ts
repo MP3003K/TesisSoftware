@@ -56,7 +56,7 @@ export class ClassroomsComponent implements OnInit {
     async ngOnInit() {
         await this.obtenerListadeUnidades();
         await this.obtenerListadeAulas();
-        this.cargarValoresIniciales();
+        // this.cargarValoresIniciales();
     }
 
     cargarValoresIniciales() {
@@ -80,14 +80,14 @@ export class ClassroomsComponent implements OnInit {
             claseInactiva: this.claseInactiva,
             esVisible: () => true
         },
-        {
-            id: ItemOptions.reportClassroom,
-            texto: 'Reporte de Salon',
-            accion: () => this.changeItemOption(ItemOptions.reportClassroom),
-            claseActiva: this.claseActiva,
-            claseInactiva: this.claseInactiva,
-            esVisible: () => this.filtrosSeleccionados.succeeded()
-        },
+        // {
+        //     id: ItemOptions.reportClassroom,
+        //     texto: 'Reporte de Salon',
+        //     accion: () => this.changeItemOption(ItemOptions.reportClassroom),
+        //     claseActiva: this.claseActiva,
+        //     claseInactiva: this.claseInactiva,
+        //     esVisible: () => this.filtrosSeleccionados.succeeded()
+        // },
         {
             id: ItemOptions.RegistrarEstudiantes,
             texto: 'Registrar Estudiantes',

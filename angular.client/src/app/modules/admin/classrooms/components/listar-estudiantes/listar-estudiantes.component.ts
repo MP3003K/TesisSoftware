@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'app/shared/shared.module';
 
@@ -14,6 +14,7 @@ import { FilterTablePipe } from '../../filter-table.pipe';
 import { ItemOptions } from '../../enums';
 import { MatButtonModule } from '@angular/material/button';
 import { Estudiante } from '../../models/estudiante.model';
+import { Subscription, interval } from 'rxjs';
 
 
 @Component({
@@ -30,7 +31,6 @@ import { Estudiante } from '../../models/estudiante.model';
         MatButtonModule
     ],
     templateUrl: './listar-estudiantes.component.html',
-    styleUrl: './listar-estudiantes.component.scss'
 })
 export class ListarEstudiantesComponent {
     @Input() filtrosSeleccionados: FiltrosSeleccionados;
@@ -78,14 +78,32 @@ export class ListarEstudiantesComponent {
             });
     }
 
+    private seguimientoSubscripcion: Subscription;
+    seguimientoActivo: boolean = false;
+
+    iniciarSeguimientoConsulta() {
+        if (this.seguimientoSubscripcion) {
+            this.seguimientoSubscripcion.unsubscribe(); // Detener seguimiento anterior si existe
+            this.seguimientoActivo = false; // Actualiza el estado a inactivo solo si se detiene el seguimiento
+            this.seguimientoSubscripcion = null; // Asegúrate de limpiar la suscripción
+        } else {
+            this.seguimientoActivo = true; // Activa el seguimiento solo si se va a iniciar
+            this.seguimientoSubscripcion = interval(3000) // Asegúrate de que esto es un Observable
+                .subscribe(() => {
+                    this.obtnerEstudiantesPorAulaYUnidad(); // Llama a tu función directamente aquí
+                });
+        }
+    }
+
+
 
 
     cambiarEstadoEvaluacionPsicologicaAula() {
         let estado = this.estadoEvalucionPsicologicaAula;
-        if (estado == 'F') return;
 
-        if (['N', 'P'].includes(estado)) {
-            let opcion = estado === 'N' ? 1 : 0; // 1: Iniciar, 0: Finalizar
+        if (['N', 'P', 'F'].includes(estado)) {
+            //0: Finalizar,  1: Iniciar y 2: Reiniciar,
+            let opcion = estado === 'N' ? 1 : (estado === 'F' ? 2 : 0);
             this.classroomsService
                 .updateEstadoEvaPsiAula(
                     this.filtrosSeleccionados.Unidad,
@@ -105,8 +123,6 @@ export class ListarEstudiantesComponent {
     }
 
     openUpdateEstadoEvaPsiAulaModal(estado: string): void {
-        if (estado == 'Evaluación Terminado') return;
-
         const dialogRef = this.confirmationService.open({
             title: '¿Deseas cambiar el estado del test psicologico?',
             message: 'Una vez aceptado no se podra revertir los cambios',
@@ -167,3 +183,12 @@ export class ListarEstudiantesComponent {
         return this.classroomStudents.filter(estudiante => estudiante.estadoEstudiante === estado).length;
     }
 }
+
+function startWith(arg0: number): any {
+    throw new Error('Function not implemented.');
+}
+
+function switchMap(arg0: () => any[]): any {
+    throw new Error('Function not implemented.');
+}
+

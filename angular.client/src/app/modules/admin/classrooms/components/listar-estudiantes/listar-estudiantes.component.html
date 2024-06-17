@@ -8,7 +8,12 @@
                                         "></mat-icon>
             <input type="text" matInput placeholder="Buscar estudiante" #query />
         </mat-form-field>
-        <button class="flex-none w-auto font-bold" mat-button [ngClass]="{
+        <button (click)="iniciarSeguimientoConsulta()"
+            [ngClass]="{'bg-red-500 hover:bg-red-600': seguimientoActivo, 'bg-blue-500 hover:bg-blue-600': !seguimientoActivo}"
+            class="w-auto px-4 py-2 text-white rounded-md shadow flex-none font-bold whitespace-nowrap">
+            {{ seguimientoActivo ? 'Realizando Seguimiento' : 'Iniciar Seguimiento' }}
+        </button>
+        <button class="w-min flex-none font-bold" mat-button [ngClass]="{
                                 'bg-green-200 text-green-800': estadoEvalucionPsicologicaAula === 'F',
                                 'bg-gray-200 text-gray-800': estadoEvalucionPsicologicaAula === 'N',
                                 'bg-orange-200 text-orange-800': estadoEvalucionPsicologicaAula === 'P'
