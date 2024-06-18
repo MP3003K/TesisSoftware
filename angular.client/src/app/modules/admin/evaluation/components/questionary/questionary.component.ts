@@ -29,6 +29,9 @@ export class QuestionaryComponent {
     errorValidador: boolean = false;
     errorTexto: string = '';
 
+    isConcentrationModeActive: boolean = false;
+    currentQuestionIndex: number = 0;
+
     @ViewChild('parentSection') miDivRef!: ElementRef;
 
     paginator = {
@@ -43,7 +46,8 @@ export class QuestionaryComponent {
         public evaluationService: EvaluationService,
         private route: ActivatedRoute,
         private db: DatabaseService
-    ) {}
+    ) { }
+
     updatePaginator() {
         this.paginator.pageNumber = 1;
         this.paginator.length = this.questions.length;
@@ -63,67 +67,67 @@ export class QuestionaryComponent {
         }
     }
 
-   public getEvaluations() {
-    this.evaluationService.getQuestions(this.evaPsiEstId).subscribe({
-        next: (response) => {
-            if (response.succeeded) {
-                this.db.getSavedQuestions(this.evaPsiEstId).then(savedQuestions => {
-                    if (savedQuestions.length > 0) {
-                        // Si hay preguntas guardadas, las usa
-                        this.questions = savedQuestions;
-                    } else {
-                        // Si no hay preguntas guardadas, obtiene las preguntas del servidor y las guarda en la base de datos IndexedDB
-                        this.questions = response.data;
-                        this.db.saveQuestions(this.questions, this.evaPsiEstId);
-                    }
-                    this.updatePaginator();
-                }).catch(error => {
-                    // Maneja el error
-                });
-            }
-        },
-        error: (x) => {
-            if (x.error && x.error.errorNumber) {
-                let message = '';
-                switch (x.error.errorNumber) {
-                    case 50001:
-                        this.errorValidador = true;
-                        this.errorTexto = x.error.error;
-                        break;
-                    case 50002:
-                        this.endedTest = true; // Ya ha terminado la Evaluacion Psicologica el estudiante
-                        break;
-                    case 50003:
-                        this.errorValidador = true;
-                        this.errorTexto = x.error.error;
-                        break;
-                    default:
-                        message = x.error;
+    public getEvaluations() {
+        this.evaluationService.getQuestions(this.evaPsiEstId).subscribe({
+            next: (response) => {
+                if (response.succeeded) {
+                    this.db.getSavedQuestions(this.evaPsiEstId).then(savedQuestions => {
+                        if (savedQuestions.length > 0) {
+                            // Si hay preguntas guardadas, las usa
+                            this.questions = savedQuestions;
+                        } else {
+                            // Si no hay preguntas guardadas, obtiene las preguntas del servidor y las guarda en la base de datos IndexedDB
+                            this.questions = response.data;
+                            this.db.saveQuestions(this.questions, this.evaPsiEstId);
+                        }
+                        this.updatePaginator();
+                    }).catch(error => {
+                        // Maneja el error
+                    });
                 }
-                this._snackbar.open(message, '', {duration: 3000});
+            },
+            error: (x) => {
+                if (x.error && x.error.errorNumber) {
+                    let message = '';
+                    switch (x.error.errorNumber) {
+                        case 50001:
+                            this.errorValidador = true;
+                            this.errorTexto = x.error.error;
+                            break;
+                        case 50002:
+                            this.endedTest = true; // Ya ha terminado la Evaluacion Psicologica el estudiante
+                            break;
+                        case 50003:
+                            this.errorValidador = true;
+                            this.errorTexto = x.error.error;
+                            break;
+                        default:
+                            message = x.error;
+                    }
+                    this._snackbar.open(message, '', { duration: 3000 });
+                }
             }
-        }
-    });
-}
+        });
+    }
 
     public goToLogin() {
         this.router.navigate(['../../login']);
     }
     itemOptions: any[] = [
         {
-            name: 'Totalmente En Desacuerdo',
+            name: 'Totalmente en desacuerdo',
             value: '1',
         },
         {
-            name: 'En Desacuerdo',
+            name: 'En desacuerdo',
             value: '2',
         },
         {
-            name: 'De Acuerdo',
+            name: 'De acuerdo',
             value: '3',
         },
         {
-            name: 'Totalmente De Acuerdo',
+            name: 'Totalmente de acuerdo',
             value: '4',
         },
     ];
@@ -200,4 +204,49 @@ export class QuestionaryComponent {
     validatePage() {
         return this.filterQuestions().every((e: any) => e.answer);
     }
+    // #region Responder una pregunta a la ves
+    nextQuestion() {
+        if (this.currentQuestionIndex < this.questions.length - 1) {
+            this.currentQuestionIndex++;
+        }
+    }
+
+    previousQuestion() {
+        if (this.currentQuestionIndex > 0) {
+            this.currentQuestionIndex--;
+        }
+    }
+    requestFullScreen = (element: any) => {
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) { // Firefox
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) { // Chrome, Safari & Opera
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) { // IE/Edge
+            element.msRequestFullscreen();
+        }
+    };
+    exitFullScreen = (document: any) => {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { // Firefox
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { // Chrome, Safari & Opera
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { // IE/Edge
+            document.msExitFullscreen();
+        }
+    };
+    toggleFullScreen() {
+        const docEl = document.documentElement;
+
+        // Verifica si el documento ya está en modo pantalla completa
+        if (!document.fullscreenElement) {
+            this.requestFullScreen(docEl);
+        } else {
+            this.exitFullScreen(document);
+        }
+    }
+    // #endregion
 }

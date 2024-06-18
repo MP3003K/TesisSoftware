@@ -10,7 +10,7 @@
         </mat-form-field>
         <button (click)="iniciarSeguimientoConsulta()"
             [ngClass]="{'bg-red-500 hover:bg-red-600': seguimientoActivo, 'bg-blue-500 hover:bg-blue-600': !seguimientoActivo}"
-            class="w-auto px-4 py-2 text-white rounded-md shadow flex-none font-bold whitespace-nowrap">
+            mat-button class="w-min text-white shadow flex-none font-bold">
             {{ seguimientoActivo ? 'Realizando Seguimiento' : 'Iniciar Seguimiento' }}
         </button>
         <button class="w-min flex-none font-bold" mat-button [ngClass]="{

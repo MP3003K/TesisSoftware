@@ -36,13 +36,13 @@
     <div class="flex-auto p-6 sm:p-10">
         <div class="grid grid-cols-4 gap-4">
             @for(questionary of questionnaires; track questionary){
-            <mat-card>
+            <mat-card class="p-3">
                 <mat-card-content>
-                    <div>
+                    <div class="mb-3">
                         <b>Inicio: </b>
                         {{ questionary.fechaInicio | date : "dd/MM/yyyy" }}
                     </div>
-                    <div>
+                    <div class="mb-3">
                         <b>Fin: </b>{{ questionary.fechaFin | date : "dd/MM/yyyy" }}
                     </div>
                     <div>

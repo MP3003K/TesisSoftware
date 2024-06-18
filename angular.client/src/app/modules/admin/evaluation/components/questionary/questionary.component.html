@@ -1,52 +1,29 @@
-<div
-    class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto"
-    cdkScrollable
-    #parentSection
->
+@if(!isConcentrationModeActive){
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable #parentSection>
     <!-- Header -->
     <div
-        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent"
-    >
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
         <div class="flex-1 min-w-0">
             <!-- Breadcrumbs -->
             <div>
-                <div class="hidden sm:flex flex-wrap items-center font-medium">
-                    <div>
-                        <a class="whitespace-nowrap text-primary-500"
-                            >Dashboard</a
-                        >
-                    </div>
-
-                    <div class="flex items-center ml-1 whitespace-nowrap">
-                        <mat-icon
-                            class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-right'"
-                        ></mat-icon>
-                        <span class="ml-1 text-secondary"
-                            >Evaluación Psicológica</span
-                        >
-                    </div>
-                </div>
                 <div class="flex sm:hidden">
-                    <a
-                        class="inline-flex items-center -ml-1.5 text-secondary font-medium"
-                        [routerLink]="'./..'"
-                    >
-                        <mat-icon
-                            class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-left'"
-                        ></mat-icon>
+                    <a class="inline-flex items-center -ml-1.5 text-secondary font-medium" [routerLink]="'./..'">
+                        <mat-icon class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
                         <span class="ml-1">Regresar</span>
                     </a>
                 </div>
             </div>
             <!-- Title -->
-            <div class="mt-2">
-                <h2
-                    class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
-                >
-                    Realizar Evaluación Psicologica
-                </h2>
+            <div class="flex justify-between items-center mt-2">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                        Realizar Evaluación Psicologica
+                    </h2>
+                </div>
+                <button mat-stroked-button (click)="toggleFullScreen(); isConcentrationModeActive = true">
+                    Modo Concentración
+                </button>
             </div>
         </div>
     </div>
@@ -67,20 +44,13 @@
         <div *ngIf="!endedTest">
             <div class="sticky top-0 py-2 px-4 flex justify-between z-10">
                 <div class="flex flex-col gap-2">
-                    <div
-                        class="h-4 w-52 rounded-full overflow-hidden bg-gray-300/30 shadow"
-                    >
-                        <div
-                            class="h-full bg-green-400/90 text-end text-xs text-white"
-                            [ngStyle]="{
+                    <div class="h-4 w-52 rounded-full overflow-hidden bg-gray-300/30 shadow">
+                        <div class="h-full bg-green-400/90 text-end text-xs text-white" [ngStyle]="{
                                 width: getPValue()
-                            }"
-                        ></div>
+                            }"></div>
                     </div>
-                    <span class="text-[8px]"
-                        >{{ countCompletedAnswers }} de
-                        {{ paginator.length }}</span
-                    >
+                    <span class="text-[8px]">{{ countCompletedAnswers }} de
+                        {{ paginator.length }}</span>
                 </div>
                 <span class="text-[8px]">
                     Página {{ paginator.pageNumber }} de {{ paginator.pages }}
@@ -94,14 +64,9 @@
                             {{ question.order }}. {{ question.text }}
                         </div>
                         <div>
-                            <mat-radio-group
-                                (change)="
+                            <mat-radio-group (change)="
                                     radioChange($event.value, question.id)
-                                "
-                                aria-label="Select an option"
-                                class="flex flex-col"
-                                [(ngModel)]="question.answer"
-                            >
+                                " aria-label="Select an option" class="flex flex-col" [(ngModel)]="question.answer">
                                 @for(option of itemOptions; track option){
                                 <mat-radio-button [value]="option.value">
                                     {{ option.name }}
@@ -115,22 +80,14 @@
                 <mat-card>
                     <mat-card-content class="grid gap-4">
                         <div class="flex flex-col gap-1">
-                            <div
-                                class="bg-gray-200 h-4 w-full animate-pulse"
-                            ></div>
-                            <div
-                                class="bg-gray-200 h-4 w-24 animate-pulse"
-                            ></div>
+                            <div class="bg-gray-200 h-4 w-full animate-pulse"></div>
+                            <div class="bg-gray-200 h-4 w-24 animate-pulse"></div>
                         </div>
                         <div class="flex flex-col gap-2">
                             @for(ii of [1, 2, 3, 4]; track ii){
                             <div class="flex items-center gap-4">
-                                <div
-                                    class="rounded-full w-6 h-6 bg-gray-200 animate-pulse"
-                                ></div>
-                                <div
-                                    class="h-4 w-36 bg-gray-200 animate-pulse"
-                                ></div>
+                                <div class="rounded-full w-6 h-6 bg-gray-200 animate-pulse"></div>
+                                <div class="h-4 w-36 bg-gray-200 animate-pulse"></div>
                             </div>
                             }
                         </div>
@@ -141,31 +98,76 @@
 
             <div class="flex justify-between items-end w-full">
                 <div class="flex gap-4">
-                    <button
-                        (click)="getPreviousItem()"
-                        [disabled]="paginator.pageNumber == 1"
-                        mat-button color="basic"
-                    >
+                    <button (click)="getPreviousItem()" [disabled]="paginator.pageNumber == 1" mat-button color="basic">
                         Anterior
                     </button>
                     @if( paginator.pageNumber != paginator.pages ){
-                        <button mat-stroked-button color="primary"
-                                (click)="getNextItem()">
-                            Siguiente
-                        </button>
+                    <button mat-stroked-button color="primary" (click)="getNextItem()">
+                        Siguiente
+                    </button>
                     }
                     @if(questions.length == countCompletedAnswers){
-                        <button
-                            mat-flat-button
-                            color="primary"
-                            [disabled]="questions.length != countCompletedAnswers"
-                            (click)="submitForm()"
-                        >
-                            Enviar
-                        </button>
+                    <button mat-flat-button color="primary" [disabled]="questions.length != countCompletedAnswers"
+                        (click)="submitForm()">
+                        Enviar
+                    </button>
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
+}
+@else {
+<section class="fixed top-0 left-0 z-[100] w-full h-full bg-black">
+    <div id="individual" class="flex flex-col w-full h-full bg-gray-100 p-10">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center space-x-4">
+                <div class="text-left px-4 py-2 bg-gray-800 text-white text-xl rounded">
+                    {{ currentQuestionIndex + 1 }}/{{ questions.length }}
+                </div>
+                <div class="text-left px-4 py-2 bg-gray-800 text-white text-xl rounded"
+                    (click)="toggleFullScreen(); isConcentrationModeActive = false">
+                    Salir del Modo Concentración
+                </div>
+            </div>
+            <div class="text-right space-x-4">
+                <button (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0"
+                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
+                    Anterior
+                </button>
+                <button *ngIf="currentQuestionIndex < questions.length - 1" (click)="nextQuestion()"
+                    [disabled]="!questions[currentQuestionIndex].answer"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
+                    Siguiente
+                </button>
+                <button *ngIf="currentQuestionIndex === questions.length - 1"
+                    (click)="submitForm(); isConcentrationModeActive = false;toggleFullScreen()"
+                    [disabled]="!questions[currentQuestionIndex].answer"
+                    class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
+                    Finalizar Prueba Psicologica
+                </button>
+            </div>
+        </div>
+        <div
+            class="flex-grow flex flex-col items-center justify-center bg-white text-black rounded-lg shadow-md px-3 sm:px-9 md:px-18 py-7 sm:py-11 md:py-15">
+            <div
+                class="flex items-center justify-center min-h-32 text-3xl sm:text-5xl md:text-6xl font-semibold mb-4 sm:mb-6 md:mb-8 text-center">
+                <p>
+                    {{ questions[currentQuestionIndex].text }}
+                </p>
+            </div>
+            <div class="mt-5 sm:mt-8 md:mt-10 flex flex-wrap justify-center gap-6 sm:gap-8 w-full h-auto">
+                <div *ngFor="let option of itemOptions" class="flex-1 min-w-0">
+                    <button
+                        [ngClass]="{'bg-blue-500 text-white': questions[currentQuestionIndex].answer === option.value, 'border': questions[currentQuestionIndex].answer !== option.value}"
+                        (click)="questions[currentQuestionIndex].answer = option.value"
+                        class="w-full h-40 flex items-center justify-center p-3 sm:p-4 md:p-6 rounded-lg cursor-pointer transition-colors duration-300 text-4xl">
+                        {{ option.name }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+}

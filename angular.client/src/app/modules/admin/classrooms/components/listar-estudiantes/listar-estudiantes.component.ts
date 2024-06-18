@@ -66,7 +66,6 @@ export class ListarEstudiantesComponent {
     ) { }
 
     obtnerEstudiantesPorAulaYUnidad() {
-        this.classroomStudents = [];
         this.classroomsService
             .getStudentsByAulaYUnidad(this.filtrosSeleccionados.Unidad, this.filtrosSeleccionados.Seccion)
             .subscribe((response) => {
@@ -74,6 +73,9 @@ export class ListarEstudiantesComponent {
                     this.classroomStudents = response.data;
                     this.estadoEvalucionPsicologicaAula = this.classroomStudents[0]?.estadoAula ?? 'N';
                     this.updateEstadoModificarAula();
+                }
+                else {
+                    this.classroomStudents = [];
                 }
             });
     }
