@@ -25,7 +25,6 @@ import * as XLSX from 'xlsx';
         MatIconModule,
     ],
     templateUrl: './registrar-estudiantes.component.html',
-    styleUrl: './registrar-estudiantes.component.scss'
 })
 export class RegistrarEstudiantesComponent {
 
@@ -44,6 +43,8 @@ export class RegistrarEstudiantesComponent {
         this.formEstudiantes = this.fb.group({
             estudiantes: this.fb.array([this.crearFormularioEstudiante()], [this.validadorDniDuplicadoEnFormEstudiantes()])
         });
+        const estudiantesFormArray = (this.formEstudiantes.get('estudiantes') as FormArray)
+        console.log('estudiantesFormArray', estudiantesFormArray.controls);
 
     }
 
@@ -262,24 +263,30 @@ export class RegistrarEstudiantesComponent {
 
                 const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
 
+                // Crear un arreglo temporal para acumular los formularios de estudiantes
+                const estudiantesTemp = [];
+
                 data.slice(1).forEach((row: any[]) => {
+                    if (row.slice(0, 4).every(value => value?.trim() === '')) return;
                     const estudianteForm = this.crearFormularioEstudiante();
                     estudianteForm.setValue({
-                        nombres: row[0],
-                        apellidoPaterno: row[1],
-                        apellidoMaterno: row[2],
-                        dni: !isNaN(row[3]) ? row[3] : ''  // Si el DNI no es un número, se establece como una cadena vacía
+                        nombres: row[0]?.trim() || '',
+                        apellidoPaterno: row[1]?.trim() || '',
+                        apellidoMaterno: row[2]?.trim() || '',
+                        dni: !isNaN(row[3]) ? row[3]?.toString()?.trim() : ''
                     });
-                    (this.formEstudiantes.get('estudiantes') as FormArray).push(estudianteForm);
+                    estudiantesTemp.push(estudianteForm);
                 });
-                if (this.formEstudiantes && this.formEstudiantes.get('estudiantes')) {
-                    const estudiantesArray = this.formEstudiantes.get('estudiantes') as FormArray;
-                    if (estudiantesArray.length > 0) {
-                        const primerEstudiante = estudiantesArray.at(0) as FormGroup;
-                        const camposVacios = Object.values(primerEstudiante.controls).every(control => !control.value);
-                        if (camposVacios) {
-                            estudiantesArray.removeAt(0);
-                        }
+
+                // Agregar todos los estudiantes al FormArray de una sola vez
+                const formEstudiantesArray = this.formEstudiantes.get('estudiantes') as FormArray;
+                estudiantesTemp.forEach(estudianteForm => formEstudiantesArray.push(estudianteForm));
+
+                if (formEstudiantesArray.length > 0) {
+                    const primerEstudiante = formEstudiantesArray.at(0) as FormGroup;
+                    const camposVacios = Object.values(primerEstudiante.controls).every(control => !control.value);
+                    if (camposVacios) {
+                        formEstudiantesArray.removeAt(0);
                     }
                 }
             };
@@ -294,7 +301,25 @@ export class RegistrarEstudiantesComponent {
 
     // #endregion
 
+    eliminarDNIsDuplicadosYRegistrados() {
+        const estudiantesFormArray = (this.formEstudiantes.get('estudiantes') as FormArray);
+        console.log('controls', estudiantesFormArray.controls);
+        const indicesAEliminar = [];
 
+        for (let i = estudiantesFormArray.controls.length - 1; i >= 0; i--) {
+            console.log('i', i);
+            const dniControl = estudiantesFormArray.at(i).get('dni');
+            if (dniControl?.errors?.['dniRegistrado'] === true) {
+
+                // Acumula los índices en lugar de eliminar directamente
+                indicesAEliminar.push(i);
+            }
+        }
+        // Eliminar los elementos después de identificar todos los índices
+        indicesAEliminar.forEach(index => {
+            estudiantesFormArray.removeAt(index)
+        });
+    }
 
 
 

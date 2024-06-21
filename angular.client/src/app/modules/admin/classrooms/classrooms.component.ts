@@ -56,14 +56,14 @@ export class ClassroomsComponent implements OnInit {
     async ngOnInit() {
         await this.obtenerListadeUnidades();
         await this.obtenerListadeAulas();
-        // this.cargarValoresIniciales();
+        this.cargarValoresIniciales();
     }
 
     cargarValoresIniciales() {
-        this.filtrosSeleccionados.Unidad = 1;
-        this.filtrosSeleccionados.Grado = 1;
-        this.filtrosSeleccionados.Seccion = 1;
-        this.changeItemOption(ItemOptions.reportClassroom);
+        this.filtrosSeleccionados.Unidad = 2;
+        this.filtrosSeleccionados.Grado = 3;
+        this.filtrosSeleccionados.Seccion = 5;
+        this.changeItemOption(ItemOptions.RegistrarEstudiantes);
     }
 
     // #region ButtonToogle
@@ -130,6 +130,7 @@ export class ClassroomsComponent implements OnInit {
             next: (response) => {
                 if (response.succeeded) {
                     this.unidades = response.data;
+                    this.filtrosSeleccionados.Unidad = Math.max(...this.unidades.map((e) => e.id));
                 }
             },
             error: (err) => {
@@ -163,6 +164,7 @@ export class ClassroomsComponent implements OnInit {
                 },
                 confirm: {
                     label: 'Crear',
+                    color: 'primary',
                 },
             },
             icon: { color: 'info', name: 'info', show: true },
@@ -201,10 +203,8 @@ export class ClassroomsComponent implements OnInit {
     }
 
     seleccionarEstadoUnidad(unidad: number) {
-        console.log(unidad, 'unidad')
         if (unidad) {
             let estado: boolean = this.unidades.find(x => x.id == unidad)?.estado;
-            console.log(estado, 'estado')
             this.filtrosSeleccionados.EstadoUnidad = estado;
         }
 
@@ -217,8 +217,6 @@ export class ClassroomsComponent implements OnInit {
     }
 
     changeItemOption(option: ItemOptions) {
-        console.log('option', this.filtrosSeleccionados)
-
         this.itemOption = option;
 
         this.seleccionarEstadoUnidad(this.filtrosSeleccionados.Unidad);

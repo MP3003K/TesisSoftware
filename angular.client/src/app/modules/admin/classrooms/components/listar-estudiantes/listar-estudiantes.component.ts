@@ -71,6 +71,15 @@ export class ListarEstudiantesComponent {
             .subscribe((response) => {
                 if (response.succeeded) {
                     this.classroomStudents = response.data;
+                    this.classroomStudents.sort((a, b) => {
+                        if (a.nombreCompleto < b.nombreCompleto) {
+                            return -1;
+                        }
+                        if (a.nombreCompleto > b.nombreCompleto) {
+                            return 1;
+                        }
+                        return 0;
+                    });
                     this.estadoEvalucionPsicologicaAula = this.classroomStudents[0]?.estadoAula ?? 'N';
                     this.updateEstadoModificarAula();
                 }
@@ -186,11 +195,5 @@ export class ListarEstudiantesComponent {
     }
 }
 
-function startWith(arg0: number): any {
-    throw new Error('Function not implemented.');
-}
 
-function switchMap(arg0: () => any[]): any {
-    throw new Error('Function not implemented.');
-}
 
