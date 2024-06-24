@@ -11,10 +11,8 @@ export class AuthService {
     private _authenticated: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
-    accessTokenTemporal: string;
 
     constructor() {
-        this.accessTokenTemporal = '';
     }
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -25,7 +23,6 @@ export class AuthService {
      */
 
     set accessToken(token: string) {
-        this.accessTokenTemporal = token;
         try {
             localStorage.setItem('accessToken', token);
             // Verificar si el token se guardó correctamente
@@ -51,30 +48,14 @@ export class AuthService {
     }
 
     get accessToken(): string {
-        if (this.accessTokenTemporal && this.accessTokenTemporal.trim() !== '') {
-            return this.accessTokenTemporal;
-        }
         let accessToken: string = localStorage.getItem('accessToken');
         if (accessToken && accessToken.trim() !== '') {
             return accessToken;
         }
 
-        accessToken = this.getCookie('accessToken');
-        if (accessToken && accessToken.trim() !== '') {
-            return accessToken;
-        }
         return null;
     }
-    getCookie(name: string): string {
-        let cookieArr = document.cookie.split(";");
-        for (let i = 0; i < cookieArr.length; i++) {
-            let cookiePair = cookieArr[i].split("=");
-            if (name == cookiePair[0].trim()) {
-                return decodeURIComponent(cookiePair[1]);
-            }
-        }
-        return null;
-    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -174,8 +155,10 @@ export class AuthService {
             .post<HttpResponse<any>>(`${environment.baseURL}/auth/signOut`, {})
             .pipe(
                 switchMap((response) => {
+                    console.error('cerrar sesion')
                     if (response.succeeded) {
-                        this.accessTokenTemporal = '';
+
+                        console.error('cerrar sesion - remover');
                         // Remove the access token from the local storage
                         localStorage.removeItem('accessToken');
 
@@ -189,6 +172,13 @@ export class AuthService {
             );
     }
 
+
+    cerrarSesion() {
+        localStorage.removeItem('accessToken');
+
+        // Set the authenticated flag to false
+        this._authenticated = false;
+    }
     /**
      * Sign up
      *

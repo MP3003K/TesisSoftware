@@ -1,53 +1,46 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { EvaluationService } from 'app/modules/admin/evaluation/evaluation.service';
-import { StudentService } from '../../services';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from 'app/shared/shared.module';
+import { FiltrosSeleccionados } from '../../models/filtros-seleccionados.model';
+import { DimensionPsicologica } from '../../enums';
+import { ButtonToogle } from '../../interfaces';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { timer, switchMap, forkJoin } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'app-reporte-estudiante',
     standalone: true,
-    imports: [SharedModule, MatIconModule, MatButtonToggleModule],
+    imports: [SharedModule, MatIconModule, MatProgressSpinnerModule, MatButtonModule],
     templateUrl: './reporte-estudiante.component.html'
 })
 export class ReporteEstudianteComponent {
+    @Input() filtrosSeleccionados: FiltrosSeleccionados;
+    @Input() evaluacionPsicologicaAulaId: number;
+    @Input() estudianteId: number;
+    @Input() cargarValoresIniciales: boolean;
+    @Output() regregarReporteSalon = new EventEmitter<boolean>();
 
+    reportTypes: DimensionPsicologica[] = [DimensionPsicologica.habilidadesSocioemocionales, DimensionPsicologica.factoresDeRiesgo];
     student: any;
     scales = [];
-    reportTypes: string[] = ['HSE', 'FR'];
-    selectedDimension = this.reportTypes[0];
-    evaluationId = 302;
-    classroomEvaluationId = 0;
-    studentId = 0;
-    filtros: string = '';
+
+    isLoading: boolean = false;
+
     constructor(
         private route: ActivatedRoute,
         private evaluationService: EvaluationService,
-        private router: Router,
-        private studentService: StudentService
     ) { }
-    ngOnInit(): void {
-        const studentId = +this.route.snapshot.paramMap.get('id');
-        const { classroomEvaluationId, filtros } = this.route.snapshot.queryParams;
-        this.filtros = filtros;
-        this.classroomEvaluationId = classroomEvaluationId;
-        this.studentId = studentId;
-        if (this.classroomEvaluationId && this.studentId) {
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.cargarValoresIniciales) {
             this.getStudentReport();
-        } else {
-            console.log('ERROR');
         }
     }
-
     returnRoute() {
-        this.router.navigate(['/reports'], {
-            queryParams: {
-                filtros: this.filtros
-            },
-        });
+        this.regregarReporteSalon.emit(true);
     }
     getStudentInfo() {
         const studentInfo = {
@@ -59,7 +52,7 @@ export class ReporteEstudianteComponent {
 
 
     getMeanClasses(mean: number) {
-        let dimensionId = this.selectedDimension == 'HSE' ? 1 : 2;
+        let dimensionId = this.filtrosSeleccionados.Dimension;
         if (mean >= 0 && mean <= 1) {
             return dimensionId == 1
                 ? 'bg-[#b6d7a8] text-black'
@@ -93,7 +86,7 @@ export class ReporteEstudianteComponent {
     };
 
     getConceptoDeResultadosPsi(promedio: number): string {
-        let dimensionId = this.selectedDimension == 'HSE' ? 1 : 2;
+        let dimensionId = this.filtrosSeleccionados.Dimension;
         const dimension = this.dimensiones_conceptos[dimensionId];
 
         if (promedio >= 0 && promedio <= 1) {
@@ -107,54 +100,80 @@ export class ReporteEstudianteComponent {
         }
     }
     getStudentReport() {
-        this.evaluationService
-            .getStudentEvaluation(this.classroomEvaluationId, this.studentId)
-            .subscribe((response) => {
-                if (response.succeeded) {
-                    const { id } = response.data;
-                    if (id) {
-                        this.evaluationService
-                            .getStudentAnswers(id, this.selectedDimension)
-                            .subscribe((response) => {
-                                if (response.succeeded) {
-                                    const rr = response.data.reduce(
-                                        (
-                                            a,
-                                            {
-                                                scale,
-                                                scaleMean,
-                                                indicator: name,
-                                                indicatorMean: mean,
-                                            }
-                                        ) => {
-                                            if (scale in a) {
-                                                a[scale]?.indicators.push({
-                                                    name,
-                                                    mean,
-                                                });
-                                            } else {
-                                                a[scale] = {
-                                                    mean: scaleMean,
-                                                    indicators: [
-                                                        { name, mean },
-                                                    ],
-                                                };
-                                            }
-                                            return a;
-                                        },
-                                        {}
-                                    );
+        this.isLoading = true;
+        const minLoadingTime$ = timer(300); // Observable que emite después de 300 ms
 
-                                    this.scales = Object.keys(rr).map(
-                                        (key) => ({
-                                            name: key,
-                                            ...rr[key],
-                                        })
-                                    );
-                                }
-                            });
+        this.evaluationService.getStudentEvaluation(this.evaluacionPsicologicaAulaId, this.estudianteId)
+            .pipe(
+                switchMap(response => {
+                    if (response.succeeded && response.data.id) {
+                        // Si la primera solicitud es exitosa, procede con la segunda
+                        const answers$ = this.evaluationService.getStudentAnswers(response.data.id, this.filtrosSeleccionados.Dimension == 1 ? 'HSE' : 'FR');
+                        return forkJoin([answers$, minLoadingTime$]);
+                    } else {
+                        // Si la primera solicitud falla, solo espera el temporizador
+                        return forkJoin([minLoadingTime$]).pipe(switchMap(() => { throw new Error('Failed to get student evaluation'); }));
                     }
+                })
+            )
+            .subscribe({
+                next: ([response]) => {
+                    if (response.succeeded) {
+                        const rr = response.data.reduce((a, { scale, scaleMean, indicator: name, indicatorMean: mean }) => {
+                            if (scale in a) {
+                                a[scale]?.indicators.push({ name, mean });
+                            } else {
+                                a[scale] = { mean: scaleMean, indicators: [{ name, mean }] };
+                            }
+                            return a;
+                        }, {});
+
+                        this.scales = Object.keys(rr).map(key => ({ name: key, ...rr[key] }));
+                    }
+                    this.isLoading = false;
+                },
+                error: (error) => {
+                    console.error(error);
+                    this.isLoading = false;
                 }
             });
     }
+
+    // #region Botones de dimensiones
+
+    claseInactiva: string = 'bg-white text-black text-md';
+
+    botonesDimensiones: ButtonToogle[] = [
+        {
+            id: DimensionPsicologica.habilidadesSocioemocionales.toString(),
+            texto: 'Habilidades Socioemocionales',
+            accion: () => {
+                this.filtrosSeleccionados.Dimension = DimensionPsicologica.habilidadesSocioemocionales;
+                this.getStudentReport();
+            },
+            claseActiva: 'bg-[#f9fafb] text-green-700 font-bold text-md',
+            claseInactiva: this.claseInactiva,
+            esVisible: () => true
+        },
+        {
+            id: DimensionPsicologica.factoresDeRiesgo.toString(),
+            texto: 'Factores de Riesgo',
+            accion: () => {
+                this.filtrosSeleccionados.Dimension = DimensionPsicologica.factoresDeRiesgo;
+                this.getStudentReport();
+            },
+            claseActiva: 'bg-[#f9fafb] text-orange-400 font-bold text-md',
+            claseInactiva: this.claseInactiva,
+            esVisible: () => true
+        }
+    ];
+
+    getButtonClassDimension(boton: ButtonToogle): string {
+        if (this.filtrosSeleccionados.Dimension.toString() == boton.id) {
+            return boton.claseActiva;
+        }
+        return boton.claseInactiva;
+    }
+
+    // #endregion
 }

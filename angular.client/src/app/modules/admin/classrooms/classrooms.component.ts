@@ -35,7 +35,7 @@ import { ButtonToogle } from "./interfaces/buttonToogle";
 
 export class ClassroomsComponent implements OnInit {
 
-    itemOption: ItemOptions = ItemOptions.ListarEstudiantes;
+    itemOption: ItemOptions;
     ItemOptions = ItemOptions;
 
     filtrosSeleccionados = new FiltrosSeleccionados();
@@ -60,10 +60,10 @@ export class ClassroomsComponent implements OnInit {
     }
 
     cargarValoresIniciales() {
-        this.filtrosSeleccionados.Unidad = 2;
-        this.filtrosSeleccionados.Grado = 3;
-        this.filtrosSeleccionados.Seccion = 5;
-        this.changeItemOption(ItemOptions.RegistrarEstudiantes);
+        this.filtrosSeleccionados.Unidad = 1;
+        this.filtrosSeleccionados.Grado = 2;
+        this.filtrosSeleccionados.Seccion = 3;
+        this.changeItemOption(ItemOptions.reportClassroom);
     }
 
     // #region ButtonToogle
@@ -80,14 +80,14 @@ export class ClassroomsComponent implements OnInit {
             claseInactiva: this.claseInactiva,
             esVisible: () => true
         },
-        // {
-        //     id: ItemOptions.reportClassroom,
-        //     texto: 'Reporte de Salon',
-        //     accion: () => this.changeItemOption(ItemOptions.reportClassroom),
-        //     claseActiva: this.claseActiva,
-        //     claseInactiva: this.claseInactiva,
-        //     esVisible: () => this.filtrosSeleccionados.succeeded()
-        // },
+        {
+            id: ItemOptions.reportClassroom,
+            texto: 'Reporte de Salon',
+            accion: () => this.changeItemOption(ItemOptions.reportClassroom),
+            claseActiva: this.claseActiva,
+            claseInactiva: this.claseInactiva,
+            esVisible: () => this.filtrosSeleccionados.succeeded()
+        },
         {
             id: ItemOptions.RegistrarEstudiantes,
             texto: 'Registrar Estudiantes',

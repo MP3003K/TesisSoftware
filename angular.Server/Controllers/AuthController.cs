@@ -78,15 +78,6 @@ namespace Controllers
 
                     var accessToken = GetAccessToken(user.Id);
 
-
-                    Response.Cookies.Append("accessToken", accessToken, new CookieOptions
-                    {
-                        Expires = DateTime.Now.AddDays(1),
-                        Path = "/",
-                        HttpOnly = false,
-                        Secure = true,
-                        SameSite = SameSiteMode.None
-                    });
                     return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
                 }
             }
@@ -120,13 +111,6 @@ namespace Controllers
 
                     var accessToken = GetAccessToken(user.Id);
 
-                    Response.Cookies.Append("accessToken", accessToken, new CookieOptions
-                    {
-                        Expires = DateTime.Now.AddDays(1),
-                        Path = "/",
-                        HttpOnly = true,
-                        Secure = true
-                    });
                     return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
                 }
             }
@@ -174,7 +158,6 @@ namespace Controllers
         [HttpPost("SignOut")]
         public ActionResult Logout()
         {
-            Response.Cookies.Delete("accessToken");
             return Ok(new Response<dynamic> { Data = true, Succeeded = true, Message = "Sesión cerrada correctamente" });
         }
 

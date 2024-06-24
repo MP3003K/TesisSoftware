@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from 'app/shared/shared.module';
 import { DimensionPsicologica } from '../../enums/dimensionPsicologica.enum';
 import { ButtonToogle } from '../../interfaces';
+import { TooltipPosition, MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
@@ -30,6 +31,8 @@ import { ButtonToogle } from '../../interfaces';
         MatCheckboxModule,
         MatIconModule,
         MatSortModule,
+        ReporteEstudianteComponent,
+        MatTooltipModule,
     ],
     templateUrl: './reporte-salon.component.html'
 })
@@ -46,7 +49,11 @@ export class ReporteSalonComponent implements AfterViewInit {
     reporteSalonFiltrado = new MatTableDataSource<Student>([]);
 
     evaluacionPsicologicaAulaId: number = 0;
+    visualizarReporteEstudiante: boolean = false;
     mensajeSnackbar: string = "";
+
+    cargarValoresInicialesReporteEstudiante: boolean = false;
+    estudianteId: number = 0;
 
     displayedColumns: string[] = ['nombre', 'DNI', 'estadoEvaluacionEstudiante', 'promedio', 'opciones']; dataSource = new MatTableDataSource<Student>([]);
 
@@ -59,7 +66,6 @@ export class ReporteSalonComponent implements AfterViewInit {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        console.log(changes, 'changes')
         if (changes.cargarValoresIniciales) {
             this.obtenerReporteSalon();
         }
@@ -181,9 +187,8 @@ export class ReporteSalonComponent implements AfterViewInit {
 
     // #region reporteSalon
     obtenerReporteSalon() {
-        console.log('llamando api')
         this.reporteSalon.data = [];
-
+        this.reporteSalonFiltrado.data = [];
         if (!this.filtrosSeleccionados.succeeded) return;
 
         this.classroomsService
@@ -192,9 +197,7 @@ export class ReporteSalonComponent implements AfterViewInit {
                 if (response.succeeded) {
                     let id = response.data?.id;
                     if (id) {
-
                         this.evaluacionPsicologicaAulaId = id;
-                        console.log(this.evaluacionPsicologicaAulaId, 'id')
                         this.evaluationService
                             .getClasroomAnswers(id, this.filtrosSeleccionados.Dimension)
                             .subscribe({
@@ -240,7 +243,7 @@ export class ReporteSalonComponent implements AfterViewInit {
 
     obtenerCategoriaPorPuntajeReporteEstudiante(promedio: number): string {
         if (promedio === 0) {
-            return 'NO INICIADO';
+            return 'No Inicio';
         }
 
         if (this.filtrosSeleccionados.Dimension == DimensionPsicologica.habilidadesSocioemocionales) {
@@ -263,7 +266,7 @@ export class ReporteSalonComponent implements AfterViewInit {
             }
         }
 
-        return 'NO INICIO'; // Por defecto si no cumple ninguna condición anterior
+        return 'No inicio'; // Por defecto si no cumple ninguna condición anterior
     }
 
     obtenerClasePorPuntajeReporteEstudiante(promedio: number) {
@@ -299,5 +302,8 @@ export class ReporteSalonComponent implements AfterViewInit {
 
     redirigirReporteEstudiante(estudiante: Student) {
         console.log(estudiante, 'estudiante')
+    }
+    ocultarReporteEstudiante(visualizar: boolean) {
+        this.visualizarReporteEstudiante = !visualizar;
     }
 }

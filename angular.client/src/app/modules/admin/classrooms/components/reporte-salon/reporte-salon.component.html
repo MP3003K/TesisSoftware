@@ -1,3 +1,4 @@
+@if(!visualizarReporteEstudiante){
 <div class="flex h-10 w-min mb-4 overflow-hidden shadow-md rounded-full font-normal">
     @for (button of botonesDimensiones; track button) {
     <button (click)="button.accion()" [ngClass]="getButtonClassDimension(button)"
@@ -7,36 +8,6 @@
     }
 </div>
 
-@if(!filtrosSeleccionados.succeeded){
-<div class="mx-auto bg-blue-100 border-blue-500 rounded-xl shadow-md overflow-hidden m-4">
-    <div class="md:flex">
-        <div class="p-8">
-            <div class="uppercase tracking-wide text-lg text-blue-500 font-semibold">Información</div>
-            <p class="mt-2 text-gray-700 font-bold text-lg">
-                Seleccione
-                {{
-                (!this.filtrosSeleccionados.Unidad ? 'una unidad, ' : '') +
-                (!this.filtrosSeleccionados.Grado) +
-                (!this.filtrosSeleccionados.Seccion ? 'una sección. ' : '')
-                }}.
-            </p>
-        </div>
-    </div>
-</div>
-}
-@else if (reporteSalonFiltrado.data?.length == 0) {
-<div class="max-w-md mx-auto bg-orange-100 border-orange-500 rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4">
-    <div class="md:flex">
-        <div class="p-8">
-            <div class="uppercase tracking-wide text-sm text-orange-500 font-semibold">Información</div>
-            <p class="mt-2 text-gray-500 font-bold">
-                Ningun test psicologico realizado.
-            </p>
-        </div>
-    </div>
-</div>
-}
-@else if(reporteSalonFiltrado.data?.length > 0){
 <div class="xl:col-span-2 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden">
     <div class="p-6">
         <div class="mr-4 text-lg font-medium tracking-tight leading-6 truncate">
@@ -52,13 +23,18 @@
             }
         </div>
     </div>
+
+    @if (reporteSalonFiltrado.data?.length == 0) {
+
     <div class="overflow-x-auto mx-6" (click)="this.reporteSalonFiltrado.sort = this.estudiantesTableMatSort">
         <table mat-table [dataSource]="reporteSalonFiltrado" matSort #estudiantesTable class="mat-elevation-z8">
 
             <!-- Nombre Column -->
             <ng-container matColumnDef="nombre">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-                <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                <td mat-cell *matCellDef="let element">
+                    {{(element.ApellidoPaterno + ' '+ element.ApellidoMaterno + ', ' + element.Nombres)| titlecase}}
+                </td>
             </ng-container>
             <!-- DNI Column -->
             <ng-container matColumnDef="DNI">
@@ -72,8 +48,7 @@
                     Estado evaluacion
                 </th>
                 <td mat-cell *matCellDef="let element">
-                    <span
-                        class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
+                    <button class="inline-flex items-center font-bold text-md px-2.5 py-0.5 rounded-full tracking-wide"
                         [ngClass]="{
                                         'bg-orange-200 text-orange-800 dark:bg-orange-600 dark:text-orange-50': element.estadoEvaluacionEstudiante === 'P',
                                         'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-50': element.estadoEvaluacionEstudiante === 'N',
@@ -84,33 +59,45 @@
                             element.estadoEvaluacionEstudiante === 'N' ? 'No iniciado' :
                             element.estadoEvaluacionEstudiante === 'P' ? 'En proceso' : ''}}
                         </span>
-                    </span>
+                    </button>
                 </td>
             </ng-container>
             <!-- Promedio Column -->
             <ng-container matColumnDef="promedio">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Resultado</th>
                 <td mat-cell *matCellDef="let element">
-                    <div class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide uppercase"
-                        [ngClass]="obtenerClasePorPuntajeReporteEstudiante(element.promedio)">
+                    <button class="inline-flex items-center font-bold text-md px-2.5 py-0.5 rounded-full tracking-wide"
+                        [ngClass]="obtenerClasePorPuntajeReporteEstudiante(element.promedio)"
+                        matTooltip="Puntaje: {{element.promedio | number:'1.1-1'}}" [matTooltipPosition]="'above'"
+                        [matTooltipHideDelay]="200" [matTooltipShowDelay]="600">
                         {{obtenerCategoriaPorPuntajeReporteEstudiante(element.promedio)}}
-                        ({{element.promedio | number:'1.1-1'}})
-                    </div>
+                    </button>
                 </td>
             </ng-container>
             <ng-container matColumnDef="opciones">
                 <th mat-header-cell *matHeaderCellDef>Opciones</th>
                 <td mat-cell *matCellDef="let element">
-                    <!-- <button [disabled]="element.mean == 0 || element.estadoEvaluacionEstudiante !='F'" mat-icon-button
-                        (click)="redirectStudent(element.id)">
+                    <button [disabled]="element.mean == 0 || element.estadoEvaluacionEstudiante !='F'" mat-icon-button
+                        (click)="estudianteId = element.id; visualizarReporteEstudiante = true">
                         <mat-icon>visibility</mat-icon>
-                    </button> -->
+                    </button>
                 </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-    </div>d
+    </div>
+    } @else {
+    <div class="bg-blue-100 text-blue-800 text-center p-4 rounded-lg shadow-md">
+        Ningún test psicológico realizado
+    </div>
+    }
 </div>
+} @else if(visualizarReporteEstudiante && estudianteId && evaluacionPsicologicaAulaId &&
+filtrosSeleccionados.succeeded){
+<app-reporte-estudiante [filtrosSeleccionados]="filtrosSeleccionados" [estudianteId]="estudianteId"
+    [evaluacionPsicologicaAulaId]="evaluacionPsicologicaAulaId"
+    [cargarValoresIniciales]="cargarValoresInicialesReporteEstudiante"
+    (regregarReporteSalon)="ocultarReporteEstudiante($event)"></app-reporte-estudiante>
 }

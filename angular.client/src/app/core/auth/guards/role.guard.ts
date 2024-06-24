@@ -21,7 +21,8 @@ export const RoleGuard: CanActivateFn | CanActivateChildFn = (route: ActivatedRo
                 return of(false);
             }
         }), catchError((error) => {
-            if (error.status === 401) {
+            console.error('Ocurrió un error role.guard:', error);
+            if (error.status == 401) {
                 console.error('No autorizado (validateAccess): ', error);
                 router.navigate(['/sign-in']); // Redirige al usuario a la página de inicio de sesión
                 return of(false);
