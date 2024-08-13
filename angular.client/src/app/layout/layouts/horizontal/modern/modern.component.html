@@ -8,8 +8,11 @@
         <!-- Navigation header hook -->
         <ng-container fuseVerticalNavigationContentHeader>
             <!-- Logo -->
-            <div class="flex items-center h-20 pt-6 px-8">
-                <img class="w-full max-w-xs" src="assets/images/logo/logo-app.png" alt="Logo image">
+            <div class="flex items-center content-center justify-center h-auto pt-6 pb-3 px-8">
+                <img style="max-width:90px; aspect-ratio: 1/1;" src="assets/images/logo/logo-app.webp" alt="Logo image">
+            </div>
+            <div class="flex justify-center content-center pb-3">
+                <b class="text-white text-lg"> TEST EMOCIONAL</b>
             </div>
         </ng-container>
     </fuse-vertical-navigation>
@@ -24,12 +27,8 @@
         <ng-container *ngIf="!isScreenSmall">
             <!-- Logo -->
             <div class="flex items-center mx-2 lg:mr-8">
-                <div class="hidden lg:flex">
-                    <img class="dark:hidden w-full max-w-xs h-auto scale-75" src="assets/images/logo/logo-app.webp">
-                    <img class="hidden dark:flex w-full max-w-xs h-auto scale-75"
-                        src="assets/images/logo/logo-app.webp">
-                </div>
-                <img class="flex lg:hidden w-full max-w-xs h-auto scale-75" src="assets/images/logo/logo-app.webp">
+                <img style="width: 100%; max-width: 60px; height: auto; aspect-ratio: 1/1;"
+                    src="assets/images/logo/logo-app.webp">
             </div>
             <!-- Horizontal navigation -->
             <fuse-horizontal-navigation class="mr-2" [name]="'mainNavigation'"

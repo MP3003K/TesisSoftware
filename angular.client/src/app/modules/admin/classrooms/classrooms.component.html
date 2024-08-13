@@ -7,6 +7,7 @@
                     Gestionar Aulas
                 </h2>
             </div>
+            
         </div>
     </div>
     <div class="flex flex-col flex-auto min-w-0">
@@ -46,7 +47,8 @@
                     <mat-form-field>
                         <mat-label>Sección</mat-label>
                         <mat-select [disabled]="!this.filtrosSeleccionados.Grado"
-                            [(ngModel)]="this.filtrosSeleccionados.Seccion">
+                            [(ngModel)]="this.filtrosSeleccionados.Seccion"
+                            (selectionChange)="seleccionarSeccionN($event.value)">
                             @for(aula of sections; track aula){
                             <mat-option [value]="aula.id">
                                 {{ aula.seccion }}

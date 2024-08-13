@@ -17,7 +17,11 @@ import { SharedModule } from 'app/shared/shared.module';
 import { DimensionPsicologica } from '../../enums/dimensionPsicologica.enum';
 import { ButtonToogle } from '../../interfaces';
 import { TooltipPosition, MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
+
+import { saveAs } from 'file-saver';
+import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
 
 @Component({
     selector: 'app-reporte-salon',
@@ -33,6 +37,7 @@ import { TooltipPosition, MatTooltipModule } from '@angular/material/tooltip';
         MatSortModule,
         ReporteEstudianteComponent,
         MatTooltipModule,
+        MatButtonModule
     ],
     templateUrl: './reporte-salon.component.html'
 })
@@ -54,7 +59,7 @@ export class ReporteSalonComponent implements AfterViewInit {
 
     cargarValoresInicialesReporteEstudiante: boolean = false;
     estudianteId: number = 0;
-
+    estudianteNombre: string = '';
     displayedColumns: string[] = ['nombre', 'DNI', 'estadoEvaluacionEstudiante', 'promedio', 'opciones']; dataSource = new MatTableDataSource<Student>([]);
 
     constructor(
@@ -76,9 +81,8 @@ export class ReporteSalonComponent implements AfterViewInit {
     }
 
     // #region buttones toogle
-    claseInactiva: string = 'bg-white text-black text-md';
+    claseInactiva: string = 'bg-white text-black text-sm';
     estadoEvaluacionPsicologica: EstadoEvaluacionEstudiante;
-
 
     botonesDimensiones: ButtonToogle[] = [
         {
@@ -88,7 +92,7 @@ export class ReporteSalonComponent implements AfterViewInit {
                 this.filtrosSeleccionados.Dimension = DimensionPsicologica.habilidadesSocioemocionales;
                 this.obtenerReporteSalon();
             },
-            claseActiva: 'bg-[#f9fafb] text-green-700 font-bold text-md',
+            claseActiva: 'bg-[#f9fafb] text-green-700 font-bold text-base',
             claseInactiva: this.claseInactiva,
             esVisible: () => true
         },
@@ -99,67 +103,77 @@ export class ReporteSalonComponent implements AfterViewInit {
                 this.filtrosSeleccionados.Dimension = DimensionPsicologica.factoresDeRiesgo;
                 this.obtenerReporteSalon();
             },
-            claseActiva: 'bg-[#f9fafb] text-orange-400 font-bold text-md',
+            claseActiva: 'bg-[#f9fafb] text-orange-400 font-bold text-base',
             claseInactiva: this.claseInactiva,
             esVisible: () => true
         }
     ];
 
-    claseInactivaEstado: string = 'bg-[#f1f5f9] text-black text-md';
+    claseInactivaEstado: string = 'bg-[#f1f5f9] text-black text-sm';
+    claseActivaEstado: string = 'bg-white text-black text-base font-bold';
+
     botonesEstado: ButtonToogle[] = [
         {
             id: EstadoEvaluacionEstudiante.Todos.toString(),
-            texto: 'Todos',
+            texto: EstadoEvaluacionEstudiante.Todos,
             accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.Todos),
-            claseActiva: 'bg-white text-black font-bold text-md',
+            claseActiva: this.claseActivaEstado,
+            claseInactiva: this.claseInactivaEstado,
+            esVisible: () => true
+        },
+        {
+            id: EstadoEvaluacionEstudiante.NoInicio.toString(),
+            texto: EstadoEvaluacionEstudiante.NoInicio,
+            accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.NoInicio),
+            claseActiva: this.claseActivaEstado,
             claseInactiva: this.claseInactivaEstado,
             esVisible: () => true
         },
         {
             id: EstadoEvaluacionEstudiante.EnInicio.toString(),
-            texto: 'En Inicio',
+            texto: EstadoEvaluacionEstudiante.EnInicio,
             accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.EnInicio),
-            claseActiva: 'bg-white text-black font-bold text-md',
+            claseActiva: this.claseActivaEstado,
             claseInactiva: this.claseInactivaEstado,
             esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.habilidadesSocioemocionales
         },
         {
             id: EstadoEvaluacionEstudiante.EnProceso.toString(),
-            texto: 'En Proceso',
+            texto: EstadoEvaluacionEstudiante.EnProceso,
             accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.EnProceso),
-            claseActiva: 'bg-white text-black font-bold text-md',
+            claseActiva: this.claseActivaEstado,
             claseInactiva: this.claseInactivaEstado,
             esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.habilidadesSocioemocionales
         },
         {
             id: EstadoEvaluacionEstudiante.Satisfactorio.toString(),
-            texto: 'Satisfactorio',
+            texto: EstadoEvaluacionEstudiante.Satisfactorio,
             accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.Satisfactorio),
-            claseActiva: 'bg-white text-black font-bold text-md',
+            claseActiva: this.claseActivaEstado,
             claseInactiva: this.claseInactivaEstado,
             esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.habilidadesSocioemocionales
         },
         {
             id: EstadoEvaluacionEstudiante.AltoRiesgo.toString(),
-            texto: 'Alto Riesgo',
+            texto: EstadoEvaluacionEstudiante.AltoRiesgo,
             accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.AltoRiesgo),
-            claseActiva: 'bg-white text-black font-bold text-md',
+            claseActiva: this.claseActivaEstado,
             claseInactiva: this.claseInactivaEstado,
             esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.factoresDeRiesgo
         },
         {
             id: EstadoEvaluacionEstudiante.RiesgoModerado.toString(),
-            texto: 'Riesgo Moderado',
+            texto: EstadoEvaluacionEstudiante.RiesgoModerado,
             accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.RiesgoModerado),
-            claseActiva: 'bg-white text-black font-bold text-md',
+            claseActiva: this.claseActivaEstado,
             claseInactiva: this.claseInactivaEstado,
             esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.factoresDeRiesgo
         },
         {
             id: EstadoEvaluacionEstudiante.BajoRiesgo.toString(),
-            texto: 'Bajo Riesgo',
+            texto: EstadoEvaluacionEstudiante.BajoRiesgo,
             accion: () => this.filtrarReporteSalon(EstadoEvaluacionEstudiante.BajoRiesgo),
-            claseActiva: 'bg-white text-black font-bold text-md',
+            claseActiva: this.claseActivaEstado,
             claseInactiva: this.claseInactivaEstado,
             esVisible: () => this.filtrosSeleccionados.Dimension === DimensionPsicologica.factoresDeRiesgo
         }
@@ -204,7 +218,7 @@ export class ReporteSalonComponent implements AfterViewInit {
                                 next: (response) => {
                                     if (response.succeeded) {
                                         this.reporteSalon.data = response.data;
-                                        this.reporteSalonFiltrado.data = response.data;
+                                        this.filtrarReporteSalon(EstadoEvaluacionEstudiante.Todos);
                                     }
                                 },
                                 error: ({ status }) => {
@@ -232,9 +246,11 @@ export class ReporteSalonComponent implements AfterViewInit {
     filtrarReporteSalon(estado: EstadoEvaluacionEstudiante) {
         this.estadoEvaluacionPsicologica = estado;
 
-        if (estado == EstadoEvaluacionEstudiante.Todos) this.reporteSalonFiltrado.data = this.reporteSalon.data;
+        if (estado == EstadoEvaluacionEstudiante.Todos) return this.reporteSalonFiltrado.data = this.reporteSalon.data;
+
         console.log('filtrar', 'estado', estado)
-        this.reporteSalonFiltrado.data = this.reporteSalon.data.filter(estudiante => estudiante.estadoEvaluacionEstudiante === estado);
+        console.log('filtrar', 'reporteSalon', this.reporteSalon.data)
+        this.reporteSalonFiltrado.data = this.reporteSalon.data.filter(estudiante => this.obtenerCategoriaPorPuntajeReporteEstudiante(estudiante.promedio) === estado);
     }
 
     getEstudiantesPorEstado(estado: string): number {
@@ -243,66 +259,196 @@ export class ReporteSalonComponent implements AfterViewInit {
 
     obtenerCategoriaPorPuntajeReporteEstudiante(promedio: number): string {
         if (promedio === 0) {
-            return 'No Inicio';
+            return EstadoEvaluacionEstudiante.NoInicio;
         }
 
         if (this.filtrosSeleccionados.Dimension == DimensionPsicologica.habilidadesSocioemocionales) {
             if (promedio > 0 && promedio <= 1) {
-                return 'En Inicio';
+                return EstadoEvaluacionEstudiante.EnInicio;
             } else if (promedio > 1 && promedio < 3) {
-                return 'En Proceso';
+                return EstadoEvaluacionEstudiante.EnProceso;
             } else if (promedio >= 3 && promedio <= 4) {
-                return 'Satisfactorio';
+                return EstadoEvaluacionEstudiante.Satisfactorio;
             }
         }
 
         if (this.filtrosSeleccionados.Dimension == DimensionPsicologica.factoresDeRiesgo) {
             if (promedio >= 3 && promedio <= 4) {
-                return 'Alto Riesgo';
+                return EstadoEvaluacionEstudiante.AltoRiesgo;
             } else if (promedio > 1 && promedio < 3) {
-                return 'Riesgo Moderado';
+                return EstadoEvaluacionEstudiante.RiesgoModerado;
             } else if (promedio > 0 && promedio <= 1) {
-                return 'Bajo Riesgo';
+                return EstadoEvaluacionEstudiante.BajoRiesgo;
             }
         }
 
-        return 'No inicio'; // Por defecto si no cumple ninguna condición anterior
+        return EstadoEvaluacionEstudiante.Error;
     }
 
     obtenerClasePorPuntajeReporteEstudiante(promedio: number) {
-        const styles = {
-            1: [ // Estilos para la dimensión 1
-                { range: [0, 0], class: 'bg-gray-200 text-gray-800' }, // Estilo para promedio 0
-                { range: [0.01, 1], class: 'bg-[#b6d7a8] text-black' },
-                { range: [1, 3], class: 'bg-[#70ad47] text-white' },
-                { range: [3, 4], class: 'bg-[#548135] text-white' }
-            ],
-            2: [ // Estilos para la dimensión 2
-                { range: [0, 0], class: 'bg-gray-200 text-gray-800' }, // Estilo para promedio 0
-                { range: [0.01, 1], class: 'bg-[#00b050] text-white' },
-                { range: [1, 3], class: 'bg-[#ffff00] text-black' },
-                { range: [3, 4], class: 'bg-[#ff0000] text-white' }
-            ]
-        };
+        if (promedio < 0 && promedio > 4) return 'bg-black text-white'; // Fuera de rango
 
         const dimensionId = this.filtrosSeleccionados.Dimension;
-        const defaultClass = 'bg-black'; // Clase por defecto si no se encuentra en ningún rango
-        const dimensionStyles = styles[dimensionId];
 
-        for (const { range, class: className } of dimensionStyles) {
-            if (promedio >= range[0] && promedio <= range[1]) {
-                return className;
-            }
+        if (dimensionId === 1) {
+            if (promedio === 0) return 'bg-gray-200 text-gray-800';
+            if (promedio <= 1) return 'bg-[#b6d7a8] text-black';
+            if (promedio < 3) return 'bg-[#70ad47] text-white';
+            return 'bg-[#548135] text-white';
         }
 
-        return defaultClass;
+        if (dimensionId === 2) {
+            if (promedio === 0) return 'bg-gray-200 text-gray-800';
+            if (promedio <= 1) return 'bg-[#ff0000] text-white';
+            if (promedio < 3) return 'bg-[#ffff00] text-black';
+            return 'bg-[#00b050] text-white';
+        }
     }
 
     // #endregion
 
-    redirigirReporteEstudiante(estudiante: Student) {
-        console.log(estudiante, 'estudiante')
+
+    //#region DescargarExcel
+    classrooms: any[] = [];
+
+    readonly PLANTILLAS = {
+        1: 'assets/plantillas/plantilla_resultados_hse_1y2.xlsx',
+        2: 'assets/plantillas/plantilla_resultados_hse_3,4y5.xlsx'
+    };
+
+    readonly RANGOS_GRADO = {
+        1: { inicio: 1, fin: 66 },
+        2: { inicio: 67, fin: 134 }
+    };
+
+    getRangoGrado(_tipo_test_psi: number) {
+        return this.RANGOS_GRADO[_tipo_test_psi] || null;
     }
+
+    getPlantilla(_tipo_test_psi: number) {
+        return this.PLANTILLAS[_tipo_test_psi] || null;
+    }
+
+    async exportarExcel_resultadosPsicologicosAula() {
+        console.log('descargar')
+        try {
+            console.log('buenos dias');
+            let gradoId = this.filtrosSeleccionados.Grado;
+            let unidadId = this.filtrosSeleccionados.Unidad;
+            let unidadNombre = this.filtrosSeleccionados.UnidadNombre;
+            let unidadNumero = this.filtrosSeleccionados.UnidadNumero;
+            let gradoDegree = this.toDegree(this.filtrosSeleccionados.Grado);
+            let seccionId = this.filtrosSeleccionados.Seccion;
+            let seccionN = this.filtrosSeleccionados.SeccionN;
+            let tipo_test_psi = gradoId >= 1 && gradoId <= 2 ? 1 : (gradoId >= 3 && gradoId <= 5 ? 2 : 0);
+            console.log('gradoId', gradoId, 'unidadId', unidadId, 'unidadNombre', unidadNombre, 'seccionId', seccionId, 'seccionN', seccionN, 'tipo_test_psi', tipo_test_psi);
+
+            if (tipo_test_psi === 0) return;
+
+            const resultadosPsiAulaExcel = await this.getResultadosPsiAulaExcel(seccionId, unidadId, tipo_test_psi);
+
+            if (!resultadosPsiAulaExcel) return;
+
+            const plantilla = this.getPlantilla(tipo_test_psi);
+            const response = await fetch(plantilla);
+            const buffer = await response.arrayBuffer();
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(buffer);
+            const worksheet = workbook.getWorksheet('BASE DE RESPUESTAS');
+
+            const worksheetIndice = workbook.getWorksheet('Índice');
+
+            worksheetIndice.getCell('C7').value = unidadNombre;
+            worksheetIndice.getCell('C9').value = gradoDegree;
+            worksheetIndice.getCell('C11').value = seccionN;
+
+            resultadosPsiAulaExcel.forEach((resultado, index) => {
+                const { inicio, fin } = this.getRangoGrado(tipo_test_psi);
+
+                worksheet.getCell(5, index + 2 + 5).value = resultado.NombreCompleto;
+
+                for (let i = inicio; i <= fin; i++) {
+                    const respuesta = resultado.respuestas[`r${i}`];
+                    if (respuesta !== undefined) {
+                        worksheet.getCell(6 + i - inicio, index + 2 + 5).value = respuesta;
+                    }
+                }
+            });
+
+            const bufferExcel = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([bufferExcel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const nombreArchivo = 'eva_' + gradoDegree + seccionN + '_' + 'U' + unidadNombre + '.xlsx';
+            saveAs(blob, nombreArchivo);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    toRoman(num) {
+        const roman = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
+        const decimal = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+        let romanNum = '';
+        for (let i = 0; i < decimal.length; i++) {
+            while (decimal[i] <= num) {
+                romanNum += roman[i];
+                num -= decimal[i];
+            }
+        }
+        return romanNum;
+    }
+    toDegree(num) {
+        return `${num}°`;
+    }
+
+    mapearRespuestas(respuestaNumerica) {
+        const mapeoRespuestas = {
+            0: 'Se dejó en blanco',
+            1: 'Totalmente en desacuerdo',
+            2: 'En desacuerdo',
+            3: 'De acuerdo',
+            4: 'Totalmente de acuerdo'
+        };
+        return mapeoRespuestas[Number(respuestaNumerica)] || 'Respuesta no válida';
+    }
+
+    async getResultadosPsiAulaExcel(_aulaId: number, _unidadId: number, _tipoTestPsi: number) {
+        if (!_aulaId || !_unidadId) {
+            console.warn('El aula o la unidad no son válidos. No se puede obtener los resultados.');
+            return;
+        }
+
+        let resultadosPsiAulaExcel = null;
+
+        try {
+            const response = await this.classroomsService.getResultadosPsiAulaExcel(_aulaId, _unidadId).toPromise();
+            if (response.succeeded) {
+                resultadosPsiAulaExcel = response.data.map(estudiante => {
+                    const respuestas = {};
+                    const { inicio, fin } = this.getRangoGrado(_tipoTestPsi);
+                    for (let i = inicio; i <= fin; i++) {
+                        const claveRespuesta = `r${i}`;
+                        const respuestaNumerica = estudiante[claveRespuesta];
+                        if (respuestaNumerica != null) {
+                            respuestas[claveRespuesta] = this.mapearRespuestas(respuestaNumerica);
+                        } else {
+                            respuestas[claveRespuesta] = 'Se dejó en blanco';
+                        }
+                    }
+
+                    return {
+                        EvaPsiEstId: estudiante.EvaPsiEstId,
+                        NombreCompleto: estudiante.NombreCompleto,
+                        respuestas: respuestas
+                    };
+                });
+                return resultadosPsiAulaExcel;
+            }
+            return null;
+        } catch (error) {
+            console.warn('Error al obtener los resultados:', error);
+        }
+    }
+    //#endregion
+
     ocultarReporteEstudiante(visualizar: boolean) {
         this.visualizarReporteEstudiante = !visualizar;
     }

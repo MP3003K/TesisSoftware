@@ -5,5 +5,7 @@ export enum EstadoEvaluacionEstudiante {
     Satisfactorio = 'Satisfactorio',
     AltoRiesgo = 'Alto Riesgo',
     RiesgoModerado = 'Riesgo Moderado',
-    BajoRiesgo = 'Bajo Riesgo'
+    BajoRiesgo = 'Bajo Riesgo',
+    NoInicio = 'No Iniciado',
+    Error = 'Error'
 }

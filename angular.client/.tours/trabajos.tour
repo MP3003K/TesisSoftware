@@ -1,0 +1,21 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Trabajos",
+  "steps": [
+    {
+      "file": "src/app/modules/auth/confirmation-required/confirmation-required.component.html",
+      "description": "vxcvxcv",
+      "line": 6
+    },
+    {
+      "file": "src/app/modules/auth/confirmation-required/confirmation-required.component.html",
+      "description": "g",
+      "line": 3
+    },
+    {
+      "title": "Introduction",
+      "description": "t"
+    }
+  ],
+  "ref": "mijail"
+}

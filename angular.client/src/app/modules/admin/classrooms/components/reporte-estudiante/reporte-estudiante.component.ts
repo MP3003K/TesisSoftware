@@ -20,6 +20,7 @@ export class ReporteEstudianteComponent {
     @Input() filtrosSeleccionados: FiltrosSeleccionados;
     @Input() evaluacionPsicologicaAulaId: number;
     @Input() estudianteId: number;
+    @Input() estudianteNombre: string;
     @Input() cargarValoresIniciales: boolean;
     @Output() regregarReporteSalon = new EventEmitter<boolean>();
 
@@ -101,7 +102,7 @@ export class ReporteEstudianteComponent {
     }
     getStudentReport() {
         this.isLoading = true;
-        const minLoadingTime$ = timer(300); // Observable que emite después de 300 ms
+        const minLoadingTime$ = timer(600);
 
         this.evaluationService.getStudentEvaluation(this.evaluacionPsicologicaAulaId, this.estudianteId)
             .pipe(
@@ -151,7 +152,7 @@ export class ReporteEstudianteComponent {
                 this.filtrosSeleccionados.Dimension = DimensionPsicologica.habilidadesSocioemocionales;
                 this.getStudentReport();
             },
-            claseActiva: 'bg-[#f9fafb] text-green-700 font-bold text-md',
+            claseActiva: 'bg-[#f9fafb] text-green-700 font-bold text-base',
             claseInactiva: this.claseInactiva,
             esVisible: () => true
         },
@@ -162,7 +163,7 @@ export class ReporteEstudianteComponent {
                 this.filtrosSeleccionados.Dimension = DimensionPsicologica.factoresDeRiesgo;
                 this.getStudentReport();
             },
-            claseActiva: 'bg-[#f9fafb] text-orange-400 font-bold text-md',
+            claseActiva: 'bg-[#f9fafb] text-orange-400 font-bold text-base',
             claseInactiva: this.claseInactiva,
             esVisible: () => true
         }

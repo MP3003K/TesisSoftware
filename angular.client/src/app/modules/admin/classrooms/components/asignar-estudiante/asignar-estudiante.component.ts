@@ -61,6 +61,8 @@ export class AsignarEstudianteComponent {
         return this.selectedStudents.map((e) => e.id);
     }
 
+
+
     asignarEstudiante() {
         const observables = this.selectedStudents.map((e) =>
             this.classroomsService.asignarEstudianteAula(

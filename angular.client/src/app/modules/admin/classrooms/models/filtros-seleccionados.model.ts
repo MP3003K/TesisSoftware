@@ -2,11 +2,13 @@ import { DimensionPsicologica } from "../enums/dimensionPsicologica.enum";
 
 export class FiltrosSeleccionados {
     private unidad: number | null = null;
+    private unidadNumero: number | null = null;
+    private unidadNombre: string;
+    private estadoUnidad: boolean = false;
     private grado: number | null = null;
     private seccion: number | null = null;
+    private seccionN: string;
     private dimension: DimensionPsicologica = DimensionPsicologica.habilidadesSocioemocionales;
-    private estadoUnidad: boolean = false;
-
 
     constructor(
         unidad?: number,
@@ -19,6 +21,14 @@ export class FiltrosSeleccionados {
         this.unidad = unidad;
         this.estadoUnidad = false;
     }
+
+    set UnidadNumero(unidadNumero: number) {
+        this.unidadNumero = unidadNumero;
+    }
+
+    set UnidadNombre(unidadNombre: string) {
+        this.unidadNombre = unidadNombre;
+    }
     set Grado(grado: number) {
         this.grado = grado;
         this.seccion = null;
@@ -26,14 +36,23 @@ export class FiltrosSeleccionados {
     set Seccion(seccion: number) {
         this.seccion = seccion;
     }
+    set SeccionN(seccionN: string) {
+        this.seccionN = seccionN;
+    }
     set Dimension(dimension: DimensionPsicologica) {
         this.dimension = dimension;
     }
-    set EstadoUnidad(estadoUnidad: boolean) {
-        this.estadoUnidad = estadoUnidad;
-    }
     get Unidad() {
         return this.unidad;
+    }
+    get UnidadNumero() {
+        return this.unidadNumero;
+    }
+    get UnidadNombre() {
+        return this.unidadNombre;
+    }
+    set EstadoUnidad(estadoUnidad: boolean) {
+        this.estadoUnidad = estadoUnidad;
     }
     get Grado() {
         return this.grado;
@@ -46,6 +65,9 @@ export class FiltrosSeleccionados {
     }
     get EstadoUnidad() {
         return this.estadoUnidad;
+    }
+    get SeccionN() {
+        return this.seccionN;
     }
 
     /**

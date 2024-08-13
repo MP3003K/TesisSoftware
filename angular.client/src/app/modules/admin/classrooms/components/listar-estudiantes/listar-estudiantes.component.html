@@ -5,12 +5,15 @@
         <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
             <mat-icon matPrefix class="icon-size-5" [svgIcon]="
                                             'heroicons_solid:magnifying-glass'
-                                        "></mat-icon>
+                                    "></mat-icon>
             <input type="text" matInput placeholder="Buscar estudiante" #query />
         </mat-form-field>
+
         <button (click)="iniciarSeguimientoConsulta()"
-            [ngClass]="{'bg-red-500 hover:bg-red-600': seguimientoActivo, 'bg-blue-500 hover:bg-blue-600': !seguimientoActivo}"
-            mat-button class="w-min text-white shadow flex-none font-bold">
+        [ngClass]="{
+                'invisible': estadoEvalucionPsicologicaAula != 'P',
+                'bg-red-500 hover:bg-red-600': seguimientoActivo, 'bg-blue-500 hover:bg-blue-600': !seguimientoActivo
+            }" mat-button class="w-min text-white shadow flex-none font-bold">
             {{ seguimientoActivo ? 'Realizando Seguimiento' : 'Iniciar Seguimiento' }}
         </button>
         <button class="w-min flex-none font-bold" mat-button [ngClass]="{

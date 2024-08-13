@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FuseConfirmationService } from "@fuse/services/confirmation";
 import { ItemOptions } from "./enums";
 import { FiltrosSeleccionados } from "./models/filtros-seleccionados.model";
-import { ClassroomsService } from "./services";
+import { ClassroomsService, Seccion } from "./services";
 import { CommonModule } from "@angular/common";
 import { SharedModule } from "app/shared/shared.module";
 import { MatIconModule } from "@angular/material/icon";
@@ -37,7 +37,6 @@ export class ClassroomsComponent implements OnInit {
 
     itemOption: ItemOptions;
     ItemOptions = ItemOptions;
-
     filtrosSeleccionados = new FiltrosSeleccionados();
 
     unidades: any = [];
@@ -63,7 +62,7 @@ export class ClassroomsComponent implements OnInit {
         this.filtrosSeleccionados.Unidad = 1;
         this.filtrosSeleccionados.Grado = 2;
         this.filtrosSeleccionados.Seccion = 3;
-        this.changeItemOption(ItemOptions.reportClassroom);
+        this.changeItemOption(ItemOptions.ListarEstudiantes);
     }
 
     // #region ButtonToogle
@@ -144,6 +143,7 @@ export class ClassroomsComponent implements OnInit {
             next: (response) => {
                 if (response.succeeded) {
                     this.classrooms = response.data;
+                    { { this.classrooms } }
                 }
             },
             error: (err) => {
@@ -202,12 +202,26 @@ export class ClassroomsComponent implements OnInit {
         return this.classrooms.filter((e) => e.grado == this.filtrosSeleccionados.Grado);
     }
 
-    seleccionarEstadoUnidad(unidad: number) {
-        if (unidad) {
-            let estado: boolean = this.unidades.find(x => x.id == unidad)?.estado;
-            this.filtrosSeleccionados.EstadoUnidad = estado;
+    seleccionarEstadoUnidadYUnidadN(unidadId: number) {
+        if (unidadId) {
+            const unidad = this.unidades.find(x => x.id === unidadId);
+            if (unidad) {
+                const { estado: unidadEstado, nUnidad: unidadNumero, nombre: unidadNombre }: { estado: boolean, nUnidad: number, nombre: string } = unidad;
+                if (unidadEstado) this.filtrosSeleccionados.EstadoUnidad = unidadEstado;
+                if (unidadNombre) this.filtrosSeleccionados.UnidadNombre = unidadNombre;
+                if (unidadNumero) this.filtrosSeleccionados.UnidadNumero = unidadNumero;
+            }
         }
+    }
 
+    seleccionarSeccionN(seccionId: number) {
+        if (seccionId) {
+            const grado = this.sections.find(x => x.id === seccionId);
+            if (grado) {
+                const { seccion: seccion }: { seccion: string } = grado;
+                if (seccion) this.filtrosSeleccionados.SeccionN = seccion;
+            }
+        }
     }
 
 
@@ -219,7 +233,7 @@ export class ClassroomsComponent implements OnInit {
     changeItemOption(option: ItemOptions) {
         this.itemOption = option;
 
-        this.seleccionarEstadoUnidad(this.filtrosSeleccionados.Unidad);
+        this.seleccionarEstadoUnidadYUnidadN(this.filtrosSeleccionados.Unidad);
         this.modificarAula = this.filtrosSeleccionados.EstadoUnidad;
 
         this.cargarValoresInicialesHijo = !this.cargarValoresInicialesHijo;
