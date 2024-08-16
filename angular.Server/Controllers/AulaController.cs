@@ -1,8 +1,10 @@
 ﻿using Application.Wrappers;
 using Context;
 using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using System.Security.Claims;
 
 namespace Controllers
 {
@@ -84,5 +86,44 @@ namespace Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("examenEstudiante")]
+        public async Task<ActionResult> PROC_OBTENER_EXAMENES_ESTUDIANTE()
+        {
+            try
+            {
+                using (var connection = ctx.CreateConnection())
+                {
+                    var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    if (string.IsNullOrEmpty(userIdClaim))
+                    {
+                        return BadRequest("User identifier claim is missing.");
+                    }
+        
+                    int userId;
+                    if (!int.TryParse(userIdClaim, out userId))
+                    {
+                        return BadRequest("Invalid user identifier.");
+                    }
+        
+                    var examenesEstudiante = await connection.QueryAsync(
+                        "PROC_OBTENER_EXAMENES_ESTUDIANTE", 
+                        new { v_userId = userId }, 
+                        commandType: CommandType.StoredProcedure
+                    );
+
+                    return Ok(new Response<dynamic> 
+                    { 
+                        Message = "Listado Correctamente", 
+                        Succeeded = true, 
+                        Data = examenesEstudiante
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

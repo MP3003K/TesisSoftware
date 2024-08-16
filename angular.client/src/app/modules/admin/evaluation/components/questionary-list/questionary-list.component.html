@@ -35,39 +35,32 @@
 
     <div class="flex-auto p-6 sm:p-10">
         <div class="grid grid-cols-4 gap-4">
-            @for(questionary of questionnaires; track questionary){
+            @for(examen of examenes; track examenes){
             <mat-card class="p-3">
                 <mat-card-content>
+                <div class="mb-3">
+                    <b>Inicio: </b>{{ '01/08/2024' | date : "dd/MM/yyyy" }}
+                </div>
                     <div class="mb-3">
-                        <b>Inicio: </b>
-                        {{ questionary.fechaInicio | date : "dd/MM/yyyy" }}
-                    </div>
-                    <div class="mb-3">
-                        <b>Fin: </b>{{ questionary.fechaFin | date : "dd/MM/yyyy" }}
+                        <b>Fin: </b>{{ '01/12/2024' | date : "dd/MM/yyyy" }}
                     </div>
                     <div>
                         <b>Estado: </b>
                         <span class="px-2 py-1 rounded shadow text-base font-bold" [ngClass]="
-                                questionary.estado == 'N'
-                                    ? 'bg-gray-200 text-gray-800'
-                                    : questionary.estado == 'P'
-                                    ? 'bg-orange-200 text-orange-800'
-                                    : 'bg-green-200 text-green-800'
-                            ">
+                                examen.validacion == false ? 'bg-gray-200 text-gray-800':
+                                'bg-green-200 text-green-800'">
                             {{
-                            questionary.estado == "N"
+                            examen.validacion == false
                             ? "Sin Comenzar"
-                            : questionary.estado == "P"
-                            ? 'En Proceso'
                             : "Completada"
                             }}
                         </span>
                     </div>
                 </mat-card-content>
-                @if( questionary.estado == "N" || questionary.estado == "P"){
+                @if( examen.validacion == false ) {
 
                 <mat-card-actions>
-                    <button mat-fab extended (click)="goToQuestionary(questionary.id)" class="mt-2">
+                    <button mat-fab extended (click)="goToQuestionary(examen.esemocional)" class="mt-2">
                         Realizar
                     </button>
                 </mat-card-actions>}

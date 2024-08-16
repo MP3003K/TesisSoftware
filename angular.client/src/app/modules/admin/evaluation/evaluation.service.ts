@@ -98,4 +98,8 @@ export class EvaluationService {
             {}
         );
     }
+
+    obtenerExamenesEstudiante(){
+        return this.http.get<any>(`${environment.baseURL}/Aula/examenEstudiante`);
+    }
 }

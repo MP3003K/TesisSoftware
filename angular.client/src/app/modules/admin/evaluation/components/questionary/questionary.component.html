@@ -29,16 +29,17 @@
     </div>
 
     <div class="flex-auto p-6 sm:p-10">
-        <mat-card *ngIf="endedTest">
-            <mat-card-content class="flex items-center justify-center">
-                <mat-icon svgIcon="check"></mat-icon>
-                <span>El Formulario se ha realizado exitosamente</span>
-            </mat-card-content>
-        </mat-card>
+
         <mat-card *ngIf="errorValidador">
             <mat-card-content class="flex items-center justify-center">
                 <mat-icon svgIcon="report"></mat-icon>
                 <span>{{ errorTexto }}</span>
+            </mat-card-content>
+        </mat-card>
+                <mat-card *ngIf="endedTest">
+            <mat-card-content class="flex items-center justify-center">
+                <mat-icon svgIcon="check"></mat-icon>
+                <span>El Formulario se ha realizado exitosamente</span>
             </mat-card-content>
         </mat-card>
         <div *ngIf="!endedTest">
@@ -61,13 +62,13 @@
                 <mat-card>
                     <mat-card-content class="grid gap-4">
                         <div class="font-medium">
-                            {{ question.order }}. {{ question.text }}
+                            {{ question.order }}. {{ question.pregunta }}
                         </div>
                         <div>
-                            <mat-radio-group (change)="
-                                    radioChange($event.value, question.id)
-                                " aria-label="Select an option" class="flex flex-col" [(ngModel)]="question.answer">
-                                @for(option of itemOptions; track option){
+                            <mat-radio-group (change)="radioChange($event.value, question.id)"
+                                aria-label="Select an option" class="flex flex-col" [(ngModel)]="question.respuesta">
+                                @for(option of question.esEmocional ? itemOptionsEmocional : itemOptionsSocial; track
+                                option){
                                 <mat-radio-button [value]="option.value">
                                     {{ option.name }}
                                 </mat-radio-button>
@@ -106,9 +107,9 @@
                         Siguiente
                     </button>
                     }
-                    @if(questions.length == countCompletedAnswers){
-                    <button mat-flat-button color="primary" [disabled]="questions.length != countCompletedAnswers"
-                        (click)="submitForm()">
+                    @if(preguntasPsicologicas.length == countCompletedAnswers){
+                    <button mat-flat-button color="primary"
+                        [disabled]="preguntasPsicologicas.length != countCompletedAnswers" (click)="submitForm()">
                         Enviar
                     </button>
                     }
@@ -124,7 +125,7 @@
         <div class="flex justify-between items-center mb-4">
             <div class="flex items-center space-x-4">
                 <div class="text-left px-4 py-2 bg-gray-800 text-white text-xl rounded">
-                    {{ currentQuestionIndex + 1 }}/{{ questions.length }}
+                    {{ currentQuestionIndex + 1 }}/{{ preguntasPsicologicas.length }}
                 </div>
                 <div class="text-left px-4 py-2 bg-gray-800 text-white text-xl rounded"
                     (click)="toggleFullScreen(); isConcentrationModeActive = false">
@@ -136,14 +137,14 @@
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
                     Anterior
                 </button>
-                <button *ngIf="currentQuestionIndex < questions.length - 1" (click)="nextQuestion()"
-                    [disabled]="!questions[currentQuestionIndex].answer"
+                <button *ngIf="currentQuestionIndex < preguntasPsicologicas.length - 1" (click)="nextQuestion()"
+                    [disabled]="!preguntasPsicologicas[currentQuestionIndex].respuesta"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
                     Siguiente
                 </button>
-                <button *ngIf="currentQuestionIndex === questions.length - 1"
+                <button *ngIf="currentQuestionIndex === preguntasPsicologicas.length - 1"
                     (click)="submitForm(); isConcentrationModeActive = false;toggleFullScreen()"
-                    [disabled]="!questions[currentQuestionIndex].answer"
+                    [disabled]="!preguntasPsicologicas[currentQuestionIndex].respuesta"
                     class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
                     Finalizar Prueba Psicologica
                 </button>
@@ -154,20 +155,22 @@
             <div
                 class="flex items-center justify-center min-h-32 text-3xl sm:text-5xl md:text-6xl font-semibold mb-4 sm:mb-6 md:mb-8 text-center">
                 <p>
-                    {{ questions[currentQuestionIndex].text }}
+                    {{ preguntasPsicologicas[currentQuestionIndex].pregunta }}
                 </p>
             </div>
             <div class="mt-5 sm:mt-8 md:mt-10 flex flex-wrap justify-center gap-6 sm:gap-8 w-full h-auto">
-                <div *ngFor="let option of itemOptions" class="flex-1 min-w-0">
+                <div *ngFor="let option of preguntasPsicologicas[currentQuestionIndex].esEmocional ? itemOptionsEmocional : itemOptionsSocial"
+                    class="flex-1 min-w-0">
                     <button
-                        [ngClass]="{'bg-blue-500 text-white': questions[currentQuestionIndex].answer === option.value, 'border': questions[currentQuestionIndex].answer !== option.value}"
-                        (click)="questions[currentQuestionIndex].answer = option.value"
+                        [ngClass]="{'bg-blue-500 text-white': preguntasPsicologicas[currentQuestionIndex].respuesta === +option.value, 'border': preguntasPsicologicas[currentQuestionIndex].respuesta !== +option.value}"
+                        (click)="preguntasPsicologicas[currentQuestionIndex].respuesta = +option.value"
                         class="w-full h-40 flex items-center justify-center p-3 sm:p-4 md:p-6 rounded-lg cursor-pointer transition-colors duration-300 text-4xl">
                         {{ option.name }}
                     </button>
                 </div>
             </div>
         </div>
+
     </div>
 </section>
 }

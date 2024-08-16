@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { StudentService } from '../../student.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe, JsonPipe, NgClass } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { EvaluationService } from '../../evaluation.service';
 
 @Component({
     selector: 'app-questionary-list',
@@ -23,18 +23,25 @@ import { MatButtonModule } from '@angular/material/button';
 export class QuestionaryListComponent implements OnInit {
     questionnaires: any = [];
     constructor(
-        private studentService: StudentService,
+        private evaluationService: EvaluationService,
         private router: Router
-    ) {}
+    ) { }
+    examenes: {
+        nombreCompleto: string;
+        esemocional: boolean;
+        validacion: boolean;
+        respuesta: string;
+    }[] = [];
     ngOnInit(): void {
-        this.studentService.getStudentEvaluations().subscribe((response) => {
-            if (response.succeeded) {
-                this.questionnaires = response.data;
+        this.evaluationService.obtenerExamenesEstudiante().subscribe((response) => {
+            if (response.succeeded && response!.data) {
+                this.examenes = response.data;
+                console.log(this.examenes[0].nombreCompleto);
             }
         });
     }
-
-    goToQuestionary(id: number) {
-        this.router.navigate(['evaluation', id]);
+    goToQuestionary(esemocional: boolean) {
+        let numeroRuta :Number = esemocional ? 1 : 0;
+        this.router.navigate(['evaluation', numeroRuta]);
     }
 }
