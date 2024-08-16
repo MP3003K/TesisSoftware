@@ -71,7 +71,7 @@
 
                                             <mat-radio-group [formControlName]="'respuesta'"
                                                 aria-label="Select an option" class="flex flex-col"
-                                                (ngModelChange)="radioChange($event.value, question.get('id').value)">
+                                                (ngModelChange)="radioChange(question.get('respuesta').value, question.get('id').value)">
                                                 <mat-radio-button *ngFor="let option of itemOptionsEmocional"
                                                     [value]="option.value">
                                                     {{ option.name }}
@@ -117,65 +117,143 @@
                 }
             </div>
         </section>
-    }
+        }
 
 
     </div>
 </div>
 }
-<!-- @else {
-<section class="fixed top-0 left-0 z-[100] w-full h-full bg-black">
-    <div id="individual" class="flex flex-col w-full h-full bg-gray-100 p-10">
+@else {
+<section class="fixed inset-0 z-50 w-full h-full bg-black">
+    <div id="individual" class="flex flex-col w-full h-full bg-gray-100 p-6 sm:p-8 md:p-10">
         <div class="flex justify-between items-center mb-4">
             <div class="flex items-center space-x-4">
-                <div class="text-left px-4 py-2 bg-gray-800 text-white text-xl rounded">
-                    {{ currentQuestionIndex + 1 }}/{{ preguntasPsicologicas.length }}
+                <div class="px-4 py-2 bg-gray-800 text-white text-lg md:text-xl rounded">
+                    {{ currentQuestionIndex + 1 }}/33
                 </div>
-                <div class="text-left px-4 py-2 bg-gray-800 text-white text-xl rounded"
+                <div class="px-4 py-2 bg-gray-800 text-white text-lg md:text-xl rounded cursor-pointer"
                     (click)="toggleFullScreen(); isConcentrationModeActive = false">
                     Salir del Modo Concentración
                 </div>
             </div>
-            <div class="text-right space-x-4">
+            <div class="space-x-4">
                 <button (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0"
-                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
+                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 sm:px-6 text-lg md:text-xl rounded disabled:opacity-50">
                     Anterior
                 </button>
                 <button *ngIf="currentQuestionIndex < preguntasPsicologicas.length - 1" (click)="nextQuestion()"
-                    [disabled]="!preguntasPsicologicas[currentQuestionIndex].respuesta"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
+                    [disabled]="!esValidoLaRespuesta(currentQuestionIndex)"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 sm:px-6 text-lg md:text-xl rounded disabled:opacity-50">
                     Siguiente
                 </button>
                 <button *ngIf="currentQuestionIndex === preguntasPsicologicas.length - 1"
-                    (click)="submitForm(); isConcentrationModeActive = false;toggleFullScreen()"
+                    (click)="submitForm(); isConcentrationModeActive = false; toggleFullScreen()"
                     [disabled]="!preguntasPsicologicas[currentQuestionIndex].respuesta"
-                    class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
+                    class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 sm:px-6 text-lg md:text-xl rounded disabled:opacity-50">
                     Finalizar Prueba Psicologica
                 </button>
             </div>
         </div>
 
-        <section
-            class="flex-grow flex flex-col items-center justify-center bg-white text-black rounded-lg shadow-md px-3 sm:px-9 md:px-18 py-7 sm:py-11 md:py-15">
-            <div
-                class="flex items-center justify-center min-h-32 text-3xl sm:text-5xl md:text-6xl font-semibold mb-4 sm:mb-6 md:mb-8 text-center">
-                <p>
-                    {{ preguntasPsicologicas[currentQuestionIndex].pregunta }}
-                </p>
-            </div>
-            <div class="mt-5 sm:mt-8 md:mt-10 flex flex-wrap justify-center gap-6 sm:gap-8 w-full h-auto">
-                <div *ngFor="let option of preguntasPsicologicas[currentQuestionIndex].esEmocional ? itemOptionsEmocional : itemOptionsSocial"
-                    class="flex-1 min-w-0">
-                    <button
-                        [ngClass]="{'bg-blue-500 text-white': preguntasPsicologicas[currentQuestionIndex].respuesta === +option.value, 'border': preguntasPsicologicas[currentQuestionIndex].respuesta !== +option.value}"
-                        (click)="preguntasPsicologicas[currentQuestionIndex].respuesta = +option.value"
-                        class="w-full h-40 flex items-center justify-center p-3 sm:p-4 md:p-6 rounded-lg cursor-pointer transition-colors duration-300 text-4xl">
-                        {{ option.name }}
+    <section class="fixed inset-0 z-50 w-full h-full bg-black">
+        <div id="individual" class="flex flex-col w-full h-full bg-gray-100 p-4 md:p-6 lg:p-8 xl:p-10">
+            <div class="flex justify-between items-center mb-4 flex-wrap space-y-2 sm:space-y-0">
+                <div class="flex items-center space-x-4 w-full sm:w-auto">
+                    <div class="px-3 py-2 bg-gray-800 text-white text-sm sm:text-base lg:text-lg rounded">
+                        {{ currentQuestionIndex + 1 }}/33
+                    </div>
+                    <div class="px-3 py-2 bg-gray-800 text-white text-sm sm:text-base lg:text-lg rounded cursor-pointer"
+                        (click)="toggleFullScreen(); isConcentrationModeActive = false">
+                        Salir del Modo Concentración
+                    </div>
+                </div>
+                <div class="flex space-x-2 sm:space-x-4 w-full sm:w-auto">
+                    <button (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0"
+                        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 sm:px-6 text-base sm:text-lg lg:text-xl rounded disabled:opacity-50">
+                        Anterior
+                    </button>
+                    <button *ngIf="currentQuestionIndex < preguntasPsicologicas.length - 1" (click)="nextQuestion()"
+                        [disabled]="!esValidoLaRespuesta(currentQuestionIndex)"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 sm:px-6 text-base sm:text-lg lg:text-xl rounded disabled:opacity-50">
+                        Siguiente
+                    </button>
+                    <button *ngIf="currentQuestionIndex === preguntasPsicologicas.length - 1"
+                        (click)="submitForm(); isConcentrationModeActive = false; toggleFullScreen()"
+                        [disabled]="!preguntasPsicologicas[currentQuestionIndex].respuesta"
+                        class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 sm:px-6 text-base sm:text-lg lg:text-xl rounded disabled:opacity-50">
+                        Finalizar Prueba Psicologica
                     </button>
                 </div>
             </div>
-        </s>
+
+        <section class="fixed inset-0 z-50 w-full h-full bg-black">
+            <div id="individual" class="flex flex-col w-full h-full bg-gray-100 p-4 sm:p-6 lg:p-8 xl:p-10">
+                <div class="flex justify-between items-center flex-wrap mb-4">
+                    <div class="flex items-center space-x-2 sm:space-x-4 mb-2 sm:mb-0">
+                        <div class="px-2 py-1 bg-gray-800 text-white text-sm sm:text-lg xl:text-xl rounded">
+                            {{ currentQuestionIndex + 1 }}/33
+                        </div>
+                        <div class="px-2 py-1 bg-gray-800 text-white text-sm sm:text-lg xl:text-xl rounded cursor-pointer"
+                            (click)="toggleFullScreen(); isConcentrationModeActive = false">
+                            Salir del Modo Concentración
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 sm:space-x-4">
+                        <button (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0"
+                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 sm:py-2 sm:px-4 lg:py-3 lg:px-6 text-sm sm:text-base xl:text-lg rounded disabled:opacity-50">
+                            Anterior
+                        </button>
+                        <button *ngIf="currentQuestionIndex < preguntasPsicologicas.length - 1" (click)="nextQuestion()"
+                            [disabled]="!esValidoLaRespuesta(currentQuestionIndex)"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 sm:py-2 sm:px-4 lg:py-3 lg:px-6 text-sm sm:text-base xl:text-lg rounded disabled:opacity-50">
+                            Siguiente
+                        </button>
+                        <button *ngIf="currentQuestionIndex === preguntasPsicologicas.length - 1"
+                            (click)="submitForm(); isConcentrationModeActive = false; toggleFullScreen()"
+                            [disabled]="!preguntasPsicologicas[currentQuestionIndex].respuesta"
+                            class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-1 px-2 sm:py-2 sm:px-4 lg:py-3 lg:px-6 text-sm sm:text-base xl:text-lg rounded disabled:opacity-50">
+                            Finalizar Prueba Psicologica
+                        </button>
+                    </div>
+                </div>
+
+                <section
+                    class="flex-grow flex flex-col items-center justify-center bg-white text-black rounded-lg shadow-md p-3 sm:p-5 lg:p-8 xl:p-10">
+                    <form [formGroup]="questionaryForm" class="w-full max-w-5xl">
+                        <div formArrayName="questions" class="w-full">
+                            <div [formGroupName]="currentQuestionIndex">
+                                <div
+                                    class="flex items-center justify-center text-center min-h-24 text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold mb-3 sm:mb-5 md:mb-7">
+                                    <p>
+                                        {{ questions.at(currentQuestionIndex).get('id').value }}.
+                                        {{ questions.at(currentQuestionIndex).get('pregunta').value }}
+                                    </p>
+                                </div>
+                                <div
+                                    class="mt-4 sm:mt-6 md:mt-8 flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-8 w-full">
+                                    <div *ngFor="let option of questions.at(currentQuestionIndex).get('esEmocional').value ? itemOptionsEmocional : itemOptionsSocial"
+                                        class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-1 sm:p-2">
+                                        <button type="button" [ngClass]="{
+                                                    'bg-blue-500 text-white': questions.at(currentQuestionIndex).get('respuesta').value === option.value,
+                                                    'border border-gray-300': questions.at(currentQuestionIndex).get('respuesta').value !== option.value
+                                                }"
+                                            (click)="questions.at(currentQuestionIndex).get('respuesta').setValue(option.value)"
+                                            class="w-full h-20 sm:h-24 md:h-28 lg:h-32 xl:h-36 flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 rounded-lg cursor-pointer transition-colors duration-300 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl">
+                                            {{ option.name }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </section>
+
+        </div>
+    </section>
 
     </div>
 </section>
-} -->
+
+}

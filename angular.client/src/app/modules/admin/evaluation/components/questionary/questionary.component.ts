@@ -86,7 +86,7 @@ export class QuestionaryComponent {
             preguntasGuardadas.forEach((preguntaGuardada: { id: number, answer: number }) => {
                 const pregunta = this.preguntasPsicologicas.find(x => x.id === preguntaGuardada.id);
                 if (pregunta && pregunta.respuesta && preguntaGuardada.answer) {
-                    pregunta.respuesta = ''+preguntaGuardada.answer;
+                    pregunta.respuesta = '' + preguntaGuardada.answer;
                 }
             });
         } catch (error) {
@@ -106,6 +106,13 @@ export class QuestionaryComponent {
                 esEmocional: [question.esEmocional]
             }));
         });
+    }
+
+    esValidoLaRespuesta(index: number): boolean {
+        let respuesta = Number(this.questions.at(index).get('respuesta').value);
+
+
+        return respuesta && isFinite(respuesta);
     }
 
     onSubmit(): void {
@@ -134,8 +141,8 @@ export class QuestionaryComponent {
     }
 
     radioChange(value: any, questionId: number) {
-        const parsedValue = typeof value === 'string' && !isNaN(Number(value)) ? Number(value) : value;
-        this.db.updateQuestion(this.estudianteId, questionId, parsedValue);
+        console.log(value, questionId);
+        this.db.updateQuestion(this.estudianteId, questionId, value);
     }
 
     filterQuestions() {
