@@ -29,21 +29,18 @@
     </div>
 
     <div class="flex-auto p-6 sm:p-10">
-
-        <mat-card *ngIf="errorValidador">
-            <mat-card-content class="flex items-center justify-center">
-                <mat-icon svgIcon="report"></mat-icon>
-                <span>{{ errorTexto }}</span>
-            </mat-card-content>
-        </mat-card>
-        <mat-card *ngIf="endedTest">
-            <mat-card-content class="flex items-center justify-center">
-                <mat-icon svgIcon="check"></mat-icon>
-                <span>El Formulario se ha realizado exitosamente</span>
-            </mat-card-content>
-        </mat-card>
-        @if (!endedTest) {
-        <div class="sticky top-0 py-2 px-4 flex justify-between z-10">
+        @if (errorValidador) {
+        <mat-card-content class="flex items-center justify-center">
+            <mat-icon svgIcon="report"></mat-icon>
+            <span>{{ errorTexto }}</span>
+        </mat-card-content>
+        } @else if (endedTest) {
+        <mat-card-content class="flex items-center justify-center">
+            <mat-icon svgIcon="check"></mat-icon>
+            <span>El Formulario se ha realizado exitosamente</span>
+        </mat-card-content>
+        } @else if (!endedTest) {
+        <section class="sticky top-0 py-2 px-4 flex justify-between z-10">
             <div class="flex flex-col gap-2">
                 <div class="h-4 w-52 rounded-full overflow-hidden bg-gray-300/30 shadow">
                     <div class="h-full bg-green-400/90 text-end text-xs text-white" [ngStyle]="{
@@ -56,8 +53,7 @@
             <span class="text-[8px]">
                 Página {{ paginator.pageNumber }} de {{ paginator.pages }}
             </span>
-        </div>
-
+        </section>
 
 
         <section class="p-4 grid gap-4">
@@ -72,8 +68,7 @@
                                             {{ question.get('id').value }}. {{ question.get('pregunta').value }}
                                         </div>
                                         <div *ngIf="question.get('esEmocional').value === true">
-                                            <!-- Opciones emocionales -->
-                                            <div>{{ question.get('respuesta').value }}</div>
+
                                             <mat-radio-group [formControlName]="'respuesta'"
                                                 aria-label="Select an option" class="flex flex-col"
                                                 (ngModelChange)="radioChange($event.value, question.get('id').value)">
@@ -85,18 +80,14 @@
 
                                         </div>
                                         <div *ngIf="question.get('esEmocional').value === false">
-                                            <!-- Opciones sociales -->
-                                            <div>{{ question.get('respuesta').value }}</div>
                                             <mat-radio-group [formControlName]="'respuesta'"
                                                 aria-label="Select an option" class="flex flex-col"
-                                                (change)="radioChange($event.value, question.get('id').value)">
-                                                <mat-radio-button *ngFor="let option of itemOptionsEmocional"
+                                                (ngModelChange)="radioChange($event.value, question.get('id').value)">
+                                                <mat-radio-button *ngFor="let option of itemOptionsSocial"
                                                     [value]="option.value">
                                                     {{ option.name }}
                                                 </mat-radio-button>
                                             </mat-radio-group>
-
-
                                         </div>
                                     </mat-card-content>
                                 </mat-card>
@@ -108,10 +99,7 @@
         </section>
 
 
-
-
-
-        <div class="flex justify-between items-end w-full">
+        <section class="flex justify-between items-end w-full">
             <div class="flex gap-4">
                 <button (click)="getPreviousItem()" [disabled]="paginator.pageNumber == 1" mat-button color="basic">
                     Anterior
@@ -128,8 +116,8 @@
                 </button>
                 }
             </div>
-        </div>
-        }
+        </section>
+    }
 
 
     </div>
@@ -166,7 +154,8 @@
                 </button>
             </div>
         </div>
-        <div
+
+        <section
             class="flex-grow flex flex-col items-center justify-center bg-white text-black rounded-lg shadow-md px-3 sm:px-9 md:px-18 py-7 sm:py-11 md:py-15">
             <div
                 class="flex items-center justify-center min-h-32 text-3xl sm:text-5xl md:text-6xl font-semibold mb-4 sm:mb-6 md:mb-8 text-center">
@@ -185,7 +174,7 @@
                     </button>
                 </div>
             </div>
-        </div>
+        </s>
 
     </div>
 </section>

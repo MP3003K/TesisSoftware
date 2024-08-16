@@ -82,17 +82,13 @@ export class QuestionaryComponent {
     async cargarRespuestasGuardadas() {
         try {
             let preguntasGuardadas = await this.db.getSavedQuestions(this.estudianteId);
-            console.log('preguntasGuardadas', preguntasGuardadas);
 
             preguntasGuardadas.forEach((preguntaGuardada: { id: number, answer: number }) => {
                 const pregunta = this.preguntasPsicologicas.find(x => x.id === preguntaGuardada.id);
-                console.log('pregunta', pregunta);
-                console.log('preguntaGuardada', preguntaGuardada);
                 if (pregunta && pregunta.respuesta && preguntaGuardada.answer) {
                     pregunta.respuesta = ''+preguntaGuardada.answer;
                 }
             });
-            console.log('preguntas', this.preguntasPsicologicas);
         } catch (error) {
             console.error('Error al cargar las respuestas guardadas:', error);
         }
@@ -102,7 +98,6 @@ export class QuestionaryComponent {
     }
 
     loadQuestions(): void {
-        console.log('preguntasPsicologicasfff', this.preguntasPsicologicas);
         this.preguntasPsicologicas.forEach(question => {
             this.questions.push(this.fb.group({
                 id: [question.id],
@@ -118,7 +113,7 @@ export class QuestionaryComponent {
             console.log(this.questionaryForm.value);
             // Lógica para enviar el formulario
         } else {
-            this._snackbar.open('Por favor, responde todas las preguntas.', '', { duration: 2000 });
+            this._snackbar.open('Por favor, responde todas las preguntas.', '', { duration: 2500 });
         }
     }
 
@@ -185,10 +180,9 @@ export class QuestionaryComponent {
             return questionValue.id >= startId && questionValue.id <= endId;
         });
 
-        console.log('pregRango', preguntasEnRango);
         const respuestasInvalidas = preguntasEnRango
             .filter((question: FormGroup) => {
-                const respuesta = question.get('respuesta')?.value;
+                const respuesta = Number(question.get('respuesta')?.value);
                 return !respuesta || !isFinite(respuesta);
             })
             .map((question: FormGroup) => question.get('id')?.value);
