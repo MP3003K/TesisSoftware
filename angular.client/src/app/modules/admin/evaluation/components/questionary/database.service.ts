@@ -9,7 +9,7 @@ export class DatabaseService {
 
     connection(): Promise<IDBDatabase> {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open('questionary', 3);
+            const request = indexedDB.open('respuestasTesis', 3);
             let db: IDBDatabase;
 
             request.onerror = function (event) {
@@ -25,73 +25,81 @@ export class DatabaseService {
             request.onupgradeneeded = function (event) {
                 const target = event.target as IDBOpenDBRequest;
                 db = target.result;
-                db.createObjectStore('questions', {
+                db.createObjectStore('respuestasTesis', {
                     keyPath: 'id',
                 });
                 resolve(db);
             };
         });
     }
+
     start() {
         this.connection();
     }
+
     async getSavedQuestions(formId: number): Promise<any> {
-    const db = await this.connection();
-    const transaction = db.transaction(['questions'], 'readonly');
-    const store = transaction.objectStore('questions');
-
-    return new Promise((resolve, reject) => {
-        const request = store.get(formId);
-        request.onsuccess = function() {
-            const data = request.result;
-            if (data) {
-                // Devuelve las preguntas guardadas
-                resolve(data.questions);
-            } else {
-                // Si no hay preguntas guardadas, devuelve un array vacío
-                resolve([]);
-            }
-        };
-        request.onerror = function() {
-            reject('Error al recuperar las preguntas guardadas');
-        };
-    });
-}
-
-    async saveQuestions(questions: any[] = [], formId: number) {
         const db = await this.connection();
-        db.transaction(['questions'], 'readwrite')
-            .objectStore('questions')
-            .put({ id: formId, questions });
-    }
-    async updateQuestion(formId: number, questionId: number, newAnswer: string) {
-        const db = await this.connection();
-        const transaction = db.transaction(['questions'], 'readwrite');
-        const store = transaction.objectStore('questions');
+        const transaction = db.transaction(['respuestasTesis'], 'readonly');
+        const store = transaction.objectStore('respuestasTesis');
 
-        const request = store.get(formId);
-        request.onsuccess = function() {
-            const data = request.result;
-            if (data) {
-                // Encuentra la pregunta que necesita ser actualizada
-                const question = data.questions.find((q: any) => q.id === questionId);
-                if (question) {
-                    // Actualiza la respuesta de la pregunta
-                    question.answer = newAnswer;
+        return new Promise((resolve, reject) => {
+            const request = store.get(formId);
+            request.onsuccess = function() {
+                const data = request.result;
+                if (data) {
+                    resolve(data.preguntas);
+                } else {
+                    resolve([]);
                 }
-                // Guarda el test psicológico actualizado de nuevo en la base de datos
-                store.put(data);
-            }
-        };
+            };
+            request.onerror = function() {
+                reject('Error al recuperar las preguntas guardadas');
+            };
+        });
     }
+
+
+
+    async saveQuestions(preguntas: any[] = [], formId: number) {
+        const db = await this.connection();
+        db.transaction(['respuestasTesis'], 'readwrite')
+            .objectStore('respuestasTesis')
+            .put({ id: formId, preguntas });
+    }
+
+async updateQuestion(formId: number, questionId: number, newAnswer: string) {
+    const db = await this.connection();
+    const transaction = db.transaction(['respuestasTesis'], 'readwrite');
+    const store = transaction.objectStore('respuestasTesis');
+
+    const request = store.get(formId);
+    request.onsuccess = function() {
+        const data = request.result;
+        if (data) {
+            const question = data.preguntas.find((q: any) => q.id === questionId);
+            if (question) {
+                question.answer = newAnswer;
+            } else {
+                data.preguntas.push({ id: questionId, answer: newAnswer });
+            }
+            store.put(data);
+        } else {
+            // Si no existe el formulario, crearlo con la nueva pregunta
+            const newData = { id: formId, preguntas: [{ id: questionId, answer: newAnswer }] };
+            store.put(newData);
+        }
+    };
+    request.onerror = function() {
+        console.error('Error al actualizar la pregunta');
+    };
+}
 
     async deleteQuestions(formId: number) {
         const db = await this.connection();
-        const transaction = db.transaction(['questions'], 'readwrite');
-        const store = transaction.objectStore('questions');
+        const transaction = db.transaction(['respuestasTesis'], 'readwrite');
+        const store = transaction.objectStore('respuestasTesis');
 
         store.delete(formId);
     }
-
 
 }

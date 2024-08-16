@@ -36,90 +36,106 @@
                 <span>{{ errorTexto }}</span>
             </mat-card-content>
         </mat-card>
-                <mat-card *ngIf="endedTest">
+        <mat-card *ngIf="endedTest">
             <mat-card-content class="flex items-center justify-center">
                 <mat-icon svgIcon="check"></mat-icon>
                 <span>El Formulario se ha realizado exitosamente</span>
             </mat-card-content>
         </mat-card>
-        <div *ngIf="!endedTest">
-            <div class="sticky top-0 py-2 px-4 flex justify-between z-10">
-                <div class="flex flex-col gap-2">
-                    <div class="h-4 w-52 rounded-full overflow-hidden bg-gray-300/30 shadow">
-                        <div class="h-full bg-green-400/90 text-end text-xs text-white" [ngStyle]="{
-                                width: getPValue()
-                            }"></div>
-                    </div>
-                    <span class="text-[8px]">{{ countCompletedAnswers }} de
-                        {{ paginator.length }}</span>
+        @if (!endedTest) {
+        <div class="sticky top-0 py-2 px-4 flex justify-between z-10">
+            <div class="flex flex-col gap-2">
+                <div class="h-4 w-52 rounded-full overflow-hidden bg-gray-300/30 shadow">
+                    <div class="h-full bg-green-400/90 text-end text-xs text-white" [ngStyle]="{
+                                                width: getPValue()
+                                            }"></div>
                 </div>
-                <span class="text-[8px]">
-                    Página {{ paginator.pageNumber }} de {{ paginator.pages }}
-                </span>
+                <span class="text-[8px]">{{ countCompletedAnswers }} de
+                    {{ paginator.length }}</span>
             </div>
-            <div class="p-4 flex flex-col gap-4">
-                @for(question of filterQuestions(); track question){
-                <mat-card>
-                    <mat-card-content class="grid gap-4">
-                        <div class="font-medium">
-                            {{ question.order }}. {{ question.pregunta }}
-                        </div>
-                        <div>
-                            <mat-radio-group (change)="radioChange($event.value, question.id)"
-                                aria-label="Select an option" class="flex flex-col" [(ngModel)]="question.respuesta">
-                                @for(option of question.esEmocional ? itemOptionsEmocional : itemOptionsSocial; track
-                                option){
-                                <mat-radio-button [value]="option.value">
-                                    {{ option.name }}
-                                </mat-radio-button>
-                                }
-                            </mat-radio-group>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-                } @empty { @for(item of [1, 2, 3]; track item){
-                <mat-card>
-                    <mat-card-content class="grid gap-4">
-                        <div class="flex flex-col gap-1">
-                            <div class="bg-gray-200 h-4 w-full animate-pulse"></div>
-                            <div class="bg-gray-200 h-4 w-24 animate-pulse"></div>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            @for(ii of [1, 2, 3, 4]; track ii){
-                            <div class="flex items-center gap-4">
-                                <div class="rounded-full w-6 h-6 bg-gray-200 animate-pulse"></div>
-                                <div class="h-4 w-36 bg-gray-200 animate-pulse"></div>
-                            </div>
-                            }
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-                } }
-            </div>
+            <span class="text-[8px]">
+                Página {{ paginator.pageNumber }} de {{ paginator.pages }}
+            </span>
+        </div>
 
-            <div class="flex justify-between items-end w-full">
-                <div class="flex gap-4">
-                    <button (click)="getPreviousItem()" [disabled]="paginator.pageNumber == 1" mat-button color="basic">
-                        Anterior
-                    </button>
-                    @if( paginator.pageNumber != paginator.pages ){
-                    <button mat-stroked-button color="primary" (click)="getNextItem()">
-                        Siguiente
-                    </button>
-                    }
-                    @if(preguntasPsicologicas.length == countCompletedAnswers){
-                    <button mat-flat-button color="primary"
-                        [disabled]="preguntasPsicologicas.length != countCompletedAnswers" (click)="submitForm()">
-                        Enviar
-                    </button>
-                    }
+
+
+        <section class="p-4 grid gap-4">
+            <form [formGroup]="questionaryForm">
+                <div formArrayName="questions" class="grid gap-4">
+                    <ng-container *ngFor="let question of questions.controls; let i = index">
+                        <ng-container *ngIf="i >= (paginator.pageNumber * 10) - 10 && i < paginator.pageNumber * 10">
+                            <div [formGroupName]="i">
+                                <mat-card>
+                                    <mat-card-content class="grid gap-4">
+                                        <div class="font-medium">
+                                            {{ question.get('id').value }}. {{ question.get('pregunta').value }}
+                                        </div>
+                                        <div *ngIf="question.get('esEmocional').value === true">
+                                            <!-- Opciones emocionales -->
+                                            <div>{{ question.get('respuesta').value }}</div>
+                                            <mat-radio-group [formControlName]="'respuesta'"
+                                                aria-label="Select an option" class="flex flex-col"
+                                                (ngModelChange)="radioChange($event.value, question.get('id').value)">
+                                                <mat-radio-button *ngFor="let option of itemOptionsEmocional"
+                                                    [value]="option.value">
+                                                    {{ option.name }}
+                                                </mat-radio-button>
+                                            </mat-radio-group>
+
+                                        </div>
+                                        <div *ngIf="question.get('esEmocional').value === false">
+                                            <!-- Opciones sociales -->
+                                            <div>{{ question.get('respuesta').value }}</div>
+                                            <mat-radio-group [formControlName]="'respuesta'"
+                                                aria-label="Select an option" class="flex flex-col"
+                                                (change)="radioChange($event.value, question.get('id').value)">
+                                                <mat-radio-button *ngFor="let option of itemOptionsEmocional"
+                                                    [value]="option.value">
+                                                    {{ option.name }}
+                                                </mat-radio-button>
+                                            </mat-radio-group>
+
+
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+                        </ng-container>
+                    </ng-container>
                 </div>
+            </form>
+        </section>
+
+
+
+
+
+        <div class="flex justify-between items-end w-full">
+            <div class="flex gap-4">
+                <button (click)="getPreviousItem()" [disabled]="paginator.pageNumber == 1" mat-button color="basic">
+                    Anterior
+                </button>
+                @if( paginator.pageNumber != paginator.pages ){
+                <button mat-stroked-button color="primary" (click)="getNextItem()">
+                    Siguiente
+                </button>
+                }
+                @if(preguntasPsicologicas.length == countCompletedAnswers){
+                <button mat-flat-button color="primary"
+                    [disabled]="preguntasPsicologicas.length != countCompletedAnswers" (click)="submitForm()">
+                    Enviar
+                </button>
+                }
             </div>
         </div>
+        }
+
+
     </div>
 </div>
 }
-@else {
+<!-- @else {
 <section class="fixed top-0 left-0 z-[100] w-full h-full bg-black">
     <div id="individual" class="flex flex-col w-full h-full bg-gray-100 p-10">
         <div class="flex justify-between items-center mb-4">
@@ -173,4 +189,4 @@
 
     </div>
 </section>
-}
+} -->
