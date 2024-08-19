@@ -74,8 +74,6 @@ export class QuestionaryComponent {
                 this.errorTexto = error;
             }
         }
-        this.toggleFullScreen();
-         this.isConcentrationModeActive = true
     }
 
     async cargarRespuestasGuardadas() {
@@ -240,38 +238,32 @@ export class QuestionaryComponent {
             this.currentQuestionIndex--;
         }
     }
-    requestFullScreen = (element: any) => {
-        if (element.requestFullscreen) {
-            element.requestFullscreen();
-        } else if (element.mozRequestFullScreen) { // Firefox
-            element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) { // Chrome, Safari & Opera
-            element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) { // IE/Edge
-            element.msRequestFullscreen();
-        }
-    };
-    exitFullScreen = (document: any) => {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) { // Firefox
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { // Chrome, Safari & Opera
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { // IE/Edge
-            document.msExitFullscreen();
-        }
-    };
-    toggleFullScreen() {
-        const docEl = document.documentElement;
-
-        // Verifica si el documento ya está en modo pantalla completa
-        if (!document.fullscreenElement) {
-            this.requestFullScreen(docEl);
-        } else {
-            this.exitFullScreen(document);
-        }
+requestFullScreen = () => {
+    const element = document.documentElement as any;
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) { // Firefox
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) { // Chrome, Safari & Opera
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) { // IE/Edge
+        element.msRequestFullscreen();
     }
+};
+
+exitFullScreen = () => {
+    const doc = document as any;
+    if (doc.exitFullscreen) {
+        doc.exitFullscreen();
+    } else if (doc.mozCancelFullScreen) { // Firefox
+        doc.mozCancelFullScreen();
+    } else if (doc.webkitExitFullscreen) { // Chrome, Safari & Opera
+        doc.webkitExitFullscreen();
+    } else if (doc.msExitFullscreen) { // IE/Edge
+        doc.msExitFullscreen();
+    }
+};
+
     // #endregion
 
 
