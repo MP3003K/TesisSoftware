@@ -21,9 +21,9 @@
                     <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
                         Realizar Evaluación Psicologica
                     </h2>
-                   @if(nombreEstudiante){
-                       <p class="pt-2 text-sm">{{nombreEstudiante}}</p>
-                   }
+                    @if(nombreEstudiante){
+                    <p class="pt-2 text-sm">{{nombreEstudiante}}</p>
+                    }
                 </div>
                 <button mat-stroked-button (click)="toggleFullScreen(); isConcentrationModeActive = true">
                     Modo Concentración
@@ -75,8 +75,8 @@
                                             <mat-radio-group [formControlName]="'respuesta'"
                                                 aria-label="Select an option" class="flex flex-col"
                                                 (change)="radioChange(question)">
-                                                <mat-radio-button class="w-auto p-2" *ngFor="let option of itemOptionsEmocional"
-                                                    [value]="option.value">
+                                                <mat-radio-button class="w-auto p-2"
+                                                    *ngFor="let option of itemOptionsEmocional" [value]="option.value">
                                                     {{ option.name }}
                                                 </mat-radio-button>
                                             </mat-radio-group>
@@ -164,8 +164,8 @@
                         </div>
 
                         <section
-                            class="flex-grow flex flex-col items-center justify-center bg-white text-black rounded-lg shadow-md p-2 sm:p-4 lg:p-6 xl:p-8">
-                            <form [formGroup]="questionaryForm" class="w-full max-w-5xl">
+                            class="flex-grow flex flex-col items-center justify-center bg-white text-black rounded-lg shadow-md p-3 sm sm:p-4 lg:p-6 xl:p-8">
+                            <form [formGroup]="questionaryForm" class="w-full max-w-7xl">
                                 <div formArrayName="questions" class="w-full">
                                     <div [formGroupName]="currentQuestionIndex">
                                         <div
