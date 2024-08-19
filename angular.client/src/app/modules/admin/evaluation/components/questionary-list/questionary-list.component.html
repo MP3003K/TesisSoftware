@@ -4,66 +4,63 @@
         class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
         <div class="flex-1 min-w-0">
             <!-- Breadcrumbs -->
-            <div>
-                <div class="hidden sm:flex flex-wrap items-center font-medium">
-                    <div>
-                        <a class="whitespace-nowrap text-primary-500">Dashboard</a>
-                    </div>
 
-                    <div class="flex items-center ml-1 whitespace-nowrap">
-                        <mat-icon class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
-                        <span class="ml-1 text-secondary">Evaluación Psicológica</span>
-                    </div>
-                </div>
-                <div class="flex sm:hidden">
-                    <a class="inline-flex items-center -ml-1.5 text-secondary font-medium" [routerLink]="'./..'">
-                        <mat-icon class="icon-size-5 text-secondary"
-                            [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
-                        <span class="ml-1">Regresar</span>
-                    </a>
-                </div>
-            </div>
             <!-- Title -->
             <div class="mt-2">
-                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    Evaluaciones Psicologica
+                <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    Evaluaciones Psicologicas
                 </h2>
+                    @if (examenes && examenes.length > 0 && examenes[0].nombreCompleto){
+                    <div class="pt-4 text-xl flex items-center">
+                        <b class="mr-2">Nombre del estudiante:</b>
+                        <p>{{ this.examenes[0].nombreCompleto | titlecase}}</p>
+                    </div>
+                    }
             </div>
         </div>
     </div>
 
-    <div class="flex-auto p-6 sm:p-10">
-        <div class="grid grid-cols-4 gap-4">
+    <div class="flex-auto px-6 py-3 sm:p-10">
+        <div class="flex row w-auto max-w-160">
             @for(examen of examenes; track examenes){
-            <mat-card class="p-3">
+            <mat-card class="p-3 w-full mx-auto mr-10">
                 <mat-card-content>
-                <div class="mb-3">
-                    <b>Inicio: </b>{{ '01/08/2024' | date : "dd/MM/yyyy" }}
-                </div>
+                    <div class="flex justify-center items-center mb-3 text-xl">
+                        @if(examen.esemocional == true){
+                        <b class="text-green-800">Prueba de Inteligencia Emocional</b>
+                        } @else if (examen.esemocional == false) {
+                        <b class="text-orange-800">Prueba de Habilidades Sociales</b>
+                        } @else {
+                        <b class="text-red-500">Tipo de examen no registrado</b>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <b>Inicio: </b>{{ '01/08/2024' | date : "dd/MM/yyyy" }}
+                    </div>
                     <div class="mb-3">
                         <b>Fin: </b>{{ '01/12/2024' | date : "dd/MM/yyyy" }}
                     </div>
                     <div>
-                        <b>Estado: </b>
+                        <b class="pr-2">Estado: </b>
                         <span class="px-2 py-1 rounded shadow text-base font-bold" [ngClass]="
-                                examen.validacion == false ? 'bg-gray-200 text-gray-800':
-                                'bg-green-200 text-green-800'">
+                            examen.validacion == false ? 'bg-gray-200 text-gray-800':
+                            'bg-green-200 text-green-800'">
                             {{
                             examen.validacion == false
                             ? "Sin Comenzar"
-                            : "Completada"
+                            : "Completado"
                             }}
                         </span>
                     </div>
                 </mat-card-content>
-                @if( examen.validacion == false ) {
-
-                <mat-card-actions>
-                    <button mat-fab extended (click)="goToQuestionary(examen.esemocional)" class="mt-2">
-                        Realizar
+                @if(examen.validacion == false){
+                <mat-card-actions class="mt-2 flex justify-center">
+                    <button mat-fab extended (click)="goToQuestionary(examen.esemocional)"
+                        class="mt-2 bg-[#4f46e5] opacity-80 hover:bg-[#4338ca]  hover:opacity-100 text-white font-bold py-2 px-4 rounded shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                        Iniciar Evaluación Psicológica
                     </button>
-                </mat-card-actions>}
+                </mat-card-actions>
+                }
             </mat-card>
             } @empty {
             <mat-card class="col-span-4">

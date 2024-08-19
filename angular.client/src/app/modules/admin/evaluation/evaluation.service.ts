@@ -92,6 +92,12 @@ export class EvaluationService {
             }
         );
     }
+
+    registrarRespuestaEstudiante(params: {esEmocional: boolean, respuesta: string}): Observable<any> {
+        return this.http.post<any>(`${environment.baseURL}/Persona/registrarExamenEstudiante`, params);
+    }
+
+
     updateTestState(evaluationId: number) {
         return this.http.put<any>(
             `${environment.baseURL}/respuestasPsicologicas/ActualizarEstadoEvaPsiEst/${evaluationId}`,

@@ -6,5 +6,22 @@
                 <mat-card-title class="text-2xl font-bold">¡Bienvenido/a {{ user.name }}!</mat-card-title>
             </mat-card-content>
         </mat-card>
+
+        <!-- Nueva tarjeta para Realizar Evaluación Psicológica -->
+        <mat-card class="mt-6 w-auto max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="mx-auto">
+                <img class="object-cover" style="width: 250px; aspect-ratio: 1/1;"
+                    src="assets/images/ui/otros/consulta_psicologica.png" alt="Realizar Evaluación Psicológica">
+            </div>
+            <mat-card-content class="mx-auto mb-5 px-5">
+                <mat-card-title class="text-2xl font-bold text-gray-800">Evaluación Psicológica</mat-card-title>
+                <div class="flex justify-center mt-6">
+                    <button mat-raised-button color="primary"
+                        class="px-6 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-500 focus:outline-none focus:bg-blue-700"
+                        (click)="navigateToEvaluation()">Comenzar</button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
     </div>
 </div>

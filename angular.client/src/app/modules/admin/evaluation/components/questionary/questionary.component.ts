@@ -66,10 +66,7 @@ export class QuestionaryComponent {
 
             try {
                 const examenHabilitado = await this.sePuedeRealizarExamen();
-                if (!examenHabilitado) {
-                    this.endedTest = true;
-                    return;
-                }
+                if (!examenHabilitado) return;
                 await this.cargarRespuestasGuardadas();
                 this.loadQuestions();
             } catch (error) {
@@ -77,15 +74,20 @@ export class QuestionaryComponent {
                 this.errorTexto = error;
             }
         }
+        this.toggleFullScreen();
+         this.isConcentrationModeActive = true
     }
 
     async cargarRespuestasGuardadas() {
         try {
-            let preguntasGuardadas = await this.db.getSavedQuestions(this.estudianteId);
+            let localStorage = await this.db.getSavedQuestions(this.estudianteId);
+            let preguntasGuardadas = localStorage.preguntas;
 
-            preguntasGuardadas.forEach((preguntaGuardada: { id: number, answer: number }) => {
-                const pregunta = this.preguntasPsicologicas.find(x => x.id === preguntaGuardada.id);
-                if (pregunta && pregunta.respuesta && preguntaGuardada.answer) {
+            if(preguntasGuardadas == undefined || preguntasGuardadas.length === 0) return;
+
+            preguntasGuardadas.forEach((preguntaGuardada: { id: number, esEmocional: boolean, answer: string }) => {
+                let pregunta = this.preguntasPsicologicas.find(x => x.id === preguntaGuardada.id);
+                if (pregunta && pregunta.respuesta && preguntaGuardada.answer && this.esEmocional === preguntaGuardada.esEmocional) {
                     pregunta.respuesta = '' + preguntaGuardada.answer;
                 }
             });
@@ -110,18 +112,34 @@ export class QuestionaryComponent {
 
     esValidoLaRespuesta(index: number): boolean {
         let respuesta = Number(this.questions.at(index).get('respuesta').value);
-
-
         return respuesta && isFinite(respuesta);
     }
 
     onSubmit(): void {
-        if (this.questionaryForm.valid) {
-            console.log(this.questionaryForm.value);
-            // Lógica para enviar el formulario
-        } else {
-            this._snackbar.open('Por favor, responde todas las preguntas.', '', { duration: 2500 });
-        }
+        let listaDeRespuestas: string = JSON.stringify(this.obtenerRespuestasDelFormulario());
+        if(!listaDeRespuestas) return;
+        this.evaluationService.registrarRespuestaEstudiante({ esEmocional: this.esEmocional, respuesta: listaDeRespuestas })
+            .subscribe({
+                next: async () => {
+                    await this.sePuedeRealizarExamen();
+                    this.db.eliminarRespuestasGuardadas(this.estudianteId, this.esEmocional);
+                    this._snackbar.open('Respuestas registradas correctamente', '', { duration: 5000 });
+                    this.router.navigate(['/evaluation']); // Redirigir a la nueva ruta
+                },
+                error: (err) => {
+                    console.error('Error al registrar respuestas:', err);
+                    this._snackbar.open('Error al registrar respuestas', '', { duration: 2500 });
+                }
+            });
+    }
+
+    obtenerRespuestasDelFormulario(): { pregunta: number, respuesta: number }[] {
+        let respuestas = this.questions.controls.map((question: AbstractControl) => {
+            let _pregunta = Number(question.value.id);
+            let _respuesta = Number(question.value.respuesta);
+            return { pregunta: _pregunta, respuesta: _respuesta };
+        });
+        return respuestas;
     }
 
     trackByQuestion(index: number, question: any): number {
@@ -140,9 +158,10 @@ export class QuestionaryComponent {
         this.router.navigate(['../../login']);
     }
 
-    radioChange(value: any, questionId: number) {
-        console.log(value, questionId);
-        this.db.updateQuestion(this.estudianteId, questionId, value);
+    radioChange(pregunta: any) {
+        let newAnswer = '' + pregunta.value.respuesta;
+        let questionId = pregunta.value.id;
+        this.db.updateQuestion(this.estudianteId, this.esEmocional, questionId, newAnswer);
     }
 
     filterQuestions() {
@@ -155,7 +174,7 @@ export class QuestionaryComponent {
     getNextItem() {
         const startId = (this.paginator.pageNumber - 1) * 10 + 1;
         const endId = this.paginator.pageNumber * 10;
-        const resultado = this.sonValidasLasRespuestas(startId, endId);
+        const resultado = this.validarRespuestas(startId, endId);
         if (!resultado.esValido) {
             let mensaje = 'Preguntas faltantes';
             if (resultado.respuestasInvalidas) {
@@ -175,13 +194,12 @@ export class QuestionaryComponent {
             behavior: 'smooth',
         });
     }
-    submitForm() {
-    }
+
     public getPValue() {
         return `${(this.countCompletedAnswers * 100) / this.paginator.length}%`;
     }
 
-    sonValidasLasRespuestas(startId: number, endId: number): { esValido: boolean, respuestasInvalidas?: string } {
+    validarRespuestas(startId: number, endId: number): { esValido: boolean, respuestasInvalidas?: string } {
         const preguntasEnRango = this.questions.controls.filter((question: AbstractControl) => {
             const questionValue = question.value;
             return questionValue.id >= startId && questionValue.id <= endId;
@@ -190,7 +208,7 @@ export class QuestionaryComponent {
         const respuestasInvalidas = preguntasEnRango
             .filter((question: FormGroup) => {
                 const respuesta = Number(question.get('respuesta')?.value);
-                return !respuesta || !isFinite(respuesta);
+                return !Number.isInteger(respuesta) || respuesta < 1 || respuesta > 5;
             })
             .map((question: FormGroup) => question.get('id')?.value);
 
@@ -264,33 +282,11 @@ export class QuestionaryComponent {
     cargarOpcionesDeRespuesta() {
         this.itemOptionsEmocional = [
             {
-                name: 'Nada de acuerdo',
-                value: '1',
-            },
-            {
-                name: 'Algo de acuerdo',
-                value: '2',
-            },
-            {
-                name: 'Bastante de acuerdo',
-                value: '3',
-            },
-            {
-                name: 'Muy de acuerdo',
-                value: '4',
-            },
-            {
-                name: 'Totalmente de acuerdo',
-                value: '5',
-            },
-        ];
-        this.itemOptionsSocial = [
-            {
                 name: 'Nunca',
                 value: '1',
             },
             {
-                name: 'Rara vez',
+                name: 'Raramente',
                 value: '2',
             },
             {
@@ -302,7 +298,29 @@ export class QuestionaryComponent {
                 value: '4',
             },
             {
-                name: 'Siempre',
+                name: 'Muy frecuentemente',
+                value: '5',
+            },
+        ];
+        this.itemOptionsSocial = [
+            {
+                name: 'Nunca',
+                value: '1',
+            },
+            {
+                name: 'Raramente',
+                value: '2',
+            },
+            {
+                name: 'A veces',
+                value: '3',
+            },
+            {
+                name: 'A menudo',
+                value: '4',
+            },
+            {
+                name: 'Muy frecuentemente',
                 value: '5',
             },
         ];
@@ -327,9 +345,9 @@ export class QuestionaryComponent {
                 { id: 7, pregunta: "A menudo pienso en mis sentimientos", respuesta: '0', esEmocional: true },
                 { id: 8, pregunta: "Presto mucha atención a cómo me siento", respuesta: '0', esEmocional: true },
                 { id: 9, pregunta: "Tengo claros mis sentimientos", respuesta: '0', esEmocional: true },
-                { id: 10, pregunta: "Frecuentemente puedo definir mis sentimientos", respuesta: '0', esEmocional: true },
+                { id: 10, pregunta: "Con frecuencia, soy capaz de identificar mis sentimientos", respuesta: '0', esEmocional: true },
                 { id: 11, pregunta: "Casi siempre sé cómo me siento", respuesta: '0', esEmocional: true },
-                { id: 12, pregunta: "Normalmente conozco mis sentimientos sobre las personas", respuesta: '0', esEmocional: true },
+                { id: 12, pregunta: "Normalmente, soy consciente de los sentimientos que tengo hacia las personas", respuesta: '0', esEmocional: true },
                 { id: 13, pregunta: "A menudo me doy cuenta de mis sentimientos en diferentes situaciones", respuesta: '0', esEmocional: true },
                 { id: 14, pregunta: "Siempre puedo decir cómo me siento", respuesta: '0', esEmocional: true },
                 { id: 15, pregunta: "A veces puedo decir cuáles son mis emociones", respuesta: '0', esEmocional: true },
@@ -337,7 +355,7 @@ export class QuestionaryComponent {
                 { id: 17, pregunta: "Aunque a veces me siento triste, puedo tener una visión optimista", respuesta: '0', esEmocional: true },
                 { id: 18, pregunta: "Aunque me sienta mal, procuro pensar en cosas agradables", respuesta: '0', esEmocional: true },
                 { id: 19, pregunta: "Cuando estoy triste, pienso en todos los placeres de la vida", respuesta: '0', esEmocional: true },
-                { id: 20, pregunta: "Intento tener pensamientos positivos aunque me sienta mal", respuesta: '0', esEmocional: true },
+                { id: 20, pregunta: "Intento tener pensamientos positivos, aunque me sienta mal", respuesta: '0', esEmocional: true },
                 { id: 21, pregunta: "Si doy demasiadas vueltas a las cosas, complicándolas, trato de calmarme", respuesta: '0', esEmocional: true },
                 { id: 22, pregunta: "Me preocupo por tener un buen estado de ánimo", respuesta: '0', esEmocional: true },
                 { id: 23, pregunta: "Tengo mucha energía cuando me siento feliz", respuesta: '0', esEmocional: true },
@@ -347,33 +365,33 @@ export class QuestionaryComponent {
                 { id: 27, pregunta: "Si necesito ayuda la pido de buena manera", respuesta: '0', esEmocional: false },
                 { id: 28, pregunta: "Me es difícil felicitar a la persona que hace algo bueno", respuesta: '0', esEmocional: false },
                 { id: 29, pregunta: "Agradezco cuando alguien me ayuda", respuesta: '0', esEmocional: false },
-                { id: 30, pregunta: "Me acerco a saludar a mi amigo (a) cuando cumple años", respuesta: '0', esEmocional: false },
-                { id: 31, pregunta: "Si un amigo (a) falta a una cita acordada le expreso mi amargura", respuesta: '0', esEmocional: false },
+                { id: 30, pregunta: "Me acerco a saludar a mi amigo (a) cuando cumpleaños", respuesta: '0', esEmocional: false },
+                { id: 31, pregunta: "Si un amigo (a) falta a una salida (cita o reunion) acordada le expreso mi amargura", respuesta: '0', esEmocional: false },
                 { id: 32, pregunta: "Cuando me siento triste prefiero no hablar", respuesta: '0', esEmocional: false },
                 { id: 33, pregunta: "Le digo a mi amigo (a) cuando hace algo que no me gusta", respuesta: '0', esEmocional: false }
             ];
         }
         else if (this.esEmocional == false) { // Habilidades Sociales
             this.preguntasPsicologicas = [
-                { id: 1, pregunta: "Protesto en voz alta cuando alguien se cuela delante de mi", respuesta: '0', esEmocional: false },
+                { id: 1, pregunta: "Me quejo en voz alta si alguien se adelanta frente a mí (por ejemplo, en una fila", respuesta: '0', esEmocional: false },
                 { id: 2, pregunta: "Si una persona mayor me ofende le insulto", respuesta: '0', esEmocional: false },
                 { id: 3, pregunta: "No hago caso cuando mis amigos (as) me presionan para hacer lo que ellos quieren", respuesta: '0', esEmocional: false },
                 { id: 4, pregunta: "Me distraigo fácilmente cuando una persona habla", respuesta: '0', esEmocional: false },
                 { id: 5, pregunta: "Pregunto cada vez que sea necesario para entender lo que me dicen", respuesta: '0', esEmocional: false },
                 { id: 6, pregunta: "Miro a los ojos cuando me hablan", respuesta: '0', esEmocional: false },
-                { id: 7, pregunta: "Cuando hablo no me dejo entender", respuesta: '0', esEmocional: false },
-                { id: 8, pregunta: "Utilizo un tono de voz con gestos apropiados para que escuchen y me entiendan mejor", respuesta: '0', esEmocional: false },
+                { id: 7, pregunta: "Cuando hablo no me se expresar", respuesta: '0', esEmocional: false },
+                { id: 8, pregunta: "Hablo de manera clara y hago gestos para que me escuchen y me entiendan mejor", respuesta: '0', esEmocional: false },
                 { id: 9, pregunta: "Pregunto a las personas si me han entendido", respuesta: '0', esEmocional: false },
                 { id: 10, pregunta: "Hago la cosas sin pensar", respuesta: '0', esEmocional: false },
                 { id: 11, pregunta: "Si estoy tenso (a) trato de relajarme para ordenar mis pensamientos", respuesta: '0', esEmocional: false },
                 { id: 12, pregunta: "Antes de opinar ordeno mis ideas con calma", respuesta: '0', esEmocional: false },
                 { id: 13, pregunta: "Evito hacer cosas que pueden dañar mi salud", respuesta: '0', esEmocional: false },
-                { id: 14, pregunta: "No me siento conforme con mi aspecto físico", respuesta: '0', esEmocional: false },
+                { id: 14, pregunta: "No estoy satisfecho con mi apariencia física o tengo inseguridades al respecto", respuesta: '0', esEmocional: false },
                 { id: 15, pregunta: "Me gusta verme arreglado (a)", respuesta: '0', esEmocional: false },
                 { id: 16, pregunta: "Puedo cambiar mi comportamiento cuando me doy cuenta de que estoy equivocado (a)", respuesta: '0', esEmocional: false },
                 { id: 17, pregunta: "Me da vergüenza reconocer mis errores", respuesta: '0', esEmocional: false },
-                { id: 18, pregunta: "Reconozco fácilmente mi cualidad positiva y negativa", respuesta: '0', esEmocional: false },
-                { id: 19, pregunta: "Puedo hablar sobre mis temores", respuesta: '0', esEmocional: false },
+                { id: 18, pregunta: "Reconozco fácilmente mis cualidades positivas y negativas", respuesta: '0', esEmocional: false },
+                { id: 19, pregunta: "Puedo expresar mis miedos y temores con libertad", respuesta: '0', esEmocional: false },
                 { id: 20, pregunta: "Cuando algo me sale mal no sé como expresar mi cólera", respuesta: '0', esEmocional: false },
                 { id: 21, pregunta: "Comparto mi alegría con mis amigos (as)", respuesta: '0', esEmocional: false },
                 { id: 22, pregunta: "Me esfuerzo para ser mejor estudiante", respuesta: '0', esEmocional: false },
@@ -382,7 +400,7 @@ export class QuestionaryComponent {
                 { id: 25, pregunta: "Pienso en varias soluciones frente a un problema", respuesta: '0', esEmocional: false },
                 { id: 26, pregunta: "Me decido por lo que la mayoría decide", respuesta: '0', esEmocional: false },
                 { id: 27, pregunta: "Pienso en las posibles consecuencias de mis decisiones", respuesta: '0', esEmocional: false },
-                { id: 28, pregunta: "No me agrada hablar del futuro", respuesta: '0', esEmocional: false },
+                { id: 28, pregunta: "No me gusta discutir temas relacionados con el futuro", respuesta: '0', esEmocional: false },
                 { id: 29, pregunta: "Hago planes para mis vacaciones", respuesta: '0', esEmocional: false },
                 { id: 30, pregunta: "Busco apoyo de otras personas para decir algo importante para mi futuro", respuesta: '0', esEmocional: false },
                 { id: 31, pregunta: "Me cuesta decir no", respuesta: '0', esEmocional: false },
@@ -391,6 +409,7 @@ export class QuestionaryComponent {
             ];
         }
     }
+    nombreEstudiante: string = '';
 
     async sePuedeRealizarExamen(): Promise<boolean> {
         return new Promise((resolve, reject) => {
@@ -400,16 +419,24 @@ export class QuestionaryComponent {
                         const filteredData = response.data.filter(x => x.esemocional === this.esEmocional);
                         if (filteredData.length > 0 && typeof filteredData[0].validacion === 'boolean') {
                             this.estudianteId = filteredData[0].estudianteId
+                            this.nombreEstudiante = filteredData[0].nombreCompleto;
                             const examenHabilitado = !filteredData[0].validacion;
+                            if (!examenHabilitado) this.endedTest = true;
                             resolve(examenHabilitado);
                         } else {
+                            this.errorTexto = 'Error al analizar los exámenes del estudiante';
+                            this.errorValidador = true;
                             resolve(false);
                         }
                     } else {
+                        this.errorTexto = 'Error al obtener los exámenes del estudiante';
+                        this.errorValidador = true;
                         resolve(false);
                     }
                 },
                 (error) => {
+                    this.errorTexto = error;
+                    this.errorValidador = true;
                     reject(false);
                 }
             );

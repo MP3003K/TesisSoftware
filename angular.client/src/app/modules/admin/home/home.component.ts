@@ -6,6 +6,7 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { Router } from '@angular/router';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
 import { SharedModule } from 'app/shared/shared.module';
@@ -27,7 +28,8 @@ export class HomeComponent implements OnInit, OnDestroy {
      */
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _service: UserService
+        private _service: UserService,
+        private router: Router
     ) {}
     ngOnInit(): void {
         this._service.user$
@@ -43,5 +45,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
+    }
+    navigateToEvaluation() {
+        this.router.navigate(['/evaluation']); // Cambia la ruta según sea necesario
     }
 }

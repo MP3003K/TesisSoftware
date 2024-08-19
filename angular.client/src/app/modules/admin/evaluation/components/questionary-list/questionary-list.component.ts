@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
-import { DatePipe, JsonPipe, NgClass } from '@angular/common';
+import { CommonModule, DatePipe, JsonPipe, NgClass } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { EvaluationService } from '../../evaluation.service';
 
@@ -11,6 +11,7 @@ import { EvaluationService } from '../../evaluation.service';
     templateUrl: './questionary-list.component.html',
     standalone: true,
     imports: [
+        CommonModule,
         MatCardModule,
         MatIconModule,
         RouterLink,
@@ -36,7 +37,6 @@ export class QuestionaryListComponent implements OnInit {
         this.evaluationService.obtenerExamenesEstudiante().subscribe((response) => {
             if (response.succeeded && response!.data) {
                 this.examenes = response.data;
-                console.log(this.examenes[0].nombreCompleto);
             }
         });
     }

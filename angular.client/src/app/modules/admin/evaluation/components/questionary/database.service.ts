@@ -18,7 +18,6 @@ export class DatabaseService {
 
             request.onsuccess = function (event) {
                 db = request.result;
-                console.log('Base de datos abierta correctamente');
                 resolve(db);
             };
 
@@ -47,7 +46,7 @@ export class DatabaseService {
             request.onsuccess = function() {
                 const data = request.result;
                 if (data) {
-                    resolve(data.preguntas);
+                    resolve(data);
                 } else {
                     resolve([]);
                 }
@@ -67,39 +66,82 @@ export class DatabaseService {
             .put({ id: formId, preguntas });
     }
 
-async updateQuestion(formId: number, questionId: number, newAnswer: string) {
-    const db = await this.connection();
-    const transaction = db.transaction(['respuestasTesis'], 'readwrite');
-    const store = transaction.objectStore('respuestasTesis');
-
-    const request = store.get(formId);
-    request.onsuccess = function() {
-        const data = request.result;
-        if (data) {
-            const question = data.preguntas.find((q: any) => q.id === questionId);
-            if (question) {
-                question.answer = newAnswer;
-            } else {
-                data.preguntas.push({ id: questionId, answer: newAnswer });
-            }
-            store.put(data);
-        } else {
-            // Si no existe el formulario, crearlo con la nueva pregunta
-            const newData = { id: formId, preguntas: [{ id: questionId, answer: newAnswer }] };
-            store.put(newData);
-        }
-    };
-    request.onerror = function() {
-        console.error('Error al actualizar la pregunta');
-    };
-}
-
-    async deleteQuestions(formId: number) {
+    async updateQuestion(formId: number, esEmocional: boolean, questionId: number, newAnswer: string) {
+    try {
         const db = await this.connection();
         const transaction = db.transaction(['respuestasTesis'], 'readwrite');
         const store = transaction.objectStore('respuestasTesis');
 
-        store.delete(formId);
+        const request = store.get(formId);
+        const data = await new Promise<any>((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(new Error('Error al obtener el formulario'));
+        });
+
+        if (data) {
+            const question = data.preguntas.find((q: any) => q.id === questionId && q.esEmocional === esEmocional);
+            if (question) {
+                question.answer = newAnswer;
+                question.esEmocional = esEmocional;
+            } else {
+                data.preguntas.push({ id: questionId, esEmocional: esEmocional, answer: newAnswer });
+            }
+            await new Promise<void>((resolve, reject) => {
+                const updateRequest = store.put(data);
+                updateRequest.onsuccess = () => resolve();
+                updateRequest.onerror = () => reject(new Error('Error al actualizar la pregunta'));
+            });
+        } else {
+            // Si no existe el formulario, crearlo con la nueva pregunta
+            const newData = { id: formId, preguntas: [{ id: questionId, esEmocional: esEmocional,answer: newAnswer }] };
+            await new Promise<void>((resolve, reject) => {
+                const addRequest = store.put(newData);
+                addRequest.onsuccess = () => resolve();
+                addRequest.onerror = () => reject(new Error('Error al crear el formulario'));
+            });
+        }
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+    async eliminarRespuestasGuardadas(formId: number, esEmocional: boolean) {
+        try {
+            const db = await this.connection();
+            const transaction = db.transaction(['respuestasTesis'], 'readwrite');
+            const store = transaction.objectStore('respuestasTesis');
+
+            const request = store.get(formId);
+            const data = await new Promise<any>((resolve, reject) => {
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(new Error('Error al obtener el formulario'));
+            });
+
+            if (data) {
+                // Filtrar las preguntas para eliminar aquellas que coincidan con esEmocional
+                data.preguntas = data.preguntas.filter((q: any) => q.esEmocional !== esEmocional);
+
+                if (data.preguntas && data.preguntas.length === 0) {
+                    // Si no hay preguntas restantes, eliminar el registro completo
+                    await new Promise<void>((resolve, reject) => {
+                        const deleteRequest = store.delete(formId);
+                        deleteRequest.onsuccess = () => resolve();
+                        deleteRequest.onerror = () => reject(new Error('Error al eliminar el formulario'));
+                    });
+                } else {
+                    // Si hay preguntas restantes, actualizar el formulario
+                    await new Promise<void>((resolve, reject) => {
+                        const updateRequest = store.put(data);
+                        updateRequest.onsuccess = () => resolve();
+                        updateRequest.onerror = () => reject(new Error('Error al actualizar el formulario'));
+                    });
+                }
+            } else {
+                console.log('No se encontraron respuestas guardadas.');
+            }
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 
 }
