@@ -36,12 +36,9 @@ namespace Controllers
                 using (var connection = context.CreateConnection())
                 {
 
-                    var evaluations = await connection.QueryAsync<EvaluationStudent>("OBTENER_EVALUACIONES", new
-                    {
-                        userId
-                    }, commandType: CommandType.StoredProcedure);
-                    return Ok(new Response<dynamic> { Message = "Creado Correctamente", Succeeded = true, Data = evaluations.ToList() });
 
+                    var report = await connection.QueryAsync("OBTENER_EVALUACIONES", new { userId }, commandType: CommandType.StoredProcedure);
+                    return Ok(report);
                 }
 
             }

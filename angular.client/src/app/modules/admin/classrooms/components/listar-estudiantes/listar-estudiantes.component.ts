@@ -113,8 +113,13 @@ export class ListarEstudiantesComponent {
         let estado = this.estadoEvalucionPsicologicaAula;
 
         if (['N', 'P', 'F'].includes(estado)) {
-            //0: Finalizar,  1: Iniciar y 2: Reiniciar,
-            let opcion = estado === 'N' ? 1 : (estado === 'F' ? 2 : 0);
+            //0: Finalizar,  1: Iniciar,
+            let opcion;
+            if (estado == 'F' || estado == 'N') {
+                opcion = 1;
+            } else {
+                opcion = 0;
+            }
             this.classroomsService
                 .updateEstadoEvaPsiAula(
                     this.filtrosSeleccionados.Unidad,

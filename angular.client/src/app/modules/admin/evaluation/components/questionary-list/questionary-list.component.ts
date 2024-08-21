@@ -21,15 +21,18 @@ import { MatButtonModule } from '@angular/material/button';
     ],
 })
 export class QuestionaryListComponent implements OnInit {
-    questionnaires: any = [];
+    questionary: any = [];
     constructor(
         private studentService: StudentService,
         private router: Router
     ) {}
     ngOnInit(): void {
         this.studentService.getStudentEvaluations().subscribe((response) => {
-            if (response.succeeded) {
-                this.questionnaires = response.data;
+            console.log('hola')
+            if (response) {
+
+                this.questionary = response[0];
+                console.log(this.questionary);
             }
         });
     }

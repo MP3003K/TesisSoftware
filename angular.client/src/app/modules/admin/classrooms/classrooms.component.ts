@@ -55,7 +55,7 @@ export class ClassroomsComponent implements OnInit {
     async ngOnInit() {
         await this.obtenerListadeUnidades();
         await this.obtenerListadeAulas();
-        this.cargarValoresIniciales();
+        this.changeItemOption(ItemOptions.ListarEstudiantes);
     }
 
     cargarValoresIniciales() {

@@ -35,15 +35,15 @@
 
     <div class="flex-auto p-6 sm:p-10">
         <div class="grid grid-cols-4 gap-4">
-            @for(questionary of questionnaires; track questionary){
+            @if(questionary != undefined  ){
             <mat-card class="p-3">
                 <mat-card-content>
                     <div class="mb-3">
                         <b>Inicio: </b>
-                        {{ questionary.fechaInicio | date : "dd/MM/yyyy" }}
+                        {{ questionary.FechaInicio | date : "dd/MM/yyyy" }}
                     </div>
                     <div class="mb-3">
-                        <b>Fin: </b>{{ questionary.fechaFin | date : "dd/MM/yyyy" }}
+                        <b>Fin: </b>{{ questionary.FechaFin | date : "dd/MM/yyyy" }}
                     </div>
                     <div>
                         <b>Estado: </b>
@@ -72,7 +72,8 @@
                     </button>
                 </mat-card-actions>}
             </mat-card>
-            } @empty {
+            }
+            @else {
             <mat-card class="col-span-4">
                 <mat-card-content>
                     <div class="text-center">
