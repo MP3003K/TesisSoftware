@@ -35,7 +35,27 @@
 
     <div class="flex-auto p-6 sm:p-10">
         <div class="grid grid-cols-4 gap-4">
-            @if(questionary != undefined  ){
+            @if(questionary != undefined ){
+
+            @if(questionary.estadoAula == "F") {
+            <div>Evaluacion finalizada</div>
+            <mat-card class="col-span-4">
+                <mat-card-content>
+                    <div class="text-center">
+                        Evaluacion bloqueada por el docente
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            } @else if (questionary.estadoAula == "N") {
+            <mat-card class="col-span-4">
+                <mat-card-content>
+                    <div class="text-center">
+                        Evaluacion bloqueada por el docente
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            }
+            @else if(questionary.estadoAula == "P") {
             <mat-card class="p-3">
                 <mat-card-content>
                     <div class="mb-3">
@@ -48,39 +68,29 @@
                     <div>
                         <b>Estado: </b>
                         <span class="px-2 py-1 rounded shadow text-base font-bold" [ngClass]="
-                                questionary.estado == 'N'
-                                    ? 'bg-gray-200 text-gray-800'
-                                    : questionary.estado == 'P'
-                                    ? 'bg-orange-200 text-orange-800'
-                                    : 'bg-green-200 text-green-800'
-                            ">
+                                            questionary.Estado == 'N'
+                                                ? 'bg-gray-200 text-gray-800'
+                                                : questionary.Estado == 'P'
+                                                ? 'bg-orange-200 text-orange-800'
+                                                : 'bg-green-200 text-green-800'
+                                        ">
                             {{
-                            questionary.estado == "N"
+                            questionary.Estado == "N"
                             ? "Sin Comenzar"
-                            : questionary.estado == "P"
+                            : questionary.Estado == "P"
                             ? 'En Proceso'
                             : "Completada"
                             }}
                         </span>
                     </div>
+                    <mat-card-actions>
+                        <button mat-fab extended (click)="goToQuestionary(questionary.Id)" class="mt-2">
+                            Realizar
+                        </button>
+                    </mat-card-actions>
                 </mat-card-content>
-                @if( questionary.estado == "N" || questionary.estado == "P"){
-
-                <mat-card-actions>
-                    <button mat-fab extended (click)="goToQuestionary(questionary.id)" class="mt-2">
-                        Realizar
-                    </button>
-                </mat-card-actions>}
             </mat-card>
             }
-            @else {
-            <mat-card class="col-span-4">
-                <mat-card-content>
-                    <div class="text-center">
-                        No hay cuestionarios disponibles
-                    </div>
-                </mat-card-content>
-            </mat-card>
             }
         </div>
     </div>

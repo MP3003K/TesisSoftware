@@ -3,6 +3,7 @@ using Context;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
@@ -61,6 +62,7 @@ namespace Controllers
         }
 
 
+
         [HttpPost("Login")]
         public async Task<ActionResult> Login([FromBody] LoginDto Credentials)
         {
@@ -68,27 +70,37 @@ namespace Controllers
             {
                 using (var connection = context.CreateConnection())
                 {
-
                     var response = await connection.QueryAsync<User>("VERIFICAR_USUARIO", Credentials, commandType: CommandType.StoredProcedure);
-                    if (!response.Any()) { return Unauthorized(); }
+                    var enumerator = response.GetEnumerator();
 
-                    var user = response.FirstOrDefault();
+                    if (!enumerator.MoveNext())
+                    {
+                        return Unauthorized();
+                    }
 
-                    if (user == null) { return Unauthorized(); }
+                    var user = enumerator.Current;
+
+                    if (user == null)
+                    {
+                        return Unauthorized();
+                    }
 
                     var accessToken = GetAccessToken(user.Id);
 
                     return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
                 }
             }
-            catch (Exception e)
+            catch (SqlException sqlEx)
             {
-                Console.WriteLine(e);
-
-                return Unauthorized();
+                Console.WriteLine(sqlEx);
+                return StatusCode(500, "Error en la base de datos");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(500, "Error en el servidor");
             }
         }
-
         // [Authorize]
         // [HttpGet("Profile")]
         // public async Task<ActionResult> GetProfile()

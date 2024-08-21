@@ -25,12 +25,10 @@ export class QuestionaryListComponent implements OnInit {
     constructor(
         private studentService: StudentService,
         private router: Router
-    ) {}
+    ) { }
     ngOnInit(): void {
         this.studentService.getStudentEvaluations().subscribe((response) => {
-            console.log('hola')
             if (response) {
-
                 this.questionary = response[0];
                 console.log(this.questionary);
             }
@@ -38,6 +36,7 @@ export class QuestionaryListComponent implements OnInit {
     }
 
     goToQuestionary(id: number) {
+        console.log(id);
         this.router.navigate(['evaluation', id]);
     }
 }

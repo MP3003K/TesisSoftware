@@ -4,7 +4,7 @@
         {
             "label": "Serve Angular App",
             "type": "shell",
-            "command": "dotnet run",
+            "command": "dotnet watch run",
             "isBackground": true,
             "problemMatcher": [],
             "runOptions": {
