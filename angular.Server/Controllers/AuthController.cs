@@ -201,6 +201,40 @@ namespace Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+
+        [Authorize]
+        [HttpGet("Navigation")]
+        public async Task<ActionResult> GetNavigation()
+        {
+            string nameIdentifier = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(nameIdentifier))
+            {
+                return BadRequest(new { message = "El userId no se encontró.", userId = nameIdentifier ?? "null" });
+            }
+
+            try
+            {
+                int userId = int.Parse(nameIdentifier);
+
+                using (var connection = context.CreateConnection())
+                {
+                    var accesses = await connection.QueryAsync<Access>("OBTENER_ACCESOS", new { UserId = userId }, commandType: CommandType.StoredProcedure);
+                    return Ok(new Navigation(accesses.ToList()));
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                // Manejo específico para errores de SQL
+                return StatusCode(500, new { message = "Error en la base de datos", details = sqlEx.Message, userId = nameIdentifier });
+            }
+            catch (Exception ex)
+            {
+                // Manejo general para otros errores
+                return StatusCode(500, new { message = "Error en el servidor", details = ex.Message, userId = nameIdentifier });
+            }
+        }
+
     }
 
 
