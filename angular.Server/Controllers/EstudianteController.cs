@@ -6,6 +6,7 @@ using Dapper;
 using Application.Wrappers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
 
 namespace Controllers
 {
@@ -35,16 +36,19 @@ namespace Controllers
                 int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
                 using (var connection = context.CreateConnection())
                 {
-
-
                     var report = await connection.QueryAsync("OBTENER_EVALUACIONES", new { userId }, commandType: CommandType.StoredProcedure);
                     return Ok(report);
                 }
-
+            }
+            catch (SqlException sqlEx)
+            {
+                // Manejo específico para errores de SQL
+                return StatusCode(500, new { Message = "Error en la base de datos", Details = sqlEx.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // Manejo general para otros errores
+                return StatusCode(500, new { Message = "Error en el servidor", Details = ex.Message });
             }
         }
 

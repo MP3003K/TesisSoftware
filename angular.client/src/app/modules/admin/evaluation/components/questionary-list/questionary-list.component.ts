@@ -26,11 +26,20 @@ export class QuestionaryListComponent implements OnInit {
         private studentService: StudentService,
         private router: Router
     ) { }
-    ngOnInit(): void {
-        this.studentService.getStudentEvaluations().subscribe((response) => {
-            if (response) {
-                this.questionary = response[0];
-                console.log(this.questionary);
+
+    async ngOnInit(): Promise<void> {
+        await this.obtenerEvalucionesEstudiantes();
+    }
+
+    async obtenerEvalucionesEstudiantes(): Promise<void> {
+        this.studentService.getStudentEvaluations().subscribe({
+            next: (response) => {
+                if (response) {
+                    this.questionary = response[0];
+                }
+            },
+            error: (err) => {
+                console.error('Error al obtener examenes del estudiante', err);
             }
         });
     }

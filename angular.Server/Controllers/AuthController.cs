@@ -134,68 +134,49 @@ namespace Controllers
         // }
 
 
+
         [Authorize]
         [HttpGet("Profile")]
         public async Task<ActionResult> GetProfile()
         {
-
-
             try
             {
-                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
+                {
+                    return Unauthorized(new Response<dynamic> { Data = null, Succeeded = false, Message = "Identificador de usuario no válido" });
+                }
 
                 using (var connection = context.CreateConnection())
                 {
+                    var response = await connection.QueryAsync<User>("OBTENER_USUARIO_V2", new { userId }, commandType: CommandType.StoredProcedure);
+                    var enumerator = response.GetEnumerator();
 
-                    var response = await connection.QueryAsync<User>("OBTENER_USUARIO", new { userId }, commandType: CommandType.StoredProcedure);
-                    if (!response.Any()) { return Unauthorized(); }
+                    if (!enumerator.MoveNext())
+                    {
+                        return Unauthorized(new Response<dynamic> { Data = null, Succeeded = false, Message = "Usuario no encontrado" });
+                    }
 
-                    var user = response.FirstOrDefault();
+                    var user = enumerator.Current;
 
-                    if (user == null) { return Unauthorized(); }
+                    if (user == null)
+                    {
+                        return Unauthorized(new Response<dynamic> { Data = null, Succeeded = false, Message = "Usuario no encontrado" });
+                    }
 
                     var accessToken = GetAccessToken(user.Id);
 
                     return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
                 }
             }
-            catch (Exception e)
+            catch (SqlException sqlEx)
             {
-                return BadRequest(new Response<dynamic> { Data = null, Succeeded = false, Message = e.Message });
+                // Manejo específico para errores de SQL
+                return StatusCode(500, new Response<dynamic> { Data = null, Succeeded = false, Message = "Error en la base de datos", Details = sqlEx.Message });
             }
-
-        }
-
-        [Authorize]
-        [HttpGet("Navigation")]
-        public async Task<ActionResult> GetNavigation()
-        {
-
-            string nameIdentifier = ClaimTypes.NameIdentifier;
-            if (string.IsNullOrEmpty(nameIdentifier))
+            catch (Exception ex)
             {
-                return BadRequest(new { message = "El nameIdentifier del usuario no se encontró.", userId = nameIdentifier ?? "null" });
-            }
-
-            nameIdentifier = User.FindFirstValue(nameIdentifier);
-
-            if (string.IsNullOrEmpty(nameIdentifier))
-            {
-                return BadRequest(new { message = "El userId no se encontró.", userId = nameIdentifier ?? "null" });
-            }
-            try
-            {
-                int userId = int.Parse(nameIdentifier);
-
-                using (var connection = context.CreateConnection())
-                {
-                    var accesses = await connection.QueryAsync<Access>("OBTENER_ACCESOS", new { UserId = userId }, commandType: CommandType.StoredProcedure);
-                    return Ok(new Navigation(accesses.ToList()));
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest(new { message = e.Message, userId = nameIdentifier });
+                // Manejo general para otros errores
+                return StatusCode(500, new Response<dynamic> { Data = null, Succeeded = false, Message = "Error en el servidor", Details = ex.Message });
             }
         }
 

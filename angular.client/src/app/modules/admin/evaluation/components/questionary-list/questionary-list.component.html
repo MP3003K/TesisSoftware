@@ -33,8 +33,13 @@
         </div>
     </div>
 
-    <div class="flex-auto p-6 sm:p-10">
-        <div class="grid grid-cols-4 gap-4">
+    <div class="flex-auto px-6 sm:px-10 sm:pt-5">
+        <div class="w-auto max-w-100">
+            <button mat-raised-button class="mb-5" color="accent" (click)="obtenerEvalucionesEstudiantes()">
+                <mat-icon>refresh</mat-icon>
+                Recargar evaluaciones
+            </button>
+
             @if(questionary != undefined ){
 
             @if(questionary.estadoAula == "F") {
@@ -42,7 +47,7 @@
             <mat-card class="col-span-4">
                 <mat-card-content>
                     <div class="text-center">
-                        Evaluacion bloqueada por el docente
+                        Evaluacion terminada por el docente
                     </div>
                 </mat-card-content>
             </mat-card>
@@ -59,21 +64,18 @@
             <mat-card class="p-3">
                 <mat-card-content>
                     <div class="mb-3">
-                        <b>Inicio: </b>
-                        {{ questionary.FechaInicio | date : "dd/MM/yyyy" }}
+                        <b>Inicio: </b>{{ questionary.FechaInicio | date : "dd/MM/yyyy" }}
                     </div>
                     <div class="mb-3">
                         <b>Fin: </b>{{ questionary.FechaFin | date : "dd/MM/yyyy" }}
                     </div>
                     <div>
                         <b>Estado: </b>
-                        <span class="px-2 py-1 rounded shadow text-base font-bold" [ngClass]="
-                                            questionary.Estado == 'N'
-                                                ? 'bg-gray-200 text-gray-800'
-                                                : questionary.Estado == 'P'
-                                                ? 'bg-orange-200 text-orange-800'
-                                                : 'bg-green-200 text-green-800'
-                                        ">
+                        <span class="px-2 py-1 rounded shadow text-base font-bold" [ngClass]=" questionary.Estado == 'N' ? 'bg-gray-200 text-gray-800'
+                                                                            : questionary.Estado == 'P'
+                                                                            ? 'bg-orange-200 text-orange-800'
+                                                                            : 'bg-green-200 text-green-800'
+                                                                    ">
                             {{
                             questionary.Estado == "N"
                             ? "Sin Comenzar"
@@ -83,11 +85,6 @@
                             }}
                         </span>
                     </div>
-                    <mat-card-actions>
-                        <button mat-fab extended (click)="goToQuestionary(questionary.Id)" class="mt-2">
-                            Realizar
-                        </button>
-                    </mat-card-actions>
                 </mat-card-content>
             </mat-card>
             }
