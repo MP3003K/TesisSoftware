@@ -148,7 +148,7 @@ namespace Controllers
 
                 using (var connection = context.CreateConnection())
                 {
-                    var response = await connection.QueryAsync<User>("OBTENER_USUARIO_V2", new { userId }, commandType: CommandType.StoredProcedure);
+                    var response = await connection.QueryAsync<dynamic>("OBTENER_USUARIO_V2", new { userId }, commandType: CommandType.StoredProcedure);
                     var enumerator = response.GetEnumerator();
 
                     if (!enumerator.MoveNext())
