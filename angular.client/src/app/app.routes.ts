@@ -1,34 +1,22 @@
-import { Route } from '@angular/router';
+import { Route, RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import { classroomsRoutes } from './modules/admin/classrooms/classrooms.routes';
 import { RoleGuard } from './core/auth/guards/role.guard';
+import { EvaluationPreloadStrategy } from './core/preloading-strategies/evaluation-preload.strategy';
 
-// @formatter:off
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
+// Definición de las rutas
 export const appRoutes: Route[] = [
-    // Redirect empty path to '/example'
     { path: '', pathMatch: 'full', redirectTo: 'home' },
-
-    // Redirect signed-in user to the '/example'
-    //
-    // After the user signs in, the sign-in page will redirect the user to the 'signed-in-redirect'
-    // path. Below is another redirection for that path to redirect the user to the desired
-    // location. This is a small convenience to keep all main routes together here on this file.
     { path: 'signed-in-redirect', pathMatch: 'full', redirectTo: 'home' },
-
-    // Auth routes for guests
     {
         path: '',
         canActivate: [NoAuthGuard],
-        canActivateChild: [NoAuthGuard],
         component: LayoutComponent,
-        data: {
-            layout: 'empty',
-        },
+        data: { layout: 'empty' },
         children: [
             {
                 path: 'sign-in',
@@ -63,45 +51,33 @@ export const appRoutes: Route[] = [
     {
         path: '',
         canActivate: [AuthGuard, RoleGuard],
-        canActivateChild: [AuthGuard, RoleGuard],
         component: LayoutComponent,
-        resolve: {
-            initialData: initialDataResolver,
-        },
+        resolve: { initialData: initialDataResolver },
         children: [
             {
                 path: 'home',
-                loadChildren: () =>
-                    import('app/modules/admin/home/home.routes'),
+                loadChildren: () => import('app/modules/admin/home/home.routes'),
+                data: { preload: false }
             },
             {
                 path: 'evaluation',
-                loadChildren: () =>
-                    import('app/modules/admin/evaluation/evaluation.routes'),
+                loadChildren: () => import('app/modules/admin/evaluation/evaluation.routes'), data: { preload: true }
             },
             {
-                path: 'reports',
-                loadChildren: () =>
-                    import('app/modules/admin/reports/reports.routes'),
+                path: 'classrooms',
+                loadChildren: () => classroomsRoutes
             },
-            { path: 'classrooms', loadChildren: () => classroomsRoutes },
-            {
-                path: 'questionaries',
-                loadChildren: () =>
-                    import(
-                        'app/modules/admin/questionaries/questionaries.routes'
-                    ),
-            },
-
-            {
-                path: '404-not-found',
-                pathMatch: 'full',
-                loadChildren: () =>
-                    import(
-                        'app/modules/admin/pages/error/error-404/error-404.routes'
-                    ),
-            },
-            { path: '**', redirectTo: '404-not-found' },
         ],
     },
 ];
+
+// Configuración de la estrategia de precarga personalizada
+@NgModule({
+    imports: [
+        RouterModule.forRoot(appRoutes, {
+            preloadingStrategy: EvaluationPreloadStrategy,
+        }),
+    ],
+    exports: [RouterModule]
+})
+export class AppRoutingModule { }

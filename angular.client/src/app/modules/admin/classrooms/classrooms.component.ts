@@ -58,12 +58,7 @@ export class ClassroomsComponent implements OnInit {
         this.changeItemOption(ItemOptions.ListarEstudiantes);
     }
 
-    cargarValoresIniciales() {
-        this.filtrosSeleccionados.Unidad = 1;
-        this.filtrosSeleccionados.Grado = 2;
-        this.filtrosSeleccionados.Seccion = 3;
-        this.changeItemOption(ItemOptions.ListarEstudiantes);
-    }
+
 
     // #region ButtonToogle
     claseActiva: string = 'bg-[#f9fafb] text-[rgb(79,70,229)] font-bold text-md';

@@ -33,8 +33,8 @@
                             "quill"
                         ],
                         "assets": [
-                            "src/favicon-16x16.png",
-                            "src/favicon-32x32.png",
+                            "src/logo_escuela-16x16.png",
+                            "src/logo_escuela-32x32.png",
                             "src/assets",
                             {
                                 "glob": "_redirects",
@@ -113,8 +113,8 @@
                         "tsConfig": "tsconfig.spec.json",
                         "inlineStyleLanguage": "scss",
                         "assets": [
-                            "src/favicon-16x16.png",
-                            "src/favicon-32x32.png",
+                            "src/logo_escuela-16x16.png",
+                            "src/logo_escuela-32x32.png",
                             "src/assets"
                         ],
                         "styles": ["src/styles/styles.scss"],

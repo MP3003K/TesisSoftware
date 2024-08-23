@@ -2,7 +2,6 @@ import { AfterViewInit, Component, EventEmitter, Input, Output, SimpleChanges, V
 import { CommonModule } from '@angular/common';
 import { FiltrosSeleccionados } from '../../models/filtros-seleccionados.model';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Student } from 'app/modules/admin/reports/classroom-report/classroom-report.component';
 import { ClassroomsService } from '../../services';
 import { EvaluationService } from 'app/modules/admin/evaluation/evaluation.service';
 import { ReporteEstudianteComponent } from '../reporte-estudiante/reporte-estudiante.component';
@@ -23,6 +22,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { saveAs } from 'file-saver';
 import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
 
+
+export interface Student {
+    nombre: string;
+    estadoEvaluacionEstudiante: string;
+    promedio: number;
+    id: number;
+}
 @Component({
     selector: 'app-reporte-salon',
     standalone: true,

@@ -40,7 +40,7 @@ export class ListarEstudiantesComponent {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.cargarValoresIniciales)
-            this.obtnerEstudiantesPorAulaYUnidad();
+            if (this.filtrosSeleccionados.Unidad && this.filtrosSeleccionados.Seccion) this.obtnerEstudiantesPorAulaYUnidad();
     }
 
     classroomStudents = [];

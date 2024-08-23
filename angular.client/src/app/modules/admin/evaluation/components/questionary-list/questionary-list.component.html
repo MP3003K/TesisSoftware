@@ -34,7 +34,7 @@
     </div>
 
     <div class="flex-auto px-6 sm:px-10 sm:pt-5">
-        <div class="w-auto max-w-100">
+        <div class="w-auto max-w-72">
             <button mat-raised-button class="mb-5" color="accent" (click)="obtenerEvalucionesEstudiantes()">
                 <mat-icon>refresh</mat-icon>
                 Recargar evaluaciones
@@ -85,12 +85,15 @@
                             }}
                         </span>
                     </div>
+                    @if(questionary.Estado != "F"){
                     <mat-card-actions class="mt-2 flex justify-center">
                         <button mat-fab extended (click)="goToQuestionary(questionary.Id)"
                             class="mt-2 bg-[#4f46e5] opacity-80 hover:bg-[#4338ca]  hover:opacity-100 text-white font-bold py-2 px-4 rounded shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
                             Iniciar Evaluación Psicológica
                         </button>
                     </mat-card-actions>
+                    }
+
                 </mat-card-content>
             </mat-card>
             }
