@@ -43,7 +43,6 @@
             @if(questionary != undefined ){
 
             @if(questionary.estadoAula == "F") {
-            <div>Evaluacion finalizada</div>
             <mat-card class="col-span-4">
                 <mat-card-content>
                     <div class="text-center">
@@ -97,6 +96,16 @@
                 </mat-card-content>
             </mat-card>
             }
+            } @else {
+                    <mat-card class="col-span-4 text-lg text-[#4F46E5]">
+                        <mat-card-content>
+                            <div class="text-center">
+                                <b>
+                                    No existen evaluaciones psicologicas asignadas.
+                                </b>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
             }
         </div>
     </div>

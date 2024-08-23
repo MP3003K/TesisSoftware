@@ -33,7 +33,6 @@
                             "quill"
                         ],
                         "assets": [
-                            "src/logo_escuela-16x16.png",
                             "src/logo_escuela-32x32.png",
                             "src/assets",
                             {
@@ -113,7 +112,6 @@
                         "tsConfig": "tsconfig.spec.json",
                         "inlineStyleLanguage": "scss",
                         "assets": [
-                            "src/logo_escuela-16x16.png",
                             "src/logo_escuela-32x32.png",
                             "src/assets"
                         ],
