@@ -31,7 +31,7 @@ interface User {
 
 export class HomeComponent implements OnInit, OnDestroy {
 
-    user: User;
+    user: any;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     /**
      * Constructor
@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
     navigateToEvaluation() {
-        if(this?.user?.roleId == 3){
+        if (this?.user?.roleId == 3) {
             this.router.navigate(['/classrooms']); // Cambia la ruta según sea necesario
         }
         if (this?.user?.roleId == 2) {
