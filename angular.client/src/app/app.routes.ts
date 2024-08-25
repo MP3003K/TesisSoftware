@@ -1,12 +1,11 @@
-import { Route, RouterModule } from '@angular/router';
-import { NgModule } from '@angular/core';
+import { Route } from '@angular/router';
 import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import { classroomsRoutes } from './modules/admin/classrooms/classrooms.routes';
 import { RoleGuard } from './core/auth/guards/role.guard';
-import { EvaluationPreloadStrategy } from './core/preloading-strategies/evaluation-preload.strategy';
+
 
 // Definición de las rutas
 export const appRoutes: Route[] = [
@@ -57,7 +56,6 @@ export const appRoutes: Route[] = [
             {
                 path: 'home',
                 loadChildren: () => import('app/modules/admin/home/home.routes'),
-                data: { preload: false }
             },
             {
                 path: 'evaluation',
@@ -65,19 +63,13 @@ export const appRoutes: Route[] = [
             },
             {
                 path: 'classrooms',
-                loadChildren: () => classroomsRoutes
-            },
+                loadChildren: () => classroomsRoutes,
+                data: {
+                    preload: true
+                }
+            }
         ],
     },
 ];
 
-// Configuración de la estrategia de precarga personalizada
-@NgModule({
-    imports: [
-        RouterModule.forRoot(appRoutes, {
-            preloadingStrategy: EvaluationPreloadStrategy,
-        }),
-    ],
-    exports: [RouterModule]
-})
 export class AppRoutingModule { }
