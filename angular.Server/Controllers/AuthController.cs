@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -20,6 +21,7 @@ namespace Controllers
         public string? Avatar { get; set; }
         public string? Status { get; set; }
         public string? Role { get; set; }
+        public int? RoleId { get; set; }
         public string? Redirect { get; set; }
 
     }
@@ -61,8 +63,6 @@ namespace Controllers
 
         }
 
-
-
         [HttpPost("Login")]
         public async Task<ActionResult> Login([FromBody] LoginDto Credentials)
         {
@@ -70,69 +70,49 @@ namespace Controllers
             {
                 using (var connection = context.CreateConnection())
                 {
-                    var response = await connection.QueryAsync<User>("VERIFICAR_USUARIO", Credentials, commandType: CommandType.StoredProcedure);
+                    var response = await connection.QueryAsync<dynamic>("VERIFICAR_USUARIO_V2", Credentials, commandType: CommandType.StoredProcedure);
                     var enumerator = response.GetEnumerator();
 
                     if (!enumerator.MoveNext())
                     {
-                        return Unauthorized();
+                        return Unauthorized(new Response<dynamic> { Data = null, Succeeded = false, Message = "Credenciales incorrectas" });
                     }
 
-                    var user = enumerator.Current;
+                    var responseJson = enumerator.Current.Response;
+                    var responseDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseJson);
 
-                    if (user == null)
+                    if (responseDict.ContainsKey("Succeeded") && Convert.ToBoolean(responseDict["Succeeded"]))
                     {
-                        return Unauthorized();
+                        var userJson = responseDict["Data"].ToString();
+                        var user = JsonConvert.DeserializeObject<User>(userJson);
+
+                        if (user == null)
+                        {
+                            return Unauthorized(new Response<dynamic> { Data = null, Succeeded = false, Message = "Credenciales incorrectas" });
+                        }
+
+                        var accessToken = GetAccessToken(user.Id);
+
+                        return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
                     }
-
-                    var accessToken = GetAccessToken(user.Id);
-
-                    return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
+                    else
+                    {
+                        var errorMessage = responseDict.ContainsKey("Error") ? responseDict["Error"].ToString() : "Credenciales incorrectas";
+                        return Unauthorized(new Response<dynamic> { Data = null, Succeeded = false, Message = errorMessage });
+                    }
                 }
             }
             catch (SqlException sqlEx)
             {
-                Console.WriteLine(sqlEx);
-                return StatusCode(500, "Error en la base de datos");
+                // Manejo específico para errores de SQL
+                return StatusCode(500, new Response<dynamic> { Data = null, Succeeded = false, Message = "Error en la base de datos", Details = sqlEx.Message });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                return StatusCode(500, "Error en el servidor");
+                // Manejo general para otros errores
+                return StatusCode(500, new Response<dynamic> { Data = null, Succeeded = false, Message = "Error en el servidor", Details = ex.Message });
             }
         }
-        // [Authorize]
-        // [HttpGet("Profile")]
-        // public async Task<ActionResult> GetProfile()
-        // {
-
-
-        //     try
-        //     {
-        //         int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-        //         using (var connection = context.CreateConnection())
-        //         {
-
-        //             var response = await connection.QueryAsync<User>("OBTENER_USUARIO", new { userId }, commandType: CommandType.StoredProcedure);
-        //             if (!response.Any()) { return Unauthorized(); }
-
-        //             var user = response.FirstOrDefault();
-
-        //             if (user == null) { return Unauthorized(); }
-
-        //             var accessToken = GetAccessToken(user.Id);
-
-        //             return Ok(new Response<dynamic> { Data = new { accessToken, user }, Succeeded = true, Message = "Usuario autenticado correctamente" });
-        //         }
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         return BadRequest(new Response<dynamic> { Data = null, Succeeded = false, Message = e.Message });
-        //     }
-
-        // }
-
 
 
         [Authorize]

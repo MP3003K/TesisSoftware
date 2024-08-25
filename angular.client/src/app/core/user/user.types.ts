@@ -5,4 +5,9 @@ export interface User
     email: string;
     avatar?: string;
     status?: string;
+    redirect?: string;
+    role?: string;
+    roleId?: number;
+
+
 }

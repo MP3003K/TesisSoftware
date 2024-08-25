@@ -97,7 +97,7 @@ export class AuthService {
             .pipe(
                 switchMap((response) => {
                     if (response.succeeded) {
-
+                        console.log(response);
                         // Set the authenticated flag to true
                         this._authenticated = true;
 
@@ -155,10 +155,7 @@ export class AuthService {
             .post<HttpResponse<any>>(`${environment.baseURL}/auth/signOut`, {})
             .pipe(
                 switchMap((response) => {
-                    console.error('cerrar sesion')
                     if (response.succeeded) {
-
-                        console.error('cerrar sesion - remover');
                         // Remove the access token from the local storage
                         localStorage.removeItem('accessToken');
 
