@@ -128,9 +128,11 @@ export class QuestionaryComponent {
         this.db.ready();
         let preguntas = await this.db.recuperarPreguntasPsicologicas(tipoTest);
 
-        if (preguntas == null) await this.guardarPreguntasPsicologicasLocalStorage();
+        if (preguntas == null){
+            await this.guardarPreguntasPsicologicasLocalStorage();
+            preguntas = await this.db.recuperarPreguntasPsicologicas(tipoTest);
+        }
 
-        preguntas = await this.db.recuperarPreguntasPsicologicas(tipoTest);
 
         preguntas = Array.isArray(preguntas) ? preguntas : Object.values(preguntas);
 
@@ -163,7 +165,6 @@ export class QuestionaryComponent {
             // Guardar las preguntas psicológicas en la base de datos
             await this.db.guardarPreguntasPsicologicas(preguntasPsicologicas);
 
-            console.log('Preguntas psicológicas guardadas exitosamente.');
         } catch (error) {
             console.error('Error al obtener o guardar las preguntas psicológicas:', error);
         }

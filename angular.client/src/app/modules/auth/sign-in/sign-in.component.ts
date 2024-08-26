@@ -123,7 +123,6 @@ export class AuthSignInComponent implements OnInit {
             // Guardar las preguntas psicológicas en la base de datos
             await this.databaseService.guardarPreguntasPsicologicas(preguntasPsicologicas);
 
-            console.log('Preguntas psicológicas guardadas exitosamente.');
         } catch (error) {
             console.error('Error al obtener o guardar las preguntas psicológicas:', error);
         }
