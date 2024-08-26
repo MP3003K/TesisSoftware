@@ -10,6 +10,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
+import { DatabaseService } from 'app/modules/admin/evaluation/components/questionary/database.service';
+import { EvaluationService } from 'app/modules/admin/evaluation/evaluation.service';
+import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 
 @Component({
     selector: 'auth-sign-in',
@@ -42,13 +45,16 @@ export class AuthSignInComponent implements OnInit {
     showAlert: boolean = false;
 
     constructor(
+        private evaluationService: EvaluationService,
         private _activatedRoute: ActivatedRoute,
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
+        private databaseService: DatabaseService
     ) { }
 
     ngOnInit(): void {
+        this.guardarPreguntasPsicologicasLocalStorage();
         // Create the form
         this.signInForm = this._formBuilder.group({
             email: ['', [Validators.required]],
@@ -77,10 +83,8 @@ export class AuthSignInComponent implements OnInit {
 
         this._authService.signIn(this.signInForm.value).subscribe({
             next: ({ user: { redirect } }) => {
-                console.log('user', redirect)
                 let redirectURL
                 if (redirect) {
-                    console.log('redirect')
                     redirectURL = redirect
                     this._router.navigateByUrl(redirectURL);
                 }
@@ -102,5 +106,26 @@ export class AuthSignInComponent implements OnInit {
                 this.showAlert = true;
             },
         });
+    }
+
+        async guardarPreguntasPsicologicasLocalStorage(): Promise<void> {
+        try {
+            // Llamada a la API para obtener las preguntas psicológicas
+            const response = await firstValueFrom(this.evaluationService.getQuestionsAll());
+            let preguntasPsicologicas: any = response?.data;
+
+            // Asegurarse de que preguntasPsicologicas sea un array
+            preguntasPsicologicas = Array.isArray(preguntasPsicologicas) ? preguntasPsicologicas : Object.values(preguntasPsicologicas);
+
+            // Esperar a que la base de datos esté lista antes de guardar las preguntas
+            await this.databaseService.ready();
+
+            // Guardar las preguntas psicológicas en la base de datos
+            await this.databaseService.guardarPreguntasPsicologicas(preguntasPsicologicas);
+
+            console.log('Preguntas psicológicas guardadas exitosamente.');
+        } catch (error) {
+            console.error('Error al obtener o guardar las preguntas psicológicas:', error);
+        }
     }
 }

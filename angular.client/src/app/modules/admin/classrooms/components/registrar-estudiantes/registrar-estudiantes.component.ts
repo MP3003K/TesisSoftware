@@ -44,8 +44,6 @@ export class RegistrarEstudiantesComponent {
             estudiantes: this.fb.array([this.crearFormularioEstudiante()], [this.validadorDniDuplicadoEnFormEstudiantes()])
         });
         const estudiantesFormArray = (this.formEstudiantes.get('estudiantes') as FormArray)
-        console.log('estudiantesFormArray', estudiantesFormArray.controls);
-
     }
 
 
@@ -303,11 +301,10 @@ export class RegistrarEstudiantesComponent {
 
     eliminarDNIsDuplicadosYRegistrados() {
         const estudiantesFormArray = (this.formEstudiantes.get('estudiantes') as FormArray);
-        console.log('controls', estudiantesFormArray.controls);
+
         const indicesAEliminar = [];
 
         for (let i = estudiantesFormArray.controls.length - 1; i >= 0; i--) {
-            console.log('i', i);
             const dniControl = estudiantesFormArray.at(i).get('dni');
             if (dniControl?.errors?.['dniRegistrado'] === true) {
 

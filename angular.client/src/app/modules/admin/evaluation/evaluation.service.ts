@@ -71,6 +71,13 @@ export class EvaluationService {
         );
     }
 
+
+    getQuestionsAll(): Observable<HttpResponse<any>> {
+        return this.http.get<HttpResponse<any>>(
+            `${environment.baseURL}/preguntasPsicologicas`
+        );
+    }
+
     getStudent() {
         return this.http.get<any>(`${environment.baseURL}/estudiante`);
     }

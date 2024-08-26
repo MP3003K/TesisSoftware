@@ -97,7 +97,6 @@ export class AuthService {
             .pipe(
                 switchMap((response) => {
                     if (response.succeeded) {
-                        console.log(response);
                         // Set the authenticated flag to true
                         this._authenticated = true;
 

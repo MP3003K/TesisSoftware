@@ -254,8 +254,6 @@ export class ReporteSalonComponent implements AfterViewInit {
 
         if (estado == EstadoEvaluacionEstudiante.Todos) return this.reporteSalonFiltrado.data = this.reporteSalon.data;
 
-        console.log('filtrar', 'estado', estado)
-        console.log('filtrar', 'reporteSalon', this.reporteSalon.data)
         this.reporteSalonFiltrado.data = this.reporteSalon.data.filter(estudiante => this.obtenerCategoriaPorPuntajeReporteEstudiante(estudiante.promedio) === estado);
     }
 
@@ -336,9 +334,7 @@ export class ReporteSalonComponent implements AfterViewInit {
     }
 
     async exportarExcel_resultadosPsicologicosAula() {
-        console.log('descargar')
         try {
-            console.log('buenos dias');
             let gradoId = this.filtrosSeleccionados.Grado;
             let unidadId = this.filtrosSeleccionados.Unidad;
             let unidadNombre = this.filtrosSeleccionados.UnidadNombre;
@@ -347,7 +343,6 @@ export class ReporteSalonComponent implements AfterViewInit {
             let seccionId = this.filtrosSeleccionados.Seccion;
             let seccionN = this.filtrosSeleccionados.SeccionN;
             let tipo_test_psi = gradoId >= 1 && gradoId <= 2 ? 1 : (gradoId >= 3 && gradoId <= 5 ? 2 : 0);
-            console.log('gradoId', gradoId, 'unidadId', unidadId, 'unidadNombre', unidadNombre, 'seccionId', seccionId, 'seccionN', seccionN, 'tipo_test_psi', tipo_test_psi);
 
             if (tipo_test_psi === 0) return;
 

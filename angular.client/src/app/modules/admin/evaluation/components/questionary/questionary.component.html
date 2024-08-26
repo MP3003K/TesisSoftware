@@ -21,7 +21,7 @@
                         Realizar Evaluación Psicologica
                     </h2>
                 </div>
-                <button mat-stroked-button (click)="toggleFullScreen(); isConcentrationModeActive = true">
+                <button mat-stroked-button (click)="openFullscreen(); isConcentrationModeActive = true">
                     Modo Concentración
                 </button>
             </div>
@@ -126,8 +126,8 @@
                 <div class="text-left px-4 py-2 bg-gray-800 text-white text-xl rounded">
                     {{ currentQuestionIndex + 1 }}/{{ questions.length }}
                 </div>
-                <div class="text-left px-4 py-2 bg-gray-800 text-white text-xl rounded"
-                    (click)="toggleFullScreen(); isConcentrationModeActive = false">
+                <div class="text-left px-4 py-2 bg-gray-800 text-white text-xl rounded" style="cursor: pointer;"
+                    (click)="closeFullscreen(); isConcentrationModeActive = false">
                     Salir del Modo Concentración
                 </div>
             </div>
@@ -142,7 +142,7 @@
                     Siguiente
                 </button>
                 <button *ngIf="currentQuestionIndex === questions.length - 1"
-                    (click)="submitForm(); isConcentrationModeActive = false;toggleFullScreen()"
+                    (click)="submitForm(); isConcentrationModeActive = false;closeFullscreen()"
                     [disabled]="!questions[currentQuestionIndex].answer"
                     class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 text-xl rounded disabled:opacity-50">
                     Finalizar Prueba Psicologica

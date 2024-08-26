@@ -7,9 +7,7 @@ import { Observable, of } from 'rxjs';
 })
 export class EvaluationPreloadStrategy implements PreloadingStrategy {
     preload(route: Route, fn: () => Observable<any>): Observable<any> {
-        console.log('hola')
         if ((route.data as any).preload) {
-            console.log('paso')
             return fn();
         }
         return of(null);

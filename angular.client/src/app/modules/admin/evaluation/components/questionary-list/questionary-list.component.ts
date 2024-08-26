@@ -45,7 +45,6 @@ export class QuestionaryListComponent implements OnInit {
     }
 
     goToQuestionary(id: number) {
-        console.log(id);
         this.router.navigate(['evaluation', id]);
     }
 }
