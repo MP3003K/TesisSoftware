@@ -355,7 +355,7 @@ export class ReporteSalonComponent implements AfterViewInit {
             const buffer = await response.arrayBuffer();
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(buffer);
-            const worksheet = workbook.getWorksheet('BASE DE RESPUESTAS');
+            const worksheet = workbook.getWorksheet('Base_de_respuestas');
 
             const worksheetIndice = workbook.getWorksheet('Índice');
 

@@ -21,7 +21,8 @@
                         Realizar Evaluación Psicologica
                     </h2>
                 </div>
-                <button mat-stroked-button (click)="openFullscreen(); isConcentrationModeActive = true">
+                <button id="btnModoConcentracion" mat-stroked-button
+                    (click)="openFullscreen(); isConcentrationModeActive = true">
                     Modo Concentración
                 </button>
             </div>
@@ -29,92 +30,153 @@
     </div>
 
     <div class="flex-auto p-6 sm:p-10">
-        <mat-card *ngIf="endedTest">
+
+
+
+        @if(endedTest == true){
+        <mat-card>
             <mat-card-content class="flex items-center justify-center">
                 <mat-icon svgIcon="check"></mat-icon>
                 <span>El Formulario se ha realizado exitosamente</span>
             </mat-card-content>
         </mat-card>
-        <mat-card *ngIf="errorValidador">
+        } @else if (errorValidador == true) {
+        <mat-card>
             <mat-card-content class="flex items-center justify-center">
                 <mat-icon svgIcon="report"></mat-icon>
                 <span>{{ errorTexto }}</span>
             </mat-card-content>
         </mat-card>
-        <div *ngIf="!endedTest">
-            <div class="sticky top-0 py-2 px-4 flex justify-between z-10">
+        } @else if(cargandoAPIs){
+        @for(item of [1, 2, 3]; track item){
+        <mat-card>
+            <mat-card-content class="grid gap-4">
+                <div class="flex flex-col gap-1">
+                    <div class="bg-gray-200 h-4 w-full animate-pulse"></div>
+                    <div class="bg-gray-200 h-4 w-24 animate-pulse"></div>
+                </div>
                 <div class="flex flex-col gap-2">
-                    <div class="h-4 w-52 rounded-full overflow-hidden bg-gray-300/30 shadow">
-                        <div class="h-full bg-green-400/90 text-end text-xs text-white" [ngStyle]="{
-                                width: getPValue()
-                            }"></div>
+                    @for(ii of [1, 2, 3, 4]; track ii){
+                    <div class="flex items-center gap-4">
+                        <div class="rounded-full w-6 h-6 bg-gray-200 animate-pulse"></div>
+                        <div class="h-4 w-36 bg-gray-200 animate-pulse"></div>
                     </div>
-                    <span class="text-[8px]">{{ countCompletedAnswers }} de
-                        {{ paginator.length }}</span>
+                    }
+                </div>
+            </mat-card-content>
+        </mat-card>
+        }
+        } @else if (endedTest == false) {
+        @if(!(questions && questions.length > 0)){
+
+
+        <div class="w-full flex justify-center">
+            <button mat-fab extended (click)="cargarEvaluacionPsicologicaYPreguntas()" class="pulse-button">
+                <mat-icon>refresh</mat-icon>
+                <p>Haz click aqui, para cargar las preguntas psicologicas</p>
+            </button>
+            <style>
+                .pulse-button {
+                    @apply text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform ease-in-out duration-300;
+                    background-color: #201658;
+                    animation: pulse 2.5s infinite;
+                    /* Duración ajustada a 2.5 segundos */
+                    letter-spacing: 0.08rem;
+                    line-height: 8;
+                    text-align: center;
+                }
+
+                .pulse-button:hover {
+                    transform: scale(1.1);
+                    background-color: #1D24CA;
+                    /* Color del botón al hacer hover */
+                    color: white;
+                    /* Color del texto en blanco al hacer hover */
+                    box-shadow: 0 0 20px rgba(29, 36, 202, 0.8);
+                    /* Brillo más intenso y grande en hover */
+                    cursor: pointer;
+                }
+
+                @keyframes pulse {
+
+                    0%,
+                    100% {
+                        transform: scale(1);
+                        box-shadow: 0 0 0 0 rgba(152, 171, 238, 0.6);
+                        /* Color azul claro de las pulsaciones */
+                    }
+
+                    50% {
+                        transform: scale(1.1);
+                        /* Pulsaciones ligeramente más grandes */
+                        box-shadow: 0 0 30px 30px rgba(152, 171, 238, 0);
+                        /* Expansión más grande de las pulsaciones */
+                    }
+                }
+            </style>
+        </div>
+
+
+        } @else {
+        <div class="sticky top-0 py-2 px-4 flex justify-end items-start gap-4 z-10">
+            <div class="flex flex-col justify-center gap-2">
+                <div class="h-4 w-52 rounded-full overflow-hidden bg-gray-300/30 shadow">
+                    <div class="h-full bg-green-400/90 text-end text-xs text-white" [ngStyle]="{
+                                    width: getPValue()
+                                }"></div>
                 </div>
                 <span class="text-[8px]">
-                    Página {{ paginator.pageNumber }} de {{ paginator.pages }}
+                    {{ countCompletedAnswers }} de {{ paginator.length }}
                 </span>
             </div>
-            <div class="p-4 flex flex-col gap-4">
-                @for(question of filterQuestions(); track question){
-                <mat-card>
-                    <mat-card-content class="grid gap-4">
-                        <div class="font-medium">
-                            {{ question.order }}. {{ question.text }}
-                        </div>
-                        <div>
-                            <mat-radio-group (change)="
-                                    radioChange($event.value, question.id)
-                                " aria-label="Select an option" class="flex flex-col" [(ngModel)]="question.answer">
-                                @for(option of itemOptions; track option){
-                                <mat-radio-button [value]="option.value">
-                                    {{ option.name }}
-                                </mat-radio-button>
-                                }
-                            </mat-radio-group>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-                } @empty { @for(item of [1, 2, 3]; track item){
-                <mat-card>
-                    <mat-card-content class="grid gap-4">
-                        <div class="flex flex-col gap-1">
-                            <div class="bg-gray-200 h-4 w-full animate-pulse"></div>
-                            <div class="bg-gray-200 h-4 w-24 animate-pulse"></div>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            @for(ii of [1, 2, 3, 4]; track ii){
-                            <div class="flex items-center gap-4">
-                                <div class="rounded-full w-6 h-6 bg-gray-200 animate-pulse"></div>
-                                <div class="h-4 w-36 bg-gray-200 animate-pulse"></div>
-                            </div>
+            <span class="text-[8px]">
+                Página {{ paginator.pageNumber }} de {{ paginator.pages }}
+            </span>
+        </div>
+        <div class="p-4 flex flex-col gap-4">
+            @for(question of filterQuestions(); track question){
+            <mat-card>
+                <mat-card-content class="grid gap-2">
+                    <div class="font-medium">
+                        {{ question.order }}. {{ question.text }}
+                    </div>
+                    <div>
+                        <mat-radio-group (change)="
+                                        radioChange($event.value, question.id)
+                                    " aria-label="Select an option" class="flex flex-col"
+                            [(ngModel)]="question.answer">
+                            @for(option of itemOptions; track option){
+                            <mat-radio-button [value]="option.value">
+                                {{ option.name }}
+                            </mat-radio-button>
                             }
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-                } }
-            </div>
+                        </mat-radio-group>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            }
+        </div>
 
-            <div class="flex justify-between items-end w-full">
-                <div class="flex gap-4">
-                    <button (click)="getPreviousItem()" [disabled]="paginator.pageNumber == 1" mat-button color="basic">
-                        Anterior
-                    </button>
-                    @if( paginator.pageNumber != paginator.pages ){
-                    <button mat-stroked-button color="primary" (click)="getNextItem()">
-                        Siguiente
-                    </button>
-                    }
-                    @if(questions.length == countCompletedAnswers){
-                    <button mat-flat-button color="primary" [disabled]="questions.length != countCompletedAnswers"
-                        (click)="submitForm()">
-                        Enviar
-                    </button>
-                    }
-                </div>
+        <div class="flex justify-between items-end w-full">
+            <div class="flex gap-4">
+                <button (click)="getPreviousItem()" [disabled]="paginator.pageNumber == 1" mat-button color="basic">
+                    Anterior
+                </button>
+                @if( paginator.pageNumber != paginator.pages ){
+                <button mat-stroked-button color="primary" (click)="getNextItem()">
+                    Siguiente
+                </button>
+                }
+                @if(questions.length == countCompletedAnswers){
+                <button mat-flat-button color="primary" [disabled]="questions.length != countCompletedAnswers"
+                    (click)="submitForm()">
+                    Enviar
+                </button>
+                }
             </div>
         </div>
+        }
+        }
     </div>
 </div>
 }

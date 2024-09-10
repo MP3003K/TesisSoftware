@@ -201,7 +201,7 @@ namespace Controllers
 
                 using (var connection = context.CreateConnection())
                 {
-                    var response = await connection.QueryAsync("OBTENER_RESULTADOS_AULA_EXCEL", new { v_aulaId = aulaId, v_unidadId = unidadId }, commandType: CommandType.StoredProcedure);
+                    var response = await connection.QueryAsync("OBTENER_RESULTADOS_AULA_EXCEL_V2", new { v_aulaId = aulaId, v_unidadId = unidadId }, commandType: CommandType.StoredProcedure);
                     return Ok(new Response<dynamic> { Message = "Listado Correctamente", Succeeded = true, Data = response.ToList() });
                 }
             }

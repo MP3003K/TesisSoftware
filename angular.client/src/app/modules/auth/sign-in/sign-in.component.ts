@@ -108,7 +108,7 @@ export class AuthSignInComponent implements OnInit {
         });
     }
 
-        async guardarPreguntasPsicologicasLocalStorage(): Promise<void> {
+    async guardarPreguntasPsicologicasLocalStorage(): Promise<void> {
         try {
             // Llamada a la API para obtener las preguntas psicológicas
             const response = await firstValueFrom(this.evaluationService.getQuestionsAll());

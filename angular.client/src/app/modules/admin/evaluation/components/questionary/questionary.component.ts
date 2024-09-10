@@ -62,64 +62,102 @@ export class QuestionaryComponent {
             this.paginator.length / this.paginator.pageSize
         );
     }
+    cargandoAPIs: boolean = true;
+
 
     async ngOnInit(): Promise<void> {
-        await this.db.ready();
+        try {
+            await this.db.ready();
 
-        this._fsDoc = document as FSDocument;
-        this._fsDocEl = document.documentElement as FSDocumentElement;
+            this._fsDoc = document as FSDocument;
+            this._fsDocEl = document.documentElement as FSDocumentElement;
 
-        let { id } = this.route.snapshot.params;
-        if (isNaN(id)) this.router.navigate(['..']);
-
-        this.evaPsiEstId = Number(id);
-
-        let evaluaciones: any = await firstValueFrom(this.studentService.getStudentEvaluations());
-
-        if (!evaluaciones) this.router.navigate(['']);;
-
-        evaluaciones = Object.values(evaluaciones);
-
-        let evaluacion = evaluaciones.find(x => x.Id === this.evaPsiEstId);
-
-        if (!evaluacion) this.router.navigate(['']);
-
-        if (evaluacion.estadoAula == 'N') {
-            this.errorTexto = 'Evalución Psicologica del salón no disponible en este momento';
-            this.errorValidador = true;
-            setTimeout(() => {
-                this.router.navigate(['']); //redirige a la lista de evaluaciones
-            }, 8000);
-        }
-
-        if (evaluacion.estadoAula == 'F') {
-            this.errorTexto = 'Evaluación Psicologica del salón Cerrada';
-            this.errorValidador = true;
-            setTimeout(() => {
-                this.router.navigate(['']); //redirige a la lista de evaluaciones
-            }, 8000);
-        }
-
-        if (evaluacion.Estado == 'F') {
-            this.terminarEvaluacionPsicologica();
-            return;
-        }
-
-        if (evaluacion && evaluacion.Id === this.evaPsiEstId && evaluacion.estadoAula === 'P' && (evaluacion.Estado === 'P' || evaluacion.Estado === 'N')) {
-
-            await this.cargarPreguntasGenericas(evaluacion.evaluacionPsicologicaId);
-            if (this.questions.length > 0) {
-                let preguntasLocales = await this.db.getSavedQuestions(this.evaPsiEstId);
-
-                preguntasLocales.forEach(localPregunta => {
-                    let pregunta = this.questions.find(q => q.id === localPregunta.id);
-                    if (pregunta) pregunta.answer = localPregunta.answer;
-                });
+            const { id } = this.route.snapshot.params;
+            if (isNaN(id)) {
+                return this.navigateToEvaluationList();
             }
 
+            this.evaPsiEstId = Number(id);
 
-            if (this.questions.length == 0) this.getEvaluations();
+            await this.cargarEvaluacionPsicologicaYPreguntas();
+            this.cargandoAPIs = false;
+        } catch (error) {
+            console.error('Error during initialization:', error);
+            this.navigateToEvaluationList();
         }
+    }
+    public async cargarEvaluacionPsicologicaYPreguntas(): Promise<void> {
+
+        const evaluaciones = await this.getEvaluaciones();
+        if (!evaluaciones) {
+            return this.navigateToEvaluationList();
+        }
+
+        const evaluacion = this.findEvaluacion(evaluaciones, this.evaPsiEstId);
+        if (!evaluacion) {
+            return this.navigateToEvaluationList();
+        }
+
+        const { estadoAula, Estado, evaluacionPsicologicaId } = evaluacion;
+
+        if (estadoAula === 'N') {
+            return this.handleError('Evaluación Psicológica del salón no disponible en este momento');
+        }
+
+        if (estadoAula === 'F') {
+            return this.handleError('Evaluación Psicológica del salón cerrada');
+        }
+
+        if (Estado === 'F') {
+            return this.terminarEvaluacionPsicologica();
+        }
+
+        if (this.shouldLoadQuestions(evaluacion)) {
+            await this.loadQuestions(evaluacionPsicologicaId);
+        }
+    }
+
+    private async getEvaluaciones(): Promise<any[]> {
+        const evaluaciones = await firstValueFrom(this.studentService.getStudentEvaluations());
+        return evaluaciones ? Object.values(evaluaciones) : null;
+    }
+
+    private findEvaluacion(evaluaciones: any[], evaPsiEstId: number): any {
+        return evaluaciones.find(evaluacion => evaluacion.Id === evaPsiEstId);
+    }
+
+    private async handleError(message: string): Promise<void> {
+        this.errorTexto = message;
+        this.errorValidador = true;
+        setTimeout(() => this.router.navigate(['']), 8000);
+    }
+
+    private navigateToEvaluationList(): void {
+        this.router.navigate(['/evaluation']);
+    }
+
+    private shouldLoadQuestions(evaluacion: any): boolean {
+        return evaluacion && evaluacion.estadoAula === 'P' && ['P', 'N'].includes(evaluacion.Estado);
+    }
+
+    private async loadQuestions(evaluacionPsicologicaId: number): Promise<void> {
+        await this.cargarPreguntasGenericas(evaluacionPsicologicaId);
+
+        if (this.questions.length > 0) {
+            const localQuestions = await this.db.getSavedQuestions(this.evaPsiEstId);
+            this.mergeLocalQuestions(localQuestions);
+        }
+
+        if (this.questions.length === 0) {
+            await this.getEvaluations();
+        }
+    }
+
+    private mergeLocalQuestions(localQuestions: any[]): void {
+        localQuestions.forEach(localPregunta => {
+            const pregunta = this.questions.find(q => q.id === localPregunta.id);
+            if (pregunta) pregunta.answer = localPregunta.answer;
+        });
     }
 
 
@@ -128,7 +166,7 @@ export class QuestionaryComponent {
         this.db.ready();
         let preguntas = await this.db.recuperarPreguntasPsicologicas(tipoTest);
 
-        if (preguntas == null){
+        if (preguntas == null) {
             await this.guardarPreguntasPsicologicasLocalStorage();
             preguntas = await this.db.recuperarPreguntasPsicologicas(tipoTest);
         }
@@ -170,39 +208,34 @@ export class QuestionaryComponent {
         }
     }
 
-    public getEvaluations() {
-        this.evaluationService.getQuestions(this.evaPsiEstId).subscribe({
-            next: (response) => {
-                if (response.succeeded) {
-                    this.questions = response.data;
-                    this.updatePaginator();
-                }
-            },
-            error: (x) => {
-                const errorMessages: { [key: number]: string } = {
-                    50001: x.error.error,
-                    50002: 'La evaluación psicológica ya ha terminado.',
-                    50003: x.error.error,
-                };
+    async getEvaluations() {
+        try {
+            const response = await firstValueFrom(this.evaluationService.getQuestions(this.evaPsiEstId));
 
-                const errorNumber = x.error?.errorNumber;
-                const message = errorMessages[errorNumber] || 'Error desconocido';
-
-                if (errorNumber === 50001 || errorNumber === 50003) {
-                    this.errorValidador = true;
-                    this.errorTexto = x.error.error;
-                } else if (errorNumber === 50002) {
-                    this.endedTest = true;
-                }
-
-                console.error('Error al obtener preguntas:', x);
-                this._snackbar.open(message, '', { duration: 3000 });
+            if (response.succeeded) {
+                this.questions = response.data;
+                this.updatePaginator();
             }
-        });
-    }
+        } catch (x) {
+            const errorMessages: { [key: number]: string } = {
+                50001: x.error.error,
+                50002: 'La evaluación psicológica ya ha terminado.',
+                50003: x.error.error,
+            };
 
-    public goToLogin() {
-        this.router.navigate(['../../login']);
+            const errorNumber = x.error?.errorNumber;
+            const message = errorMessages[errorNumber] || 'Error desconocido';
+
+            if (errorNumber === 50001 || errorNumber === 50003) {
+                this.errorValidador = true;
+                this.errorTexto = x.error.error;
+            } else if (errorNumber === 50002) {
+                this.endedTest = true;
+            }
+
+            console.error('Error al obtener preguntas:', x);
+            this._snackbar.open(message, '', { duration: 3000 });
+        }
     }
 
     itemOptions: any[] = [
@@ -273,7 +306,7 @@ export class QuestionaryComponent {
         });
     }
 
-    submitForm() {
+    async submitForm() {
         const parsedAnswers = this.questions.map(
             ({ id: preg, answer: res }) => ({
                 preg,
@@ -282,31 +315,27 @@ export class QuestionaryComponent {
         );
         this.evaluationService
             .bulkInsertAnswers(parsedAnswers)
-            .subscribe((response) => {
+            .subscribe(async (response) => {
                 if (response.succeeded) {
-                    this.evaluationService
-                        .updateTestState(this.evaPsiEstId)
-                        .subscribe((res) => {
-                            this.db.deleteQuestions(this.evaPsiEstId);
-                            this.terminarEvaluacionPsicologica();
-                        });
+                    await this.db.deleteQuestions(this.evaPsiEstId);
+                    this.terminarEvaluacionPsicologica();
                 }
             });
     }
 
     terminarEvaluacionPsicologica() {
         this.endedTest = true;
-        setTimeout(() => {
-            this.router.navigate(['']); //redirige a la lista de evaluaciones
-        }, 6000);
-        return;
+        this.navigateToEvaluationList()
     }
     public getPValue() {
         return `${(this.countCompletedAnswers * 100) / this.paginator.length}%`;
     }
 
     validatePage() {
-        const unansweredQuestions = this.filterQuestions().map((e: any, index: number) => !e.answer ? index + 1 : null).filter((e: any) => e !== null);
+        const unansweredQuestions = this.filterQuestions()
+            .filter(question => question.answer === null)
+            .map(question => question.order);
+
         return {
             isValid: unansweredQuestions.length === 0,
             unansweredQuestions: unansweredQuestions
